@@ -12,17 +12,27 @@ export default {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          TabWallet: {
             screens: {
-              TabOneScreen: 'one',
+              TabWalletScreen: 'wallet',
             },
           },
-          TabTwo: {
+          TabHome: {
             screens: {
-              TabTwoScreen: 'two',
+              TabHomeScreen: 'home',
+            },
+          },
+          TabProfile: {
+            screens: {
+              TabProfileScreen: 'profile',
             },
           },
         },
+      },
+      RequestService: {
+        screens: {
+          RequestServiceScreen: 'RequestService'
+        }
       },
       NotFound: '*',
     },

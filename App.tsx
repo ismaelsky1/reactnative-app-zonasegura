@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View } from './components/Themed';
+import { ModalContext, ModalContextProvider } from './contexts/modal';
 
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
@@ -15,8 +17,8 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
+          <Navigation colorScheme={colorScheme} />
+        <StatusBar translucent={false} />
       </SafeAreaProvider>
     );
   }
