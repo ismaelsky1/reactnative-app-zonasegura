@@ -11,6 +11,7 @@ export type RootStackParamList = {
   NotFound: undefined;
 
   RequestService: undefined;
+  SetLocationMap: undefined;
 };
 
 export type BottomTabParamList = {
@@ -31,14 +32,13 @@ export type TabProfileParamList = {
   TabProfileScreen: undefined;
 };
 
-
-
 export type ItemListView = {
   title: string;
   subTitle?: string | null;
   next?: boolean | null;
   icons?: React.ComponentProps<typeof Ionicons>['name'];
-  onPress: ()=> void;
+  onPress: any;
+  // onPress: ()=> void | JSX.Element;
   styleItem?: any | null;
 }
 
@@ -49,6 +49,8 @@ export type ModalAlert = {
   mensage?: string;
   btnOk?: string;
   btnCancel?: string;
+  onPress: ()=> void;
+  onPressCancel?: ()=> void;
 }
 
 

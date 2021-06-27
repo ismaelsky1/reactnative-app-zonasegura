@@ -34,6 +34,11 @@ export default {
           RequestServiceScreen: 'RequestService'
         }
       },
+      SetLocationMap: {
+        screens: {
+          SetLocationMapScreen: 'SetLocationMap'
+        }
+      },
       NotFound: '*',
     },
   },

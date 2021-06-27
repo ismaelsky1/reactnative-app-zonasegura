@@ -9,7 +9,7 @@ export const ModalContext = createContext({} as ModalContextData);
 
 interface ModalContextData {
     modalAlert: ModalAlert,
-    openModalAlert: ({}: ModalAlert)=> void,
+    openModalAlert: ()=> void,
     closeModal: ()=> void,
 }
 
@@ -20,12 +20,12 @@ interface ModalProviderProps {
 
 export function ModalContextProvider({ children, ...rest }: ModalProviderProps) {
 
-    const [modalAlert, setModalAlert] = useState<ModalAlert>({});
+    const [modalAlert, setModalAlert] = useState<ModalAlert>({title: 'title', btnOk: 'ok - '});
     const [isModalAlertOpen, setIsModalAlertOpen] = useState(false);
 
-    function openModalAlert(modalAlertData : ModalAlert) {
+    function openModalAlert() {
         console.log('OPEN MODAL');
-        setModalAlert(modalAlertData);
+        setModalAlert(modalAlert);
         setIsModalAlertOpen(true);
     }
 

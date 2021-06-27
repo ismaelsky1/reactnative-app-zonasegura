@@ -10,6 +10,8 @@ import { ColorSchemeName } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
 import RequestServiceScreen from '../screens/RequestServiceScreen';
+import SetLocationMapScreen from '../screens/SetLocationMapScreen';
+
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -33,6 +35,8 @@ function RootNavigator() {
     <Stack.Navigator initialRouteName={'Root'} screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Root" component={BottomTabNavigator} />
         <Stack.Screen name="RequestService" component={RequestServiceScreen} />
+        <Stack.Screen name="SetLocationMap" component={SetLocationMapScreen} />
+        
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

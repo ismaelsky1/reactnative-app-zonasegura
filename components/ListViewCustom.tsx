@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { ModalContext, ModalContextProvider } from '../contexts/modal';
+
 
 import Constants from 'expo-constants';
 import { Text, View } from '../components/Themed';
@@ -11,9 +13,10 @@ import useColorScheme from '../hooks/useColorScheme';
 import { ItemListView } from '../types';
 
 export default function ListViewCustom(props: { data: ItemListView[] }) {
+  // const { openModalAlert, closeModal } = useContext(ModalContext);
+
   const colorScheme = useColorScheme();
   return (
-    <>
       <FlatList
         style={styles.containerList}
         data={props.data}
@@ -31,7 +34,6 @@ export default function ListViewCustom(props: { data: ItemListView[] }) {
           </TouchableOpacity>
         )}
       />
-    </>
   );
 }
 

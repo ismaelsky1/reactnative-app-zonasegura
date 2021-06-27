@@ -6,35 +6,32 @@ import { Text, View } from './Themed';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import { useNavigation } from '@react-navigation/native';
 import { ModalAlert } from '../types';
-import { ModalContext } from '../contexts/modal';
 
 export default function ModalAlertCustom(props: ModalAlert) {
   const colorScheme = useColorScheme();
-  const { navigate, goBack } = useNavigation();
-  const {openModalAlert, closeModal } = useContext(ModalContext);
-
-
-  const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    console.log(props)
-  }, [props])
-
 
   return <View style={styles.centeredView}>
     <View style={styles.modalView}>
       <MaterialCommunityIcons style={styles.source} name={props.icon} size={70} color="black" />
       <Text style={[styles.modalTitle, { color: Colors[colorScheme].black }]}>{props.title}</Text>
       <Text style={[styles.modalMensage, { color: Colors[colorScheme].black2 }]}>{props.mensage}</Text>
-      <TouchableOpacity
-        style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+      <TouchableHighlight
+        style={[styles.openButton, { backgroundColor: '#2196F3' }]}
         onPress={() => {
-          closeModal();
+          props?.onPress()
         }}>
         <Text style={styles.textStyle}>{props.btnOk}</Text>
-      </TouchableOpacity>
+      </TouchableHighlight>
+      {props.btnCancel && <TouchableHighlight
+        style={[styles.openButton, { backgroundColor: Colors[colorScheme].warning }]}
+        onPress={() => {
+          if (props?.onPressCancel) {
+            props.onPressCancel()
+          }
+        }}>
+        <Text style={styles.textStyle}>{props.btnCancel}</Text>
+      </TouchableHighlight>}
     </View>
   </View>
 }
@@ -45,7 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(0,0,0, 0.5)',
     height: '100%',
     width: '100%',
   },
@@ -71,11 +68,13 @@ const styles = StyleSheet.create({
     marginVertical: 25
   },
   openButton: {
-    backgroundColor: '#F194FF',
+    backgroundColor: 'red',
     borderRadius: 8,
     padding: 10,
     elevation: 2,
-    width: "80%", 
+    width: "80%",
+    display: 'flex',
+    marginBottom: 10
   },
   textStyle: {
     color: 'white',
@@ -92,5 +91,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 25
-  },
+  }
 });
