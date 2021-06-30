@@ -39,6 +39,22 @@ export default {
           SetLocationMapScreen: 'SetLocationMap'
         }
       },
+      ProfileScreen: {
+        screens: {
+          ProfileScreen: 'Profile'
+        }
+      },
+      InvoiceDetailScreen: {
+        screens: {
+          InvoiceDetailScreen: 'InvoiceDetail'
+        }
+      },
+      HistoryInvoiceScreen: {
+        screens: {
+          HistoryInvoiceScreen: 'HistoryInvoice'
+        }
+      },
+      
       NotFound: '*',
     },
   },

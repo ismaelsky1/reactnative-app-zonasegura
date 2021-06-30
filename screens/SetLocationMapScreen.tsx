@@ -7,7 +7,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 
-import { StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity, Button } from 'react-native';
 import * as Location from 'expo-location';
 
 import Colors from '../constants/Colors';
@@ -31,12 +31,23 @@ export default function SetLocationMapScreen(props: any) {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
+      
       if (status !== 'granted') {
+        alert('false')       
         setErrorMsg('Permission to access location was denied');
         return;
+      }else{
+        alert('true')
       }
 
       let getLocation = await Location.getCurrentPositionAsync({});
+
+      if(getLocation){
+        alert('true')
+      }else{
+        alert('false')
+
+      }
       setLocation(getLocation);
     })();
   }, []);
@@ -44,6 +55,7 @@ export default function SetLocationMapScreen(props: any) {
   function setAgenda(){
     setShowAlert(true)
   }
+
 
   return (<>
     <View style={styles.container}>
@@ -65,12 +77,13 @@ export default function SetLocationMapScreen(props: any) {
           /> */}
 
           </MapView>
-          <Ionicons onPress={() => { goBack() }} style={{ position: 'absolute', alignSelf: 'flex-start', top: '1%' }} name={'ios-close'} size={37} color={Colors[colorScheme].black} />
-          <Text style={{ position: 'absolute', alignSelf: 'center', top: '2.3%', fontSize: 18, fontWeight: 'bold' }} >Local de Encontro</Text>
-          <Ionicons style={{ position: 'absolute', alignSelf: 'center', top: '44%' }} name={'ios-location'} size={37} color={Colors[colorScheme].warning} />
+         
+          <Ionicons style={{ position: 'absolute', alignSelf: 'center', top: '43%' }} name={'ios-location'} size={37} color={Colors[colorScheme].warning} />
         </>
       ) : (<ActivityIndicator size="large" color={Colors[colorScheme].primary} />)}
     </View>
+    <Ionicons onPress={() => { goBack() }} style={{ position: 'absolute', alignSelf: 'flex-start', top: '1%' }} name={'ios-close'} size={37} color={Colors[colorScheme].black} />
+          <Text style={{ position: 'absolute', alignSelf: 'center', top: '2.1%', fontSize: 18, fontWeight: 'bold' }} >Local de Encontro</Text>
 
     <View style={[styles.form, { backgroundColor: Colors[colorScheme].white }]}>
       <Text style={[styles.modalTitle, { color: Colors[colorScheme].black }]}>{props.title}</Text>

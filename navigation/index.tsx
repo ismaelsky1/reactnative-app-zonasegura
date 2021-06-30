@@ -11,6 +11,11 @@ import { ColorSchemeName } from 'react-native';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import RequestServiceScreen from '../screens/RequestServiceScreen';
 import SetLocationMapScreen from '../screens/SetLocationMapScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import InvoiceDetailScreen from '../screens/InvoiceDetailScreen';
+import HistoryInvoiceScreen from '../screens/HistoryInvoiceScreen';
+
+
 
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
@@ -36,6 +41,10 @@ function RootNavigator() {
         <Stack.Screen name="Root" component={BottomTabNavigator} />
         <Stack.Screen name="RequestService" component={RequestServiceScreen} />
         <Stack.Screen name="SetLocationMap" component={SetLocationMapScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="InvoiceDetail" component={InvoiceDetailScreen} />
+        <Stack.Screen name="HistoryInvoice" component={HistoryInvoiceScreen} />
+        
         
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>

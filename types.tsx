@@ -12,6 +12,9 @@ export type RootStackParamList = {
 
   RequestService: undefined;
   SetLocationMap: undefined;
+  Profile: undefined;
+  InvoiceDetail: undefined;
+  HistoryInvoice: undefined;
 };
 
 export type BottomTabParamList = {

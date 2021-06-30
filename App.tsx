@@ -7,6 +7,8 @@ import { ModalContext, ModalContextProvider } from './contexts/modal';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
+import Colors from './constants/Colors';
+
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -18,7 +20,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
           <Navigation colorScheme={colorScheme} />
-        <StatusBar translucent={false} />
+        <StatusBar translucent={false} style='light' backgroundColor={Colors[colorScheme].primary}/>
       </SafeAreaProvider>
     );
   }

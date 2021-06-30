@@ -25,7 +25,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "br.com.securityshild",
+      "permissions": [
+        "LOCATION",
+        "MOTION",
+        "MEDIA_LIBRARY"
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

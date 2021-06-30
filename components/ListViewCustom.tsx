@@ -40,8 +40,8 @@ export default function ListViewCustom(props: { data: ItemListView[] }) {
 const styles = StyleSheet.create({
   containerList: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
-    width: '90%',
+    // marginTop: Constants.statusBarHeight,
+    width: '100%',
   },
   itemList: {
     flexDirection: 'row',
