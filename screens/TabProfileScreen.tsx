@@ -1,16 +1,80 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useCallback, useState, useEffect } from 'react';
+import { StyleSheet, Linking } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
+import ListViewCustom from '../components/ListViewCustom';
 import { Text, View } from '../components/Themed';
 
-export default function TabProfileScreen() {
+import Colors from '../constants/Colors';
+import useColorScheme from '../hooks/useColorScheme';
+import { ModalAlert } from '../types';
+
+import ModalAlertCustom from '../components/ModalAlertCustom';
+import ModalAgendaCustom from '../components/ModalAgendaCustom';
+
+export default function TabProfileScreen(props: any) {
+  const [showModal, setShowModal] = useState(false);
+  const [showModalAgenda, setShowModalAgenda] = useState(false);
+  const [mensage, setMensage] = useState<ModalAlert>({});
+  const [listService, setListService] = useState([]);
+
+  // const [formDataTimeData, setFormDataTimeData] = useState(null);
+  // const [formLocationData, setFormLocationData] = useState<any>(null);
+
+
+  const colorScheme = useColorScheme();
+  const { navigate, goBack } = useNavigation();
+
+  function link(params: string) {
+    navigate(params);
+  }
+
+  function linkContact() {
+    console.log('link')
+    Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte%20%3F');
+  }
+
+  useEffect(() => {
+    // if(props.route.params){
+    //   console.log(props.route.params)
+    //   // setFormLocationData(props.route.params.coords)
+    // }
+    console.log('home')
+
+    console.log(props.route.params)
+  }, [props])
+
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>PROFILE</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
+    <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
+      {/* <Text style={[styles.title, { color: Colors[colorScheme].white }]}>Olá</Text> */}
+      <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>Perfil</Text>
+      {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
+      <ListViewCustom data={[{
+        title: 'Usuário',
+        subTitle: 'Nome, telefone, endereço...',
+        icons: 'person',
+        next: false,
+        onPress: () => { link('Profile') },
+      }, {
+        title: 'Contato',
+        subTitle: 'Fale conosco',
+        icons: 'call',
+        next: false,
+        onPress: () => { linkContact() },
+      }, {
+        title: 'Sair',
+        subTitle: 'Sair do usuário',
+        icons: 'log-out',
+        next: false,
+        onPress: () => { console.log('sair') },
+      }
+      ]} />
+
+      {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} onPressCancel={() => { setShowModal(!showModal) }} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} btnCancel='Cancelar' />}
+
     </View>
+
   );
 }
 
@@ -19,10 +83,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 15
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: '300',
+    marginTop: '15%'
+  },
+  subtitle: {
+    fontSize: 34,
     fontWeight: 'bold',
+    width: '91%',
+    marginTop: '5%'
   },
   separator: {
     marginVertical: 30,
