@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#3175FD"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,16 +22,23 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA3C0eZXoCJMjJctV3FFy5P-OwmE46Ioes"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#3175FD"
       },
       "package": "br.com.securityshild",
       "permissions": [
         "LOCATION",
-        "MOTION",
-        "MEDIA_LIBRARY"
-      ]
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE"
+      ],
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

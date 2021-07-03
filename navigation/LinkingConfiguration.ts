@@ -54,6 +54,12 @@ export default {
           HistoryInvoiceScreen: 'HistoryInvoice'
         }
       },
+      ProfileAddressScreen: {
+        screens: {
+          ProfileAddressScreen: 'ProfileAddress'
+        }
+      },
+      
       
       NotFound: '*',
     },

@@ -17,7 +17,7 @@ import ButtonCustom from '../components/ButtonCustom';
 import ModalAlertCustom from '../components/ModalAlertCustom';
 import ModalAgendaCustom from '../components/ModalAgendaCustom';
 
-export default function ProfileScreenScreen(props: any) {
+export default function ProfileAddressScreen(props: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
   // const { navigate, goBack } = useNavigation();
   const [showModal, setShowModal] = useState(false);
@@ -30,24 +30,6 @@ export default function ProfileScreenScreen(props: any) {
 
 
   const schemaDataUsers = yup.object().shape({
-
-    name: yup.string()
-      .required('Obrigatório'),
-    cellphone: yup.string()
-      .required('Obrigatório')
-      .test("len", "Informe um número válido.", (val) => {
-        const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 13 || lengthWithoutDashes === 14) ? true : false;
-      }),
-    document: yup.string()
-      .required('Obrigatório')
-      .test("len", "documento inválido.", (val) => {
-        const lengthWithoutDashes = val?.replace(/-|_./g, "").length;
-        return (lengthWithoutDashes === 13) ? true : false;
-      }),
-    email: yup.string()
-      .required('Obrigatório')
-      .email(),
     address: yup.string()
       .required('Obrigatório'),
     number: yup.string()
@@ -72,16 +54,13 @@ export default function ProfileScreenScreen(props: any) {
 
   return (
     <>
-      <HeaderCustom back={'true'} title='Usuário' />
+      <HeaderCustom back={'true'} title='Endereço' />
 
       <ScrollView style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
 
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            name: '',
-            cellphone: '',
-            document: '',
             address: '',
             complement: '',
             number: '',
@@ -105,40 +84,87 @@ export default function ProfileScreenScreen(props: any) {
           }) => (
             <>
               <TextInputCustom
-                title='Nome:'
+                title='Rua:'
                 placeholder="..."
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
-                value={values.name}
+                onChangeText={handleChange('address')}
+                onBlur={handleBlur('address')}
+                value={values.address}
               />
-              {(errors.name && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.name}</Text>
+              {(errors.address && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.address}</Text>
               }
               <TextInputCustom
-                title='Celular:'
+                title='Complemento:'
                 placeholder="..."
-                onChangeText={handleChange('cellphone')}
-                onBlur={handleBlur('cellphone')}
-                value={values.cellphone}
-                keyboardType='phone-pad'
+                onChangeText={handleChange('complement')}
+                onBlur={handleBlur('complement')}
+                value={values.complement}
               />
-              {(errors.cellphone && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.cellphone}</Text>
+              {(errors.complement && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.complement}</Text>
               }
               <TextInputCustom
-                title='CPF:'
+                title='Nº:'
                 placeholder="..."
-                onChangeText={handleChange('document')}
-                onBlur={handleBlur('document')}
-                value={values.document}
+                onChangeText={handleChange('number')}
+                onBlur={handleBlur('number')}
+                value={values.number}
                 keyboardType='numeric'
 
               />
-              {(errors.document && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
+              {(errors.number && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.number}</Text>
               }
-              
-              <ButtonCustom background={Colors[colorScheme].primary} onPress={() => { setSubmitting(true) }} title="Salvar" />
+              <TextInputCustom
+                title='Bairro:'
+                placeholder="..."
+                onChangeText={handleChange('neighborhood')}
+                onBlur={handleBlur('neighborhood')}
+                value={values.neighborhood}
+              />
+              {(errors.neighborhood && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.neighborhood}</Text>
+              }
+              <TextInputCustom
+                title='Cidade:'
+                placeholder="..."
+                onChangeText={handleChange('city')}
+                onBlur={handleBlur('city')}
+                value={values.city}
+              />
+              {(errors.city && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.city}</Text>
+              }
+              <TextInputCustom
+                title='state:'
+                placeholder="..."
+                onChangeText={handleChange('state')}
+                onBlur={handleBlur('state')}
+                value={values.state}
+              />
+              {(errors.state && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.state}</Text>
+              }
+              <TextInputCustom
+                title='CEP:'
+                placeholder="..."
+                onChangeText={handleChange('zipcode')}
+                onBlur={handleBlur('zipcode')}
+                value={values.zipcode}
+              />
+              {(errors.zipcode && isSubmitting) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.zipcode}</Text>
+              }
+              <Text style={{
+                fontSize: 16,
+                fontWeight: '700',
+                width: '100%',
+                color: Colors[colorScheme].black2,
+                marginTop: 10
+              }}>Localização:</Text>
+              <ButtonCustom background={Colors[colorScheme].primary} onPress={() => { setSubmitting(true) }} title="Editar" />
+              <Text></Text>
+              <ButtonCustom background={Colors[colorScheme].sucess} onPress={() => { setSubmitting(true) }} title="Salvar" />
             </>
           )}
         </Formik>

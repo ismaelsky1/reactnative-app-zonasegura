@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View } from '../components/Themed';
 import { useNavigation } from '@react-navigation/native';
 import { TextInputMask } from 'react-native-masked-text';
+// import { Permissions } from 'react-native-unimodules';
 
 
 import MapView from 'react-native-maps';
@@ -9,12 +10,15 @@ import { Marker, Callout } from 'react-native-maps';
 
 import { StyleSheet, Dimensions, ActivityIndicator, TouchableOpacity, Button } from 'react-native';
 import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
 import { Ionicons } from '@expo/vector-icons';
 import ModalAlertCustom from '../components/ModalAlertCustom';
+
+import { ModalAlert } from '../types';
 
 
 export default function SetLocationMapScreen(props: any) {
@@ -23,38 +27,32 @@ export default function SetLocationMapScreen(props: any) {
 
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [location, setLocation] = useState<any>(null);
-  
-  const [errorMsg, setErrorMsg] = useState('');
+
+  const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [myDateText, setMyDateText] = useState();
 
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      
+      // let { status } = await Location.requestForegroundPermissionsAsync();
+
+      const { status } = await Permissions.askAsync(Permissions.LOCATION_FOREGROUND);
+
       if (status !== 'granted') {
-        alert('false')       
-        setErrorMsg('Permission to access location was denied');
+
+        setAlertMsg({ mensage: 'Permissão de acesso a localização necessária.', onPress: () => { goBack() }, btnOk: 'Ok', title: 'Atenção', icon: 'alert-circle' });
+        setShowAlert(true)
         return;
-      }else{
-        alert('true')
-      }
 
+      }
       let getLocation = await Location.getCurrentPositionAsync({});
-
-      if(getLocation){
-        alert('true')
-      }else{
-        alert('false')
-
-      }
       setLocation(getLocation);
+      // setAlertMsg({ mensage: `Sua localização é: ${getLocation.coords.latitude}, ${getLocation.coords.longitude}`, onPress: () => { setShowAlert(false) }, btnOk: 'Ok', title: 'Atenção', icon: 'alert-circle' });
+      // setShowAlert(true)
+
+
     })();
   }, []);
-
-  function setAgenda(){
-    setShowAlert(true)
-  }
 
 
   return (<>
@@ -77,13 +75,13 @@ export default function SetLocationMapScreen(props: any) {
           /> */}
 
           </MapView>
-         
+
           <Ionicons style={{ position: 'absolute', alignSelf: 'center', top: '43%' }} name={'ios-location'} size={37} color={Colors[colorScheme].warning} />
         </>
       ) : (<ActivityIndicator size="large" color={Colors[colorScheme].primary} />)}
     </View>
     <Ionicons onPress={() => { goBack() }} style={{ position: 'absolute', alignSelf: 'flex-start', top: '1%' }} name={'ios-close'} size={37} color={Colors[colorScheme].black} />
-          <Text style={{ position: 'absolute', alignSelf: 'center', top: '2.1%', fontSize: 18, fontWeight: 'bold' }} >Local de Encontro</Text>
+    <Text style={{ position: 'absolute', alignSelf: 'center', top: '2.1%', fontSize: 18, fontWeight: 'bold' }} >Local de Encontro</Text>
 
     <View style={[styles.form, { backgroundColor: Colors[colorScheme].white }]}>
       <Text style={[styles.modalTitle, { color: Colors[colorScheme].black }]}>{props.title}</Text>
@@ -101,13 +99,13 @@ export default function SetLocationMapScreen(props: any) {
       />
     </View>
 
-    <TouchableOpacity onPress={() => {setShowAlert(true)} } style={[styles.buttonSave, { backgroundColor: Colors[colorScheme].primary }]}>
+    <TouchableOpacity onPress={() => { setShowAlert(true) }} style={[styles.buttonSave, { backgroundColor: Colors[colorScheme].primary }]}>
       <Text style={{ color: Colors[colorScheme].white, fontWeight: 'bold' }}>
         Salvar
       </Text>
     </TouchableOpacity>
 
-    {showAlert && <ModalAlertCustom title="Concluido"  mensage="Agendamento de escolta realizado." onPress={()=>{goBack()}} btnOk='Ok' icon='check'/>}
+    {showAlert && <ModalAlertCustom title={alertMsg.title} mensage={alertMsg?.mensage} onPress={alertMsg.onPress} btnOk={alertMsg.btnOk} icon={alertMsg.icon} />}
   </>)
 };
 

@@ -15,6 +15,7 @@ export type RootStackParamList = {
   Profile: undefined;
   InvoiceDetail: undefined;
   HistoryInvoice: undefined;
+  ProfileAddress: undefined;
 };
 
 export type BottomTabParamList = {
@@ -52,7 +53,7 @@ export type ModalAlert = {
   mensage?: string;
   btnOk?: string;
   btnCancel?: string;
-  onPress: ()=> void;
+  onPress?: ()=> void;
   onPressCancel?: ()=> void;
 }
 

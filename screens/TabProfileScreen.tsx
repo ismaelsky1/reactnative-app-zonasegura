@@ -47,15 +47,21 @@ export default function TabProfileScreen(props: any) {
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
-      {/* <Text style={[styles.title, { color: Colors[colorScheme].white }]}>Olá</Text> */}
-      <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>Perfil</Text>
+      <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Perfil</Text>
+      <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>João Victor</Text>
       {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       <ListViewCustom data={[{
-        title: 'Usuário',
-        subTitle: 'Nome, telefone, endereço...',
+        title: 'Meus Dados',
+        subTitle: 'Nome, telefone...',
         icons: 'person',
         next: false,
         onPress: () => { link('Profile') },
+      },{
+        title: 'Endereço',
+        subTitle: 'Rua,Bairro,Cidade...',
+        icons: 'person',
+        next: false,
+        onPress: () => { link('ProfileAddress') },
       }, {
         title: 'Contato',
         subTitle: 'Fale conosco',
@@ -86,15 +92,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '300',
-    marginTop: '15%'
+    width: '100%',
+    marginTop: 10,
+    textAlign: 'left'
   },
   subtitle: {
     fontSize: 34,
     fontWeight: 'bold',
-    width: '91%',
-    marginTop: '5%'
+    width: '100%',
+    marginTop: 0,
+    textAlign: 'left'
   },
   separator: {
     marginVertical: 30,

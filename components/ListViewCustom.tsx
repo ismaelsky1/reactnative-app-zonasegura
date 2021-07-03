@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   containerList: {
     flex: 1,
     // marginTop: Constants.statusBarHeight,
-    width: '100%',
+    width: '100%'
   },
   itemList: {
     flexDirection: 'row',

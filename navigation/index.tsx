@@ -14,6 +14,7 @@ import SetLocationMapScreen from '../screens/SetLocationMapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import InvoiceDetailScreen from '../screens/InvoiceDetailScreen';
 import HistoryInvoiceScreen from '../screens/HistoryInvoiceScreen';
+import ProfileAddressScreen from '../screens/ProfileAddressScreen';
 
 
 
@@ -44,6 +45,7 @@ function RootNavigator() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="InvoiceDetail" component={InvoiceDetailScreen} />
         <Stack.Screen name="HistoryInvoice" component={HistoryInvoiceScreen} />
+        <Stack.Screen name="ProfileAddress" component={ProfileAddressScreen} />
         
         
         <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
