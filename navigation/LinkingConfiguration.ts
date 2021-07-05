@@ -59,6 +59,12 @@ export default {
           ProfileAddressScreen: 'ProfileAddress'
         }
       },
+      SetLocationMapAddressScreen: {
+        screens: {
+          SetLocationMapAddressScreen: 'SetLocationMapAddress'
+        }
+      },
+      
       
       
       NotFound: '*',

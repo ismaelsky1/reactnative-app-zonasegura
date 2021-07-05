@@ -40,7 +40,7 @@ export default function InvoiceDetailScreen(props: any) {
       <HeaderCustom back={'true'} title={'Fatura'} />
 
       <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
-        <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="A Vencer" link='' />
+        <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="Em aberto" link='' />
         <Text style={styles.title}>Forma de Pagamento</Text>
         <ListViewCustom data={[
           {

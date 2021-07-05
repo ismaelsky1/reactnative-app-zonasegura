@@ -17,7 +17,7 @@ interface Props {
   onBlur?: (res: any)=> void;
 }
 
-export default function TextInputCustom(props: Props) {
+export default function PasswordInputCustom(props: Props) {
   const colorScheme = useColorScheme();
   const { navigate, goBack } = useNavigation();
 
@@ -25,7 +25,7 @@ export default function TextInputCustom(props: Props) {
   return <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
 
     <Text style={[styles.title, { color: Colors[colorScheme].black2 }]}>{props?.title}</Text>
-    <TextInput placeholder={props?.placeholder} keyboardType={props.keyboardType} value={props.value} onBlur={props.onBlur} onChangeText={props.onChangeText} style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} />
+    <TextInput secureTextEntry placeholder={props?.placeholder} keyboardType={props.keyboardType} value={props.value} onBlur={props.onBlur} onChangeText={props.onChangeText} style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} />
   </View>;
 }
 

@@ -18,9 +18,9 @@ export default function TabWalletScreen() {
   return (
     <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
       <Text style={styles.title}>Carteira</Text>
-      <Text style={styles.subTitle}>Voce tem 1 conta em aberto</Text>
+      <Text style={styles.subTitle}>Você tem 1 conta em aberto</Text>
 
-      <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="A Vencer" link="InvoiceDetail" />
+      <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="Em aberto" link="InvoiceDetail" />
       <ListViewCustom data={[
         {
           title: 'Historico',

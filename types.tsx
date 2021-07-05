@@ -16,6 +16,7 @@ export type RootStackParamList = {
   InvoiceDetail: undefined;
   HistoryInvoice: undefined;
   ProfileAddress: undefined;
+  SetLocationMapAddress: undefined;
 };
 
 export type BottomTabParamList = {

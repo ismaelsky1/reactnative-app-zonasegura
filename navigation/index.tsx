@@ -1,54 +1,26 @@
-/**
- * If you are not familiar with React Navigation, check out the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { ColorSchemeName } from 'react-native';
 
-import NotFoundScreen from '../screens/NotFoundScreen';
-import RequestServiceScreen from '../screens/RequestServiceScreen';
-import SetLocationMapScreen from '../screens/SetLocationMapScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import InvoiceDetailScreen from '../screens/InvoiceDetailScreen';
-import HistoryInvoiceScreen from '../screens/HistoryInvoiceScreen';
-import ProfileAddressScreen from '../screens/ProfileAddressScreen';
+
+import AuthRoutes from './auth.routes';
+import AppRoutes from './app.routes';
+
+import { useAuth } from '../hooks/auth';
 
 
+const Routes = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
+  const { user, loading } = useAuth();
 
-import { RootStackParamList } from '../types';
-import BottomTabNavigator from './BottomTabNavigator';
-import LinkingConfiguration from './LinkingConfiguration';
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#999" />
+      </View>
+    );
+  }
 
-export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
-  return (
-    <NavigationContainer
-      linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
-    </NavigationContainer>
-  );
-}
+  return user ? <AppRoutes  colorScheme={colorScheme} /> : <AuthRoutes />;
+};
 
-// A root stack navigator is often used for displaying modals on top of all other content
-// Read more here: https://reactnavigation.org/docs/modal
-const Stack = createStackNavigator<RootStackParamList>();
-
-function RootNavigator() {
-  return (
-    <Stack.Navigator initialRouteName={'Root'} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Root" component={BottomTabNavigator} />
-        <Stack.Screen name="RequestService" component={RequestServiceScreen} />
-        <Stack.Screen name="SetLocationMap" component={SetLocationMapScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="InvoiceDetail" component={InvoiceDetailScreen} />
-        <Stack.Screen name="HistoryInvoice" component={HistoryInvoiceScreen} />
-        <Stack.Screen name="ProfileAddress" component={ProfileAddressScreen} />
-        
-        
-        <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-    </Stack.Navigator>
-  );
-}
+export default Routes;

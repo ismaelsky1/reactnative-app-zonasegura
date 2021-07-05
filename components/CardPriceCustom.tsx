@@ -25,22 +25,21 @@ export default function CardPriceCustom(props: Props) {
   const colorScheme = useColorScheme();
   return (
     <View style={[styles.card, { backgroundColor: Colors[colorScheme].white }]} >
-      <Text style={[styles.title, { color: Colors[colorScheme].black }]}>{props.title}</Text>
-      <Text style={[styles.subTitle, { color: Colors[colorScheme].black }]}>{props.subTitle}</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <View style={styles.rowCard}>
-        <View >
-          <Text style={[styles.price, { color: Colors[colorScheme].black }]}>{props.price}</Text>
-          <Text style={[styles.date, { color: Colors[colorScheme].black }]}>{props.date}</Text>
-        </View>
-        <View >
-          <TouchableOpacity style={[]} onPress={() => { navigate(props.link) }}>
+      <TouchableOpacity style={[]} onPress={() => { navigate(props.link) }}>
+
+        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>{props.title}</Text>
+        <Text style={[styles.subTitle, { color: Colors[colorScheme].black }]}>{props.subTitle}</Text>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <View style={styles.rowCard}>
+          <View >
+            <Text style={[styles.price, { color: Colors[colorScheme].black }]}>{props.price}</Text>
+            <Text style={[styles.date, { color: Colors[colorScheme].black }]}>{props.date}</Text>
+          </View>
+          <View >
             <Text style={[styles.linkStatus, { color: Colors[colorScheme].primary }]}>{props.status}</Text>
-          </TouchableOpacity>
+          </View>
         </View>
-      </View>
-
-
+      </TouchableOpacity>
     </View>
   );
 }

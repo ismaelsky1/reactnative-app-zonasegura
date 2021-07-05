@@ -27,8 +27,6 @@ export default function ProfileScreenScreen(props: any) {
   const [nameForm, setNameForm] = useState<string>('');
   const colorScheme = useColorScheme();
 
-
-
   const schemaDataUsers = yup.object().shape({
 
     name: yup.string()
@@ -45,21 +43,6 @@ export default function ProfileScreenScreen(props: any) {
         const lengthWithoutDashes = val?.replace(/-|_./g, "").length;
         return (lengthWithoutDashes === 13) ? true : false;
       }),
-    email: yup.string()
-      .required('Obrigatório')
-      .email(),
-    address: yup.string()
-      .required('Obrigatório'),
-    number: yup.string()
-      .required('Obrigatório'),
-    neighborhood: yup.string()
-      .required('Obrigatório'),
-    complement: yup.string()
-      .required('Obrigatório'),
-    city: yup.string()
-      .required('Obrigatório'),
-    state: yup.string()
-      .required('Obrigatório')
   });
 
   useEffect(() => {
@@ -81,14 +64,7 @@ export default function ProfileScreenScreen(props: any) {
           initialValues={{
             name: '',
             cellphone: '',
-            document: '',
-            address: '',
-            complement: '',
-            number: '',
-            neighborhood: '',
-            city: '',
-            state: '',
-            zipcode: ''
+            document: ''
           }}
           onSubmit={values => console.log(values)}
         >
@@ -138,7 +114,7 @@ export default function ProfileScreenScreen(props: any) {
                 <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
               }
               
-              <ButtonCustom background={Colors[colorScheme].primary} onPress={() => { setSubmitting(true) }} title="Salvar" />
+              <ButtonCustom background={Colors[colorScheme].sucess} onPress={() => { setSubmitting(true) }} title="Salvar" />
             </>
           )}
         </Formik>

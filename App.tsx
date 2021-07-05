@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer, DefaultTheme, DarkTheme  } from '@react-navigation/native';
+
 import { View } from './components/Themed';
 import { ModalContext, ModalContextProvider } from './contexts/modal';
 
@@ -9,6 +11,8 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import Colors from './constants/Colors';
 
+import AppProvider from './hooks';
+import LinkingConfiguration from './navigation/LinkingConfiguration';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -19,8 +23,14 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-        <StatusBar translucent={false} style='light' backgroundColor={Colors[colorScheme].primary}/>
+        <NavigationContainer
+          linking={LinkingConfiguration}
+          theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <AppProvider>
+            <Navigation colorScheme={colorScheme} />
+          </AppProvider>
+          <StatusBar translucent={false} style='light' backgroundColor={Colors[colorScheme].primary} />
+        </NavigationContainer>
       </SafeAreaProvider>
     );
   }

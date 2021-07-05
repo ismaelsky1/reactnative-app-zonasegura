@@ -35,7 +35,7 @@ export default function HitoryInvoiceScreen(props: any) {
       <HeaderCustom back={'true'} title={'Historico de Contas'} />
 
       <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
-        <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="A Vencer" link='' />
+        <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="Em aberto" link='' />
         <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/03/21" status="Atrasada" link='' />
         <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/02/21" status="Pago" link='' />
       </View>

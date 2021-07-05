@@ -19,7 +19,7 @@ import ModalAgendaCustom from '../components/ModalAgendaCustom';
 
 export default function ProfileAddressScreen(props: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
-  // const { navigate, goBack } = useNavigation();
+  const { navigate, goBack } = useNavigation();
   const [showModal, setShowModal] = useState(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
@@ -83,6 +83,16 @@ export default function ProfileAddressScreen(props: any) {
             isSubmitting
           }) => (
             <>
+             <Text style={{
+                fontSize: 16,
+                fontWeight: '700',
+                width: '100%',
+                color: Colors[colorScheme].black2,
+                marginTop: 10
+              }}>Localização:</Text>
+              <ButtonCustom background={Colors[colorScheme].primary} onPress={() => { navigate('SetLocationMapAddress') }} title="Editar" />
+              <Text></Text>
+              
               <TextInputCustom
                 title='Rua:'
                 placeholder="..."
@@ -136,7 +146,7 @@ export default function ProfileAddressScreen(props: any) {
                 <Text style={{ fontSize: 10, color: 'red' }}>{errors.city}</Text>
               }
               <TextInputCustom
-                title='state:'
+                title='Estato:'
                 placeholder="..."
                 onChangeText={handleChange('state')}
                 onBlur={handleBlur('state')}
@@ -155,16 +165,9 @@ export default function ProfileAddressScreen(props: any) {
               {(errors.zipcode && isSubmitting) &&
                 <Text style={{ fontSize: 10, color: 'red' }}>{errors.zipcode}</Text>
               }
-              <Text style={{
-                fontSize: 16,
-                fontWeight: '700',
-                width: '100%',
-                color: Colors[colorScheme].black2,
-                marginTop: 10
-              }}>Localização:</Text>
-              <ButtonCustom background={Colors[colorScheme].primary} onPress={() => { setSubmitting(true) }} title="Editar" />
-              <Text></Text>
+             
               <ButtonCustom background={Colors[colorScheme].sucess} onPress={() => { setSubmitting(true) }} title="Salvar" />
+              <Text></Text>
             </>
           )}
         </Formik>

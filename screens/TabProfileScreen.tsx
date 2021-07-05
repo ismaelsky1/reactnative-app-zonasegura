@@ -11,12 +11,16 @@ import { ModalAlert } from '../types';
 
 import ModalAlertCustom from '../components/ModalAlertCustom';
 import ModalAgendaCustom from '../components/ModalAgendaCustom';
+import { useAuth } from '../hooks/auth';
 
 export default function TabProfileScreen(props: any) {
   const [showModal, setShowModal] = useState(false);
   const [showModalAgenda, setShowModalAgenda] = useState(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
+
+  const { signOut } = useAuth();
+
 
   // const [formDataTimeData, setFormDataTimeData] = useState(null);
   // const [formLocationData, setFormLocationData] = useState<any>(null);
@@ -73,7 +77,7 @@ export default function TabProfileScreen(props: any) {
         subTitle: 'Sair do usuário',
         icons: 'log-out',
         next: false,
-        onPress: () => { console.log('sair') },
+        onPress: () => { signOut() },
       }
       ]} />
 

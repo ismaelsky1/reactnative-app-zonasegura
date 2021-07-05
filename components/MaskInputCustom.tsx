@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View } from './Themed';
+import { useNavigation } from '@react-navigation/native';
+import { TextInputMask } from 'react-native-masked-text';
 
+import { Text, View } from './Themed';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import { useNavigation } from '@react-navigation/native';
 
 interface Props {
   title?: string;
@@ -13,11 +14,13 @@ interface Props {
   keyboardType?: 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'default';
   value?: string;
   invalid?: boolean;
-  onChangeText: (res: any)=> void;
-  onBlur?: (res: any)=> void;
+  options?: any;
+  type: 'cel-phone' | 'cnpj' | 'cpf' | 'datetime' | 'money' | 'only-numbers' | 'zip-code' | 'credit-card' | 'custom';
+  onChangeText: (res: any) => void;
+  onBlur?: (res: any) => void;
 }
 
-export default function TextInputCustom(props: Props) {
+export default function MaskInputCustom(props: Props) {
   const colorScheme = useColorScheme();
   const { navigate, goBack } = useNavigation();
 
@@ -25,7 +28,16 @@ export default function TextInputCustom(props: Props) {
   return <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
 
     <Text style={[styles.title, { color: Colors[colorScheme].black2 }]}>{props?.title}</Text>
-    <TextInput placeholder={props?.placeholder} keyboardType={props.keyboardType} value={props.value} onBlur={props.onBlur} onChangeText={props.onChangeText} style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} />
+    <TextInputMask
+      type={props.type}
+      options={props.options}
+      value={props.value}
+      onChangeText={props.onChangeText}
+      placeholder={props?.placeholder}
+      keyboardType={props.keyboardType}
+      onBlur={props.onBlur}
+      style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} 
+    />
   </View>;
 }
 
