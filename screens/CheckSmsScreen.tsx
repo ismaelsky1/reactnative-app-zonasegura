@@ -1,10 +1,9 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, TextInput, Button, ScrollView, Image } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
-
-import MaskInputCustom from '../components/MaskInputCustom';
-import PasswordInputCustom from '../components/PasswordInputCustom';
+import TextInputCustom from '../components/TextInputCustom';
 
 import { Text, View } from '../components/Themed';
 import { Formik } from 'formik';
@@ -22,7 +21,7 @@ import ModalAgendaCustom from '../components/ModalAgendaCustom';
 import logoImg from '../assets/images/logo-name.png';
 import { useAuth } from '../hooks/auth';
 
-export default function SignInScreen() {
+export default function CheckSmsScreen() {
   const [loading, setLoading] = useState(false);
   const [msgError, setMsgError] = useState(false);
 
@@ -35,53 +34,53 @@ export default function SignInScreen() {
 
 
   const schemaDataUsers = yup.object().shape({
-
-    password: yup.string()
-      .required('Mínimo 6 caracteres.')
-      .min(6, 'Mínimo 6 caracteres.'),
-      document: yup.string()
+    key: yup.string()
       .required('Obrigatório')
       .test("len", "Informe um número válido.", (val) => {
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 13) ? true : false;
+        return (lengthWithoutDashes === 6) ? true : false;
       }),
   });
 
   const handleSignIn = useCallback(
-    async (data: any) => {
-      setMsgError(false);
-      setLoading(true);
+    ()=>{navigate('SetLocationMapAddressScreen')}
+    // async (data: any) => {
+    //   setMsgError(false);
+    //   setLoading(true);
 
-      try {
-        await signIn({
-          email: data.email,
-          password: data.password,
-        });
-        setMsgError(false);
-        setLoading(false);
+    //   try {
+    //     await signIn({
+    //       email: data.email,
+    //       password: data.password,
+    //     });
+    //     setMsgError(false);
+    //     setLoading(false);
 
-      } catch (error) {
-        setMsgError(true);
-        setLoading(false);
+    //   } catch (error) {
+    //     setMsgError(true);
+    //     setLoading(false);
 
-      }
-    },
-    [signIn],
+    //   }
+    // }
+    , [signIn],
   );
 
 
   return (
     <View style={[styles.container, { backgroundColor: Colors[colorScheme].primary }]}>
       <View style={[styles.boxLogo, { backgroundColor: Colors[colorScheme].primary }]}>
-        <Image style={styles.logo} source={logoImg} />
+        <Ionicons style={styles.logo} name="key-outline" size={100} color={Colors[colorScheme].secund} />
       </View>
       <View style={[styles.box, { backgroundColor: Colors[colorScheme].secund }]}>
-        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Entrar</Text>
+        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Informe código recebido</Text>
+        <Text style={[styles.subTitle, { color: Colors[colorScheme].black2 }]}>
+          Enviamos um código para seu número, informe no campo
+          logo a baixo.
+        </Text>
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            document: '',
-            password: '',
+            key: ''
           }}
           onSubmit={handleSignIn}
         >
@@ -94,52 +93,19 @@ export default function SignInScreen() {
             errors,
           }) => (
             <>
-              {/* <MaskInputCustom
-                title='Telefone:'
+              <TextInputCustom
+                title='Código:'
                 placeholder="..."
-                onChangeText={handleChange('cellphone')}
-                onBlur={handleBlur('cellphone')}
-                keyboardType='phone-pad'
-                value={values.cellphone}
-                type={'cel-phone'}
-                options={{
-                  maskType: 'BRL',
-                  withDDD: true,
-                  dddMask: '(99) '
-                }}
+                onChangeText={handleChange('key')}
+                onBlur={handleBlur('key')}
+                keyboardType='decimal-pad'
+                value={values.key}
               />
-              {(errors.cellphone && touched.cellphone) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.cellphone}</Text>
-              } */}
-               <MaskInputCustom
-                title='CPF:'
-                placeholder="000.000.000-00"
-                onChangeText={handleChange('document')}
-                onBlur={handleBlur('document')}
-                keyboardType='phone-pad'
-                value={values.document}
-                type={'cpf'}
-              />
-              {(errors.document && touched.document) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
+              {(errors.key && touched.key) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.key}</Text>
               }
-              <PasswordInputCustom
-                title='Senha:'
-                placeholder="...."
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
-              {(errors.password && touched.password) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.password}</Text>
-              }
-              <Text style={{ color: Colors[colorScheme].warning }}>
-                {msgError && ('Senha ou Número inválidos. Por favor, tente novamente. Caso tenha esquecido sua senha clique no link: Esqueçeu sua senha?')
-                }
-              </Text>
 
-
-              <ButtonCustom isLoading={loading} background={Colors[colorScheme].primary} onPress={handleSubmit} title="Salvar" />
+              <ButtonCustom isLoading={loading} background={Colors[colorScheme].primary} onPress={handleSubmit} title="Verificar" />
             </>
           )}
         </Formik>
@@ -148,8 +114,8 @@ export default function SignInScreen() {
       <View style={[styles.boxFooter, { backgroundColor: Colors[colorScheme].secund }]}>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <View style={[styles.boxFooterRow, { backgroundColor: Colors[colorScheme].secund }]}>
-          <Text onPress={() => { navigate('Forgout') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>Esqueçeu sua senha?</Text>
-          <Text onPress={() => { navigate('SignUp') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>Criar conta</Text>
+          <Text onPress={() => { navigate('SignIn') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>00:59</Text>
+          <Text onPress={() => { navigate('SignIn') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>Reenviar código</Text>
         </View>
       </View>
       {/* {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} />} */}
@@ -166,11 +132,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginVertical: 10
   },
-
-  textInput: {},
+  subTitle: {
+    fontSize: 12,
+    fontWeight: '300',
+    marginVertical: 5
+  },
   logo: {
-    width: 150,
-    height: 150,
     alignSelf: 'center'
   },
   boxLogo: {
