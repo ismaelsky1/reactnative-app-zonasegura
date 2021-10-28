@@ -44,17 +44,17 @@ export default function InvoiceDetailScreen(props: any) {
         <Text style={styles.title}>Forma de Pagamento</Text>
         <ListViewCustom data={[
           {
-            title: 'PIX CPF: 058.755.100-20',
-            subTitle: 'Não é necessário enviar o comprovante.',
+            name: 'PIX CPF: 058.755.100-20',
+            descript: 'Não é necessário enviar o comprovante.',
             onPress: () => { copyToClipboard() },
-            icons: 'barcode',
+            icon: 'barcode',
             next: true
           },
           {
-            title: 'Agendar retirada',
-            subTitle: 'O Agente irá a seu endereço cadastrado.',
+            name: 'Agendar retirada',
+            descript: 'O Agente irá a seu endereço cadastrado.',
             onPress: () => { Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%20desejo%20efetuar%20o%20pagamento!%20') },
-            icons: 'bicycle',
+            icon: 'bicycle',
             next: true
           }
         ]} />

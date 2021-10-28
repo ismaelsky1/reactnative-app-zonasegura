@@ -21,7 +21,7 @@ import React, {
   }
   
   interface SignInCredentials {
-    email: string;
+    document: string;
     password: string;
   }
   
@@ -57,22 +57,19 @@ import React, {
       loadStoragedData();
     }, []);
   
-    const signIn = useCallback(async ({ email, password }) => {
-      const response = await api.post('sessions', {
-        email:'root@smartpsi.com.br',
+    const signIn = useCallback(async ({ document, password }) => {
+      const response = await api.post('auth/singIn', {
+        document:'12312312389',
         password: '123123'
-        // email,
-        // password,
       });
   
       const { token, user } = response.data;
-  
       await AsyncStorage.multiSet([
         ['@Shild:token', token],
         ['@Shild:user', JSON.stringify(user)],
       ]);
-  
-      api.defaults.headers.authorization = `Bearer ${token[1]}`;
+      console.log(token)
+      api.defaults.headers.authorization = `Bearer ${token}`;
   
       setData({ token, user });
     }, []);

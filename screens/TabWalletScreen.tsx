@@ -23,10 +23,10 @@ export default function TabWalletScreen() {
       <CardPriceCustom title='Plano Mensal' subTitle="serviço de seguraça privada" price="R$ 19,00" date="Vencimento dia 02/04/21" status="Em aberto" link="InvoiceDetail" />
       <ListViewCustom data={[
         {
-          title: 'Historico',
-          subTitle: 'Ver contas anteriores.',
+          name: 'Historico',
+          descript: 'Ver contas anteriores.',
           next: true,
-          icons: 'time-outline',
+          icon: 'time-outline',
           onPress: () => { navigate('HistoryInvoice') }
         }
       ]} />

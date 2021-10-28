@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "581965148649",
+    "project_id": "shild-push",
+    "storage_bucket": "shild-push.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581965148649:android:1dbf839dca96dd4a7b5b78",
+        "android_client_info": {
+          "package_name": "br.com.securityshild"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581965148649-lrke6e8foukm34ed8erqtumh484mu44a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQvAupP9w7vVBf1Awwgwh_Ry5YA-J458w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581965148649-lrke6e8foukm34ed8erqtumh484mu44a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

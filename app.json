@@ -18,10 +18,16 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "notification": {
+      "icon": "./assets/images/icon.png"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "br.com.securityshild",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyA3C0eZXoCJMjJctV3FFy5P-OwmE46Ioes"
@@ -42,6 +48,7 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "description": ""
   }
 }

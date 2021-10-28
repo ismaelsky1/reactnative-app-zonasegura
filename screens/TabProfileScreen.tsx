@@ -13,7 +13,7 @@ import ModalAlertCustom from '../components/ModalAlertCustom';
 import ModalAgendaCustom from '../components/ModalAgendaCustom';
 import { useAuth } from '../hooks/auth';
 
-export default function TabProfileScreen(props: any) {
+export default function TabProfileScreen({ navigation, route }: any) {
   const [showModal, setShowModal] = useState(false);
   const [showModalAgenda, setShowModalAgenda] = useState(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
@@ -43,10 +43,10 @@ export default function TabProfileScreen(props: any) {
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
     // }
-    console.log('home')
+    console.log('profile')
 
-    console.log(props.route.params)
-  }, [props])
+    // console.log(props.route.params)
+  }, [navigation])
 
 
   return (
@@ -55,27 +55,27 @@ export default function TabProfileScreen(props: any) {
       <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>João Victor</Text>
       {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       <ListViewCustom data={[{
-        title: 'Meus Dados',
-        subTitle: 'Nome, telefone...',
-        icons: 'person',
+        name: 'Meus Dados',
+        descript: 'Nome, telefone...',
+        icon: 'person',
         next: false,
         onPress: () => { link('Profile') },
       },{
-        title: 'Endereço',
-        subTitle: 'Rua,Bairro,Cidade...',
-        icons: 'person',
+        name: 'Endereço',
+        descript: 'Rua,Bairro,Cidade...',
+        icon: 'person',
         next: false,
         onPress: () => { link('ProfileAddress') },
       }, {
-        title: 'Contato',
-        subTitle: 'Fale conosco',
-        icons: 'call',
+        name: 'Contato',
+        descript: 'Fale conosco',
+        icon: 'call',
         next: false,
         onPress: () => { linkContact() },
       }, {
-        title: 'Sair',
-        subTitle: 'Sair do usuário',
-        icons: 'log-out',
+        name: 'Sair',
+        descript: 'Sair do usuário',
+        icon: 'log-out',
         next: false,
         onPress: () => { signOut() },
       }

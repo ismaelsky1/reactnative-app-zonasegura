@@ -21,12 +21,12 @@ export default function ListViewCustom(props: { data: ItemListView[] }) {
         style={styles.containerList}
         data={props.data}
         renderItem={({ item }) => (
-          <TouchableOpacity key={item.title} onPress={item.onPress}>
+          <TouchableOpacity key={item.name} onPress={item.onPress}>
             <View style={[styles.itemList, { backgroundColor: Colors[colorScheme].background }]}>
               <View style={[styles.groupitemList]}>
-                <View style={[styles.iconItemList, { backgroundColor: Colors[colorScheme].secund }]}><Ionicons name={item.icons} size={24} color={Colors[colorScheme].primary} /></View>
-                <View><Text style={[styles.titleList, { color: Colors[colorScheme].black }]}>{item.title}</Text>
-                  <Text style={[styles.subtitleList, { color: Colors[colorScheme].black2 }]}>{item.subTitle}</Text>
+                <View style={[styles.iconItemList, { backgroundColor: Colors[colorScheme].secund }]}><Ionicons name={item.icon} size={24} color={Colors[colorScheme].primary} /></View>
+                <View><Text style={[styles.titleList, { color: Colors[colorScheme].black }]}>{item.name}</Text>
+                  <Text style={[styles.subtitleList, { color: Colors[colorScheme].black2 }]}>{item.descript}</Text>
                 </View>
               </View>
               {item.next && <View style={[styles.iconItemList]}><Ionicons name="md-chevron-forward" size={24} color={Colors[colorScheme].black2} /></View>}

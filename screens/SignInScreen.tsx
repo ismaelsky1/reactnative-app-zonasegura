@@ -54,7 +54,7 @@ export default function SignInScreen() {
 
       try {
         await signIn({
-          email: data.email,
+          document: data.document,
           password: data.password,
         });
         setMsgError(false);

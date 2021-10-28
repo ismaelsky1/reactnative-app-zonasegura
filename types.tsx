@@ -38,10 +38,10 @@ export type TabProfileParamList = {
 };
 
 export type ItemListView = {
-  title: string;
-  subTitle?: string | null;
+  name: string;
+  descript?: string | null;
   next?: boolean | null;
-  icons?: React.ComponentProps<typeof Ionicons>['name'];
+  icon?: React.ComponentProps<typeof Ionicons>['name'];
   onPress: any;
   // onPress: ()=> void | JSX.Element;
   styleItem?: any | null;
