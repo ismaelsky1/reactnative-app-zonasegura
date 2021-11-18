@@ -14,6 +14,7 @@ import SetLocationMapScreen from '../screens/SetLocationMapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import InvoiceDetailScreen from '../screens/InvoiceDetailScreen';
 import HistoryInvoiceScreen from '../screens/HistoryInvoiceScreen';
+import HistorySolicitationScreen from '../screens/HistorySolicitationScreen';
 import ProfileAddressScreen from '../screens/ProfileAddressScreen';
 import SetLocationMapAddressScreen from '../screens/SetLocationMapAddressScreen';
 
@@ -22,6 +23,8 @@ import SetLocationMapAddressScreen from '../screens/SetLocationMapAddressScreen'
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
+import api from '../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -44,10 +47,12 @@ function RootNavigator() {
       <App.Screen name="HistoryInvoice" component={HistoryInvoiceScreen} />
       <App.Screen name="ProfileAddress" component={ProfileAddressScreen} />
       <App.Screen name="SetLocationMapAddress" component={SetLocationMapAddressScreen} />
-
+      <App.Screen name="HistorySolicitatio" component={HistorySolicitationScreen} />
+      
 
 
       <App.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </App.Navigator>
   );
 }
+

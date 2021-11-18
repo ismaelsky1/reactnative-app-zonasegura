@@ -64,7 +64,11 @@ export default {
           SetLocationMapAddressScreen: 'SetLocationMapAddress'
         }
       },
-      
+      HistorySolicitatioScreen: {
+        screens: {
+          HistorySolicitatioScreen: 'HistorySolicitatio'
+        }
+      },
       
       
       NotFound: '*',

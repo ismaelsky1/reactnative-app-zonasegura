@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    marginVertical: 20
+    marginVertical: 20,
+    marginRight: 23
   },
 });

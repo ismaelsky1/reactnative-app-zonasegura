@@ -1,18 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer, DefaultTheme, DarkTheme  } from '@react-navigation/native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
 
-import { View } from './components/Themed';
-import { ModalContext, ModalContextProvider } from './contexts/modal';
+import { View } from "./components/Themed";
+import { ModalContext, ModalContextProvider } from "./contexts/modal";
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
-import Navigation from './navigation';
-import Colors from './constants/Colors';
+import useCachedResources from "./hooks/useCachedResources";
+import useColorScheme from "./hooks/useColorScheme";
+import Navigation from "./navigation";
+import Colors from "./constants/Colors";
 
-import AppProvider from './hooks';
-import LinkingConfiguration from './navigation/LinkingConfiguration';
+import AppProvider from "./hooks";
+import LinkingConfiguration from "./navigation/LinkingConfiguration";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -25,11 +31,16 @@ export default function App() {
       <SafeAreaProvider>
         <NavigationContainer
           linking={LinkingConfiguration}
-          theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
           <AppProvider>
             <Navigation colorScheme={colorScheme} />
           </AppProvider>
-          <StatusBar translucent={false} style='light' backgroundColor={Colors[colorScheme].primary} />
+          <StatusBar
+            translucent={false}
+            style="light"
+            backgroundColor={Colors[colorScheme].primary}
+          />
         </NavigationContainer>
       </SafeAreaProvider>
     );

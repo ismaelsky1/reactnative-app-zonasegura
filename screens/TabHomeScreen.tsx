@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -12,26 +12,26 @@ import { ModalAlert } from "../types";
 
 import ModalAlertCustom from "../components/ModalAlertCustom";
 import ModalAgendaCustom from "../components/ModalAgendaCustom";
+import ModalAlertMap from "../components/ModalAlertMap";
 
 import api from "../services/api";
 import SkeletonLoader from "../components/SkeletonLoader";
+import ListViewDanger from "../components/ListViewDanger";
+import { useAuth } from "../hooks/auth";
+import { AntDesign, Foundation } from "@expo/vector-icons";
 
 export default function TabHomeScreen({ route, navigation }: any) {
   const [showModal, setShowModal] = useState(false);
-  const [showModalAgenda, setShowModalAgenda] = useState(false);
+
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
+  const [isLoade, setIsLoade] = useState(true);
 
-  // const [formDataTimeData, setFormDataTimeData] = useState(null);
-  // const [formLocationData, setFormLocationData] = useState<any>(null);
+  const { user } = useAuth();
 
   const colorScheme = useColorScheme();
   const { navigate, goBack } = useNavigation();
   const isFocused = useIsFocused();
-
-  function link(params: string) {
-    navigate(params);
-  }
 
   useEffect(() => {
     // if(props.route.params){
@@ -46,6 +46,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
 
   const getTypeSolicitation = useCallback(async () => {
     try {
+      setIsLoade(true);
       const { data } = await api.get("type-solicitation");
 
       const resp = data.map((item: any) => {
@@ -55,28 +56,76 @@ export default function TabHomeScreen({ route, navigation }: any) {
           icon: item.icon,
           next: false,
           onPress: () => {
-            setShowModal(!showModal);
-            setMensage({
-              title: "Agente a camilho",
-              mensage: "Usaremos sua geolocalização.",
-              btnOk: "Ok",
-              icon: "bike-fast",
-              onPress: () => {},
-            });
+            if (item.type == "NOW") {
+              setShowModal(true);
+              setMensage({
+                title: "Confirmar",
+                mensage: `Suporte via ${item.name} sera solicitado \n Realmente desejá concluir?`,
+                btnOk: "Sim",
+                icon: "help-circle",
+                onPress: () => {
+                  createSolicitation(item.id);
+                },
+                btnCancel: "Não",
+                onPressCancel: () => {
+                  setShowModal(false);
+                },
+              });
+            }
+
+            if (item.action == "ESCOLTA") {
+              navigate(`SetLocationMap`, { idTypeSolicitation: item.id });
+            }
           },
         };
       });
 
       setListService(resp);
+      setIsLoade(false);
+    } catch (error) {
+      setShowModal(!showModal);
+      setMensage({
+        title: "Error",
+        mensage: "Tente novamente mais tarde.",
+        btnOk: "Ok",
+        icon: "alert",
+        onPress: () => {
+          setShowModal(false);
+        },
+      });
+    }
+  }, []);
+
+  const createSolicitation = useCallback(async (idTypeSolicitation: string) => {
+    try {
+      const { data } = await api.post("solicitation", {
+        client: user.id,
+        agent: user.responsibleAgentId,
+        typeSolicitation: idTypeSolicitation,
+        status: "OPEN",
+        obs: "",
+      });
+
+      setMensage({
+        title: "Concluido !",
+        mensage: `Suporte foi solicitado \n logo chegaremos no local!`,
+        btnOk: "Ok",
+        icon: "check",
+        onPress: () => {
+          setShowModal(false);
+        },
+      });
     } catch (error) {
       console.log(error);
       setShowModal(!showModal);
       setMensage({
-        title: "Agente a camilho",
-        mensage: "Usaremos sua geolocalização.",
+        title: "Error",
+        mensage: "Tente novamente.",
         btnOk: "Ok",
-        icon: "bike-fast",
-        onPress: () => {},
+        icon: "alert",
+        onPress: () => {
+          setShowModal(false);
+        },
       });
     }
   }, []);
@@ -93,37 +142,43 @@ export default function TabHomeScreen({ route, navigation }: any) {
           Olá
         </Text>
         <Text style={[styles.subtitle, { color: Colors[colorScheme].white }]}>
-          João Victor
+          {user.name}
         </Text>
-        <View
-          style={[
-            {
-              backgroundColor: Colors[colorScheme].primary,
-              width: "100%",
-            },
-          ]}
+        <TouchableOpacity
+          onPress={() => {
+            navigate("HistorySolicitatio");
+          }}
+          style={styles.history}
+          key="+"
         >
-           {!listService && <SkeletonLoader />}
-          
-        </View>
-      
+          <Text style={styles.titleSolicitation}>Suas Solicitações</Text>
+          <View>
+            <AntDesign
+              name="rightcircleo"
+              size={24}
+              color={Colors[colorScheme].black2}
+            />
+          </View>
+        </TouchableOpacity>
+        <View
+          style={styles.separator}
+          lightColor="#eee"
+          darkColor="rgba(255,255,255,0.1)"
+        />
+
         {listService && <ListViewCustom data={listService} />}
-        {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       </View>
       {showModal && (
         <ModalAlertCustom
-          onPress={() => setShowModal(!showModal)}
-          onPressCancel={() => {
-            setShowModal(!showModal);
-          }}
+          onPress={mensage.onPress}
+          onPressCancel={mensage.onPressCancel}
           mensage={mensage?.mensage}
           icon={mensage?.icon}
-          btnOk={"OK"}
+          btnOk={mensage?.btnOk}
           title={mensage?.title}
-          btnCancel="Cancelar"
+          btnCancel={mensage?.btnCancel}
         />
       )}
-      {/* {showModalAgenda && <ModalAgendaCustom fromCood={props.route.params?.coords} onPress={() => setShowModalAgenda(!showModalAgenda)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title}  />} */}
     </>
   );
 }
@@ -132,7 +187,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: 15,
   },
   title: {
@@ -146,8 +200,24 @@ const styles = StyleSheet.create({
     marginBottom: "15%",
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 10,
     height: 1,
     width: "80%",
+  },
+  history: {
+    width: "100%",
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    margin: 10,
+    borderRadius: 20,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  titleSolicitation: {
+    fontSize: 12,
+    fontWeight: "500",
+    textAlign: "center",
   },
 });

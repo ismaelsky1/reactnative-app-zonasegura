@@ -17,6 +17,7 @@ export type RootStackParamList = {
   HistoryInvoice: undefined;
   ProfileAddress: undefined;
   SetLocationMapAddress: undefined;
+  HistorySolicitatio: undefined;
 };
 
 export type BottomTabParamList = {
@@ -52,6 +53,19 @@ export type ModalAlert = {
   title?: string;
   icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   mensage?: string;
+  btnOk?: string;
+  btnCancel?: string;
+  onPress?: ()=> void;
+  onPressCancel?: ()=> void;
+}
+
+export type ModalAlertMap = {
+  back?: string;
+  title?: string;
+  icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  mensage?: string;
+  coordinates?: string;
+  startup?: Date | any;
   btnOk?: string;
   btnCancel?: string;
   onPress?: ()=> void;

@@ -12,7 +12,7 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import { ItemListView } from '../types';
 
-export default function ListViewCustom(props: { data: ItemListView[] }) {
+export default function ListViewDanger(props: { data: ItemListView[] }) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
 
   const colorScheme = useColorScheme();
@@ -24,9 +24,9 @@ export default function ListViewCustom(props: { data: ItemListView[] }) {
           <TouchableOpacity key={item.name} onPress={item.onPress}>
             <View style={[styles.itemList, { backgroundColor: Colors[colorScheme].background }]}>
               <View style={[styles.groupitemList]}>
-                <View style={[styles.iconItemList, { backgroundColor: Colors[colorScheme].secund }]}><Ionicons name={item.icon} size={24} color={Colors[colorScheme].primary} /></View>
-                <View><Text style={[styles.titleList, { color: Colors[colorScheme].black }]}>{item.name}</Text>
-                  <Text style={[styles.subtitleList, { color: Colors[colorScheme].black2 }]}>{item.descript}</Text>
+                <View style={[styles.iconItemList, { backgroundColor: Colors[colorScheme].secund }]}><Ionicons name={item.icon} size={24} color={Colors[colorScheme].warning} /></View>
+                <View><Text style={[styles.titleList, { color: Colors[colorScheme].warning }]}>{item.name}</Text>
+                  <Text style={[styles.subtitleList, { color: Colors[colorScheme].warning }]}>{item.descript}</Text>
                 </View>
               </View>
               {item.next && <View style={[styles.iconItemList]}><Ionicons name="md-chevron-forward" size={24} color={Colors[colorScheme].black2} /></View>}

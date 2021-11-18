@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Modal,
@@ -13,10 +14,28 @@ import { Text, View } from "./Themed";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import { ModalAlert } from "../types";
+import { ModalAlertMap } from "../types";
+import MapView, { Marker } from "react-native-maps";
 
-export default function ModalAlertCustom(props: ModalAlert) {
+import moment from "moment";
+import "moment/locale/pt-br";
+
+// import * as Location from "expo-location";
+// import * as Permissions from "expo-permissions";
+
+export default function ModalMapAlert(props: ModalAlertMap) {
   const colorScheme = useColorScheme();
+  const [coordinates, setCoordinates] = useState<any>(null);
+  const [startUp, setStartUp] = useState<string>("");
+
+  useEffect(() => {
+    setStartUp(
+      moment(props.startup).locale("pt-br").format("HH:mm DD/MM/YYYY")
+    );
+
+    let coordinate = JSON.parse(`${props?.coordinates}`);
+    setCoordinates(coordinate);
+  }, []);
 
   return (
     <View style={styles.centeredView}>
@@ -34,22 +53,52 @@ export default function ModalAlertCustom(props: ModalAlert) {
             color={Colors[colorScheme].primary}
           />
         </View>
-        <View
-          style={[
-            // { backgroundColor: Colors[colorScheme].secund },
-            styles.bodyModalView,
-          ]}
-        >
+        <View pointerEvents="none" style={[styles.bodyModalView]}>
           <Text
             style={[styles.modalTitle, { color: Colors[colorScheme].black }]}
           >
             {props.title}
+          </Text>
+
+          <Text
+            style={[
+              styles.modalMensageStartUp,
+              {
+                color: Colors[colorScheme].primary,
+                backgroundColor: Colors[colorScheme].secund,
+              },
+            ]}
+          >
+            {startUp}
           </Text>
           <Text
             style={[styles.modalMensage, { color: Colors[colorScheme].black2 }]}
           >
             {props.mensage}
           </Text>
+
+          {coordinates && (
+            <MapView
+              pointerEvents="none"
+              region={{
+                latitude: coordinates?.latitude,
+                longitude: coordinates?.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.0221,
+              }}
+              accessibilityViewIsModal={true}
+              style={styles.map}
+            >
+              <Marker
+                key={1}
+                coordinate={{
+                  latitude: coordinates.latitude,
+                  longitude: coordinates.longitude,
+                }}
+               
+              />
+            </MapView>
+          )}
         </View>
         <View
           style={[
@@ -88,6 +137,10 @@ export default function ModalAlertCustom(props: ModalAlert) {
 }
 
 const styles = StyleSheet.create({
+  map: {
+    width: "90%",
+    height: "60%",
+  },
   centeredView: {
     position: "absolute",
     flex: 1,
@@ -139,12 +192,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 10,
     paddingHorizontal: 8,
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   openButton: {
     // flex: 1,
     height: 40,
-    width: '47%',
+    width: "47%",
     borderRadius: 45,
     marginHorizontal: 5,
     marginVertical: 20,
@@ -160,13 +213,20 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 28,
     textAlign: "center",
-    marginVertical: 20,
+    marginVertical: 10,
     fontWeight: "700",
   },
   modalMensage: {
     fontSize: 16,
+    marginVertical: 5,
+  },
+  modalMensageStartUp: {
+    fontSize: 21,
     textAlign: "center",
     justifyContent: "center",
-    lineHeight: 25
+    backgroundColor: "red",
+    padding: 8,
+    paddingHorizontal: 35,
+    borderRadius: 30,
   },
 });
