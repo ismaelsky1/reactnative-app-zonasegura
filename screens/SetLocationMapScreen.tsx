@@ -78,7 +78,7 @@ export default function SetLocationMapScreen({ route, navigation }: any) {
       setShowModal(true);
       setMensage({
         title: "Concluido !",
-        mensage: `Agendamento foi solicitado. \n o prazo de aguarde pelo agente e \nde 5 minutos! `,
+        mensage: `Agendamento foi solicitado. \n O prazo de aguarde pelo segurança \né de 5 minutos no local! `,
         btnOk: "Ok",
         icon: "check",
         onPress: () => {

@@ -20,6 +20,9 @@ import ListViewDanger from "../components/ListViewDanger";
 import { useAuth } from "../hooks/auth";
 import { AntDesign, Foundation } from "@expo/vector-icons";
 
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
+
 export default function TabHomeScreen({ route, navigation }: any) {
   const [showModal, setShowModal] = useState(false);
 
@@ -38,7 +41,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
     // }
-    // console.log(route.params);
+    console.log(user);
     if (isFocused) {
       getTypeSolicitation();
     }
@@ -50,6 +53,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
       const { data } = await api.get("type-solicitation");
 
       const resp = data.map((item: any) => {
+        console.log(item.action);
         return {
           name: item.name,
           descript: item.descript,
@@ -64,7 +68,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
                 btnOk: "Sim",
                 icon: "help-circle",
                 onPress: () => {
-                  createSolicitation(item.id);
+                  createSolicitation(item.id, item.action);
                 },
                 btnCancel: "Não",
                 onPressCancel: () => {
@@ -96,7 +100,38 @@ export default function TabHomeScreen({ route, navigation }: any) {
     }
   }, []);
 
-  const createSolicitation = useCallback(async (idTypeSolicitation: string) => {
+  const createSolicitation = async (
+    idTypeSolicitation: string,
+    action: string
+  ) => {
+    let coord;
+
+    if (action == "GPS") {
+      const { status } = await Permissions.askAsync(
+        Permissions.LOCATION_FOREGROUND
+      );
+
+      if (status !== "granted") {
+        setMensage({
+          mensage: "Permissão de acesso a localização necessária.",
+          onPress: () => {
+            goBack();
+          },
+          btnOk: "Ok",
+          title: "Atenção",
+          icon: "alert-circle",
+        });
+        setShowModal(true);
+        return;
+      }
+      let { coords } = await Location.getCurrentPositionAsync({});
+      coord = coords;
+    }
+
+    if (action == "ENDERECO") {
+      coord = user.coordinates;
+    }
+    
     try {
       const { data } = await api.post("solicitation", {
         client: user.id,
@@ -104,6 +139,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
         typeSolicitation: idTypeSolicitation,
         status: "OPEN",
         obs: "",
+        coordinates: JSON.stringify(coord),
       });
 
       setMensage({
@@ -128,7 +164,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
         },
       });
     }
-  }, []);
+  };
 
   return (
     <>

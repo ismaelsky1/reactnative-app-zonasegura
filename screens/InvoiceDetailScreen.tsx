@@ -52,7 +52,7 @@ export default function InvoiceDetailScreen(props: any) {
           },
           {
             name: 'Agendar retirada',
-            descript: 'O Agente irá a seu endereço cadastrado.',
+            descript: 'O Segurança irá a seu endereço cadastrado.',
             onPress: () => { Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%20desejo%20efetuar%20o%20pagamento!%20') },
             icon: 'bicycle',
             next: true

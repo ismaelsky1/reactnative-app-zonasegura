@@ -25,6 +25,7 @@ interface User {
   state: string;
   status: string;
   zipcode: string;
+  coordinates: string;
 }
 
 interface AuthState {

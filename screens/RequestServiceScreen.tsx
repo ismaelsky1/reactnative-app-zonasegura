@@ -37,13 +37,13 @@ export default function RequestServiceScreen(props: any) {
         subTitle: 'Vamos para a sua localização.',
         icons: 'location',
         next: false,
-        onPress: () => { setShowModal(!showModal); setMensage({ title: "Agente a camilho", mensage: "Usaremos sua geolocalização.", btnOk: 'Ok', icon: 'bike-fast', onPress: () => { } }) },
+        onPress: () => { setShowModal(!showModal); setMensage({ title: "Segurança a camilho", mensage: "Usaremos sua geolocalização.", btnOk: 'Ok', icon: 'bike-fast', onPress: () => { } }) },
       }, {
         title: 'Seu endereço',
         subTitle: 'Seu endereço cadastrado.',
         icons: 'home',
         next: false,
-        onPress: () => { setShowModal(!showModal); setMensage({ title: "Agente a camilho", mensage: "Usaremos seu endereço.", btnOk: 'Ok', icon: 'bike-fast', onPress: () => { } }) },
+        onPress: () => { setShowModal(!showModal); setMensage({ title: "Segurança a camilho", mensage: "Usaremos seu endereço.", btnOk: 'Ok', icon: 'bike-fast', onPress: () => { } }) },
       }]} />
       }
 

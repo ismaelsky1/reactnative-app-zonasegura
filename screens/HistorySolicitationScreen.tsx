@@ -59,7 +59,7 @@ export default function HistorySolicitationScreen(props: any) {
               setShowModal(true);
               setMensage({
                 title: `Solicitação: \n${item.typeSolicitation.name}`,
-                mensage: `${item.typeSolicitation.descript} \nAgente: ${item.agent.name} foi acionado!`,
+                mensage: `${item.typeSolicitation.descript} \nSegurança: ${item.agent.name} foi acionado!`,
                 btnOk: "Voltar",
                 btnCancel: "Cancelar",
                 icon: "run-fast",
@@ -69,7 +69,7 @@ export default function HistorySolicitationScreen(props: any) {
                 onPressCancel: () => {
                   setMensage({
                     title: "Confirma",
-                    mensage: `Realmente desejá cancelar? \nO agente já pode esta perto!`,
+                    mensage: `Realmente desejá cancelar? \nO segurança já pode esta perto!`,
                     btnOk: "Sim",
                     btnCancel: "Não",
                     icon: "alert",
@@ -103,7 +103,7 @@ export default function HistorySolicitationScreen(props: any) {
                   setShowModal(true);
                   setMensage({
                     title: "Confirma",
-                    mensage: `Realmente desejá cancelar? \nO agente já pode esta perto!`,
+                    mensage: `Realmente desejá cancelar? \nO segurança já pode esta perto!`,
                     btnOk: "Sim",
                     btnCancel: "Não",
                     icon: "alert",
