@@ -38,6 +38,32 @@ export type TabProfileParamList = {
   TabProfileScreen: undefined;
 };
 
+
+
+export type AgentStackParamList = {
+  RootAgent: undefined;
+  NotFound: undefined;
+
+  SetLocationMap: undefined;
+  Profile: undefined;
+  ProfileAddress: undefined;
+  SetLocationMapAddress: undefined;
+};
+export type AgentBottomTabParamList = {
+  TabClient: undefined;
+  TabHomeAgent: undefined;
+  TabProfile: undefined;
+};
+export type TabClientParamList = {
+  TabClientScreen: undefined;
+};
+export type TabHomeAgentParamList = {
+  TabHomeAgentScreen: undefined;
+};
+
+
+
+
 export type ItemListView = {
   name: string;
   descript?: string | null;
@@ -71,5 +97,10 @@ export type ModalAlertMap = {
   onPress?: ()=> void;
   onPressCancel?: ()=> void;
 }
+
+
+
+
+
 
 

@@ -2,6 +2,7 @@ import React from "react";
 import { View, ActivityIndicator } from "react-native";
 import { ColorSchemeName } from "react-native";
 
+import AgentRoutes from "./agent.routes";
 import AuthRoutes from "./auth.routes";
 import AppRoutes from "./app.routes";
 
@@ -19,6 +20,7 @@ const Routes = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
       if (err.response.status == 401) {
         signOut();
       }
+      throw err;       
     }
   );
 
@@ -30,7 +32,7 @@ const Routes = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
     );
   }
 
-  return user ? <AppRoutes colorScheme={colorScheme} /> : <AuthRoutes />;
+  return user ? ((user.role == 'CLIENT')? <AppRoutes colorScheme={colorScheme} />: <AgentRoutes colorScheme={colorScheme} />) : <AuthRoutes />;
 };
 
 export default Routes;

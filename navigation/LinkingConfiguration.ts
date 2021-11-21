@@ -69,6 +69,23 @@ export default {
           HistorySolicitatioScreen: 'HistorySolicitatio'
         }
       },
+
+
+      // AGENT ROLE SCREEN
+      RootAgent: {
+        screens: {
+          TabHomeAgent: {
+            screens: {
+              TabHomeAgentScreen: 'TabHomeAgent',
+            },
+          },
+          TabClient: {
+            screens: {
+              TabClientScreen: 'TabClient',
+            },
+          }
+        },
+      },
       
       
       NotFound: '*',

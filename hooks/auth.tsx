@@ -29,7 +29,7 @@ interface User {
 }
 
 interface AuthState {
-  token: string;
+  token?: string;
   user: User;
 }
 
@@ -43,6 +43,7 @@ interface AuthContextData {
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+  setUser(use: User): void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -72,7 +73,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const signIn = useCallback(async ({ document, password }) => {
     const response = await api.post("auth/singIn", {
-      document: "12312312389",
+      document: "12312312399",
       password: "123123",
     });
 
@@ -93,8 +94,16 @@ const AuthProvider: React.FC = ({ children }) => {
     setData({} as AuthState);
   }, []);
 
+  const setUser = useCallback(async (user) => {
+    await AsyncStorage.removeItem("@Shild:user");
+    await AsyncStorage.setItem("@Shild:user", JSON.stringify(user));
+    setData({ user });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user: data.user, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user: data.user, setUser, loading, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

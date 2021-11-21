@@ -29,6 +29,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
   const [isLoade, setIsLoade] = useState(true);
+  const [nick, setNick] = useState("");
 
   const { user } = useAuth();
 
@@ -41,10 +42,11 @@ export default function TabHomeScreen({ route, navigation }: any) {
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
     // }
-    console.log(user);
     if (isFocused) {
       getTypeSolicitation();
     }
+    const use = user.name.split(" ");
+    setNick(use[0]);
   }, [isFocused]);
 
   const getTypeSolicitation = useCallback(async () => {
@@ -125,13 +127,13 @@ export default function TabHomeScreen({ route, navigation }: any) {
         return;
       }
       let { coords } = await Location.getCurrentPositionAsync({});
-      coord = coords;
+      coord = JSON.stringify(coords);
     }
 
     if (action == "ENDERECO") {
       coord = user.coordinates;
     }
-    
+
     try {
       const { data } = await api.post("solicitation", {
         client: user.id,
@@ -139,7 +141,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
         typeSolicitation: idTypeSolicitation,
         status: "OPEN",
         obs: "",
-        coordinates: JSON.stringify(coord),
+        coordinates: coord,
       });
 
       setMensage({
@@ -178,7 +180,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
           Olá
         </Text>
         <Text style={[styles.subtitle, { color: Colors[colorScheme].white }]}>
-          {user.name}
+          {nick}
         </Text>
         <TouchableOpacity
           onPress={() => {

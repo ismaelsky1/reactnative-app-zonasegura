@@ -11,7 +11,7 @@ interface Props {
   title?: string;
   placeholder?: string;
   keyboardType?: 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'default';
-  value?: string;
+  value?: any;
   invalid?: boolean;
   onChangeText: (res: any)=> void;
   onBlur?: (res: any)=> void;
@@ -25,7 +25,7 @@ export default function TextInputCustom(props: Props) {
   return <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
 
     <Text style={[styles.title, { color: Colors[colorScheme].black2 }]}>{props?.title}</Text>
-    <TextInput placeholder={props?.placeholder} keyboardType={props.keyboardType} value={props.value} onBlur={props.onBlur} onChangeText={props.onChangeText} style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} />
+    <TextInput placeholder={props?.placeholder} keyboardType={props.keyboardType} value={String(props.value)} onBlur={props.onBlur} onChangeText={props.onChangeText} style={[styles.input, { backgroundColor: Colors[colorScheme].white, color: Colors[colorScheme].black }]} />
   </View>;
 }
 

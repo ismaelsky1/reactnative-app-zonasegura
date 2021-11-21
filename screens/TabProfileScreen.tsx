@@ -15,11 +15,10 @@ import { useAuth } from '../hooks/auth';
 
 export default function TabProfileScreen({ navigation, route }: any) {
   const [showModal, setShowModal] = useState(false);
-  const [showModalAgenda, setShowModalAgenda] = useState(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
-  const [listService, setListService] = useState([]);
+  const [nick, setNick] = useState("");
 
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
 
   // const [formDataTimeData, setFormDataTimeData] = useState(null);
@@ -44,6 +43,8 @@ export default function TabProfileScreen({ navigation, route }: any) {
     //   // setFormLocationData(props.route.params.coords)
     // }
     console.log('profile')
+    const use = user.name.split(" ");
+    setNick(use[0]);
 
     // console.log(props.route.params)
   }, [navigation])
@@ -52,7 +53,7 @@ export default function TabProfileScreen({ navigation, route }: any) {
   return (
     <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
       <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Perfil</Text>
-      <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>João Victor</Text>
+      <Text style={[styles.subtitle, { color: Colors[colorScheme].black }]}>{nick}</Text>
       {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       <ListViewCustom data={[{
         name: 'Meus Dados',

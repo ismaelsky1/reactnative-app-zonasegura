@@ -141,40 +141,8 @@ export default function SetLocationMapAddressScreen(props: any) {
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
       </View>
-      <Ionicons
-        onPress={() => {
-          goBack();
-        }}
-        style={{ position: "absolute", alignSelf: "flex-start", top: "1%" }}
-        name={"ios-close"}
-        size={37}
-        color={Colors[colorScheme].black}
-      />
-      <Text
-        style={{
-          position: "absolute",
-          alignSelf: "center",
-          top: "2.1%",
-          fontSize: 18,
-          fontWeight: "bold",
-        }}
-      >
-        Seu endereço
-      </Text>
 
-      <TouchableOpacity
-        onPress={() => {
-          handleSave(location);
-        }}
-        style={[
-          styles.buttonSave,
-          { backgroundColor: Colors[colorScheme].primary },
-        ]}
-      >
-        <Text style={{ color: Colors[colorScheme].white, fontWeight: "bold" }}>
-          Salvar
-        </Text>
-      </TouchableOpacity>
+      <Text style={styles.boxAtiveStatusAgent}>Seu endereço</Text>
 
       {showModal && (
         <ModalAlertCustom
@@ -225,5 +193,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 5,
     width: "100%",
+  },
+  boxAtiveStatusAgent: {
+    position: "absolute",
+    alignSelf: "center",
+    top: "2.1%",
+    fontSize: 18,
+    fontWeight: "bold",
+    padding: 25,
+    width: "100%",
+    height: 55,
   },
 });

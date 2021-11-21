@@ -1,124 +1,177 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { StyleSheet, TextInput, Button, ScrollView } from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
-import HeaderCustom from '../components/HeaderCustom';
-import ListViewCustom from '../components/ListViewCustom';
-import TextInputCustom from '../components/TextInputCustom';
-import { Text, View } from '../components/Themed';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import HeaderCustom from "../components/HeaderCustom";
+import ListViewCustom from "../components/ListViewCustom";
+import TextInputCustom from "../components/TextInputCustom";
+import { Text, View } from "../components/Themed";
+import { Formik } from "formik";
+import * as yup from "yup";
 
-import Colors from '../constants/Colors';
-import { ModalContext, ModalContextProvider } from '../contexts/modal';
-import useColorScheme from '../hooks/useColorScheme';
-import { ModalAlert } from '../types';
-import ButtonCustom from '../components/ButtonCustom';
-import ModalAlertCustom from '../components/ModalAlertCustom';
-import ModalAgendaCustom from '../components/ModalAgendaCustom';
+import Colors from "../constants/Colors";
+import { ModalContext, ModalContextProvider } from "../contexts/modal";
+import useColorScheme from "../hooks/useColorScheme";
+import { ModalAlert } from "../types";
+import ButtonCustom from "../components/ButtonCustom";
+import ModalAlertCustom from "../components/ModalAlertCustom";
+import ModalAgendaCustom from "../components/ModalAgendaCustom";
+import { useAuth } from "../hooks/auth";
+import api from "../services/api";
+import MaskInputCustom from "../components/MaskInputCustom";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreenScreen(props: any) {
-  // const { openModalAlert, closeModal } = useContext(ModalContext);
-  // const { navigate, goBack } = useNavigation();
-  const [showModal, setShowModal] = useState(false);
-  const [mensage, setMensage] = useState<ModalAlert>({});
-  const [listService, setListService] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [nameForm, setNameForm] = useState<string>('');
+  const [mensageSuccess, setMensageSuccess] = useState<String>();
+  const [mensageWarning, setMensageWarning] = useState<String>();
+
   const colorScheme = useColorScheme();
 
-  const schemaDataUsers = yup.object().shape({
+  const { setUser, user } = useAuth();
 
-    name: yup.string()
-      .required('Obrigatório'),
-    cellphone: yup.string()
-      .required('Obrigatório')
+  const schemaDataUsers = yup.object().shape({
+    name: yup.string().required("Obrigatório"),
+    phone: yup
+      .string()
+      .required("Obrigatório")
       .test("len", "Informe um número válido.", (val) => {
-        const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 13 || lengthWithoutDashes === 14) ? true : false;
+        const lengthWithoutDashes = val?.replace(/[^0-9]/g, "").length;
+        return lengthWithoutDashes === 10 || lengthWithoutDashes === 11
+          ? true
+          : false;
       }),
-    document: yup.string()
-      .required('Obrigatório')
+    document: yup
+      .string()
+      .required("Obrigatório")
       .test("len", "documento inválido.", (val) => {
-        const lengthWithoutDashes = val?.replace(/-|_./g, "").length;
-        return (lengthWithoutDashes === 13) ? true : false;
+        const lengthWithoutDashes = val?.replace(/[^0-9]/g, "").length;
+        return lengthWithoutDashes === 11 ? true : false;
       }),
   });
 
-  useEffect(() => {
+  const handleUpdateProfile = useCallback(async (dataForm: any) => {
+    setLoading(true);
+    setMensageSuccess("");
+    setMensageWarning("");
 
+    const form = {
+      name: dataForm.name,
+      document: dataForm.document.replace(/[^0-9]/g, ""),
+      phone: dataForm.phone.replace(/[^0-9]/g, ""),
+    };
 
-  }, [props])
-  function test(res: any) {
-    console.log(res)
-  }
+    try {
+      const { data } = await api.patch(`users/${user.id}`, form);
+      setUser(data);
+      
+      setMensageSuccess("Salvo");
+
+      setLoading(false);
+    } catch (err: any) {
+      const error = JSON.parse(err.request._response);
+      console.log(error);
+      // setShowAlert(true);
+      setMensageWarning("Error, Tente novamente.");
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <>
-      <HeaderCustom back={'true'} title='Usuário' />
+      <HeaderCustom back={"true"} title="Usuário" />
 
-      <ScrollView style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
+      <ScrollView
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme].secund },
+        ]}
+      >
+        {user && (
+          <Formik
+            validationSchema={schemaDataUsers}
+            initialValues={{
+              name: user.name,
+              phone: user.phone,
+              document: user.document,
+            }}
+            onSubmit={handleUpdateProfile}
+          >
+            {({
+              handleSubmit,
+              handleChange,
+              handleBlur,
+              values,
+              errors,
+            }) => (
+              <>
+                <TextInputCustom
+                  title="Nome:"
+                  placeholder="..."
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  value={values.name}
+                />
+                {errors.name && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    {errors.name}
+                  </Text>
+                )}
+                <MaskInputCustom
+                  title="Telefone:"
+                  placeholder="..."
+                  onChangeText={handleChange("phone")}
+                  onBlur={handleBlur("phone")}
+                  keyboardType="phone-pad"
+                  value={values.phone}
+                  type={"cel-phone"}
+                  options={{
+                    maskType: "BRL",
+                    withDDD: true,
+                    dddMask: "(99) ",
+                  }}
+                />
+                {errors.phone && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    {errors.phone}
+                  </Text>
+                )}
+                <MaskInputCustom
+                  title="CPF:"
+                  placeholder="000.000.000-00"
+                  onChangeText={handleChange("document")}
+                  onBlur={handleBlur("document")}
+                  keyboardType="phone-pad"
+                  value={values.document}
+                  type={"cpf"}
+                />
+                {errors.document && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    {errors.document}
+                  </Text>
+                )}
 
-        <Formik
-          validationSchema={schemaDataUsers}
-          initialValues={{
-            name: '',
-            cellphone: '',
-            document: ''
-          }}
-          onSubmit={values => console.log(values)}
-        >
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors,
-            setSubmitting,
-            isSubmitting
-          }) => (
-            <>
-              <TextInputCustom
-                title='Nome:'
-                placeholder="..."
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
-                value={values.name}
-              />
-              {(errors.name && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.name}</Text>
-              }
-              <TextInputCustom
-                title='Celular:'
-                placeholder="..."
-                onChangeText={handleChange('cellphone')}
-                onBlur={handleBlur('cellphone')}
-                value={values.cellphone}
-                keyboardType='phone-pad'
-              />
-              {(errors.cellphone && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.cellphone}</Text>
-              }
-              <TextInputCustom
-                title='CPF:'
-                placeholder="..."
-                onChangeText={handleChange('document')}
-                onBlur={handleBlur('document')}
-                value={values.document}
-                keyboardType='numeric'
-
-              />
-              {(errors.document && isSubmitting) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
-              }
-              
-              <ButtonCustom background={Colors[colorScheme].sucess} onPress={() => { setSubmitting(true) }} title="Salvar" />
-            </>
-          )}
-        </Formik>
-
+                <ButtonCustom
+                  isLoading={loading}
+                  background={Colors[colorScheme].sucess}
+                  onPress={handleSubmit}
+                  title="Salvar"
+                />
+              </>
+            )}
+          </Formik>
+        )}
+        {mensageSuccess !== "" && (
+          <Text style={{ color: Colors[colorScheme].primary }}>
+            {mensageSuccess}
+          </Text>
+        )}
+        {mensageWarning !== "" && (
+          <Text style={{ color: Colors[colorScheme].warning }}>
+            {mensageWarning}
+          </Text>
+        )}
         {/* {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} />} */}
       </ScrollView>
     </>
@@ -129,13 +182,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   scroll: {
-    width: '100%',
-    paddingTop: 10
+    width: "100%",
+    paddingTop: 10,
   },
   textInput: {},
-
-
 });
