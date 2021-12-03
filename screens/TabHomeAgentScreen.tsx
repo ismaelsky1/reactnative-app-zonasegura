@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Text, View } from "../components/Themed";
-import { useNavigation } from "@react-navigation/native";
-import { TextInputMask } from "react-native-masked-text";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 // import { Permissions } from 'react-native-unimodules';
+import { useIsFocused } from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-import MapView from "react-native-maps";
-import { Marker, Callout } from "react-native-maps";
+import Constants from "expo-constants";
 
 import {
   StyleSheet,
@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Button,
+  Switch,
+  Image,
 } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -20,15 +22,21 @@ import * as Permissions from "expo-permissions";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import ModalAlertCustom from "../components/ModalAlertCustom";
 
 import { ModalAlert } from "../types";
 import api from "../services/api";
 import { useAuth } from "../hooks/auth";
+import logoImg from "../assets/images/shield.png";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Animated from "react-native-reanimated";
+import ListViewCustom from "../components/ListViewCustom";
+import ListViewDanger from "../components/ListViewDanger";
 
 export default function SetLocationMapAddressScreen(props: any) {
   const { user, setUser } = useAuth();
+  const isFocused = useIsFocused();
 
   const { navigate, goBack } = useNavigation();
   const colorScheme = useColorScheme();
@@ -40,37 +48,24 @@ export default function SetLocationMapAddressScreen(props: any) {
 
   const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
+  const [nick, setNick] = useState("");
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    (async () => {
-      // let { status } = await Location.requestForegroundPermissionsAsync();
+    const use = user.name.split(" ");
+    setNick(use[0]);
+    // if(props.route.params){
+    //   console.log(props.route.params)
+    //   // setFormLocationData(props.route.params.coords)
+    // }
 
-      const { status } = await Permissions.askAsync(
-        Permissions.LOCATION_FOREGROUND
-      );
-
-      if (status !== "granted") {
-        setAlertMsg({
-          mensage: "Permissão de acesso a localização necessária.",
-          onPress: () => {
-            goBack();
-          },
-          btnOk: "Ok",
-          title: "Atenção",
-          icon: "alert-circle",
-        });
-        setShowAlert(true);
-        return;
-      }
-      let getLocation = await Location.getCurrentPositionAsync({});
-
-      if (user.coordinates) {
-        setLocation({ coords: JSON.parse(user.coordinates) });
-      } else {
-        setLocation(getLocation);
-      }
-    })();
-  }, []);
+    if (isFocused) {
+    }
+  }, [isFocused]);
 
   const handleSave = async (loc: any) => {
     setLoading(true);
@@ -107,42 +102,314 @@ export default function SetLocationMapAddressScreen(props: any) {
     }
   };
 
+  function fastScreen() {
+    console.log("as");
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}>
+        <ListViewCustom
+          data={[
+            {
+              name: "Jose",
+              descript: "Solicitação via GPS",
+              icon: "flash",
+              onPress: () => {
+                true;
+              },
+              status: "#Aberto",
+            },
+            {
+              name: "Ismael",
+              descript: "Solicitação via GPS",
+              icon: "flash",
+              onPress: () => {
+                true;
+              },
+              status: "#Finalizado",
+            },
+            {
+              name: "maria",
+              descript: "Solicitação via Endereço",
+              icon: "flash",
+              onPress: () => {
+                true;
+              },
+              status: "#Cancelado",
+            },
+          ]}
+        />
+      </View>
+    );
+  }
+
+  function scheduledScreen() {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}>
+        <ListViewCustom
+          data={[
+            {
+              name: "Jose",
+              descript: "10:00 - Buscar Pagamento",
+              icon: "calendar",
+              onPress: () => {
+                true;
+              },
+              status: "#Aberto",
+            },
+            {
+              name: "Ismael",
+              descript: "21:40 - Escolta",
+              icon: "calendar",
+              onPress: () => {
+                true;
+              },
+              status: "#Finalizado",
+            },
+            {
+              name: "maria",
+              descript: "23:00 - Verificar casa",
+              icon: "calendar",
+              onPress: () => {
+                true;
+              },
+              status: "#Agendado",
+            },
+          ]}
+        />
+      </View>
+    );
+  }
+
+  const Tab = createMaterialTopTabNavigator();
+
+  function MyTabBar({ state, descriptors, navigation, position }: any) {
+    return (
+      <View
+        style={{ flexDirection: "row", borderRadius: 15, marginBottom: 10 }}
+      >
+        {state.routes.map((route: any, index: any) => {
+          const { options } = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              // The `merge: true` option makes sure that the params inside the tab screen are preserved
+              navigation.navigate({ name: route.name, merge: true });
+            }
+          };
+
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
+
+          const inputRange = state.routes.map((_: any, i: any) => i);
+          // const opacity = position.interpolate({
+          //   inputRange,
+          //   outputRange: inputRange.map((i : any) => (i === index ? 1 : 0)),
+          // });
+
+          return (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={{
+                flex: 1,
+                backgroundColor: isFocused
+                  ? Colors[colorScheme].primary
+                  : Colors[colorScheme].white,
+                borderRadius: 30,
+                alignItems: "center",
+                justifyContent: "center",
+                height: 35,
+              }}
+            >
+              <Animated.Text
+                style={{
+                  opacity: 1,
+                  color: isFocused
+                    ? Colors[colorScheme].white
+                    : Colors[colorScheme].black2,
+                }}
+              >
+                {label}
+              </Animated.Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
+
   return (
     <>
       <View style={styles.container}>
-        {location ? (
-          <>
-            <MapView
-              initialRegion={location.coords}
-              onRegionChange={(res) => {
-                setLocation({ coords: res });
+        <View
+          style={[
+            styles.header,
+            {
+              backgroundColor: Colors[colorScheme].primary,
+            },
+          ]}
+        >
+          <View style={styles.headerSwitch}>
+            <Switch
+              style={styles.switchStatus}
+              trackColor={{
+                false: "#767577",
+                true: Colors[colorScheme].black2,
               }}
-              style={styles.map}
-            >
-              {/* <Marker
-                key={1}
-                coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                }}
-                // title='Meu Local'
-                // description='Teste'
-              /> */}
-            </MapView>
-
-            <Ionicons
-              style={{ position: "absolute", alignSelf: "center", top: "44%" }}
-              name={"ios-location"}
-              size={37}
-              color={Colors[colorScheme].warning}
+              thumbColor={isEnabled ? Colors[colorScheme].sucess2 : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
             />
-          </>
-        ) : (
-          <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
-        )}
-      </View>
+            {isEnabled && (
+              <Text
+                style={[
+                  styles.textAtiveStatusAgent,
+                  { color: Colors[colorScheme].white },
+                ]}
+              >
+                Ativo
+              </Text>
+            )}
+            {!isEnabled && (
+              <Text
+                style={[
+                  styles.textAtiveStatusAgent,
+                  { color: Colors[colorScheme].white },
+                ]}
+              >
+                Ausente
+              </Text>
+            )}
+          </View>
+          <Image style={styles.logo} source={logoImg} />
+        </View>
+        <View
+          style={[styles.body, { backgroundColor: Colors[colorScheme].secund }]}
+        >
+          <Text style={[styles.textNick, { color: Colors[colorScheme].text }]}>
+            Olá {nick}
+          </Text>
+          <Text
+            style={[
+              styles.textNotification,
+              { color: Colors[colorScheme].text },
+            ]}
+          >
+            Você tem 02 novos chamados!
+            {/* Você tem {nick} novos chamados! */}
+          </Text>
+          <Text
+            style={[
+              styles.textCurrentSolicitation,
+              { color: Colors[colorScheme].black2 },
+            ]}
+          >
+            Chamado em atendimento
+          </Text>
 
-      <Text style={styles.boxAtiveStatusAgent}>Seu endereço</Text>
+          <View
+            style={[
+              styles.cardCurrent,
+              { backgroundColor: Colors[colorScheme].white },
+            ]}
+          >
+            <View
+              style={[
+                // styles.cardCurrent,
+                { backgroundColor: Colors[colorScheme].white },
+              ]}
+            >
+              <Ionicons
+                style={{
+                  backgroundColor: Colors[colorScheme].secund,
+                  padding: 18,
+                  borderRadius: 6,
+                  marginRight: 10,
+                }}
+                name="megaphone-outline"
+                size={34}
+                color={Colors[colorScheme].orange}
+              />
+            </View>
+            <View
+              style={[
+                // styles.cardCurrent,
+                { backgroundColor: Colors[colorScheme].white, width: "70%" },
+              ]}
+            >
+              <Text
+                style={[
+                  // styles.textCardNickName,
+                  { color: Colors[colorScheme].black2, fontWeight: "700" },
+                ]}
+              >
+                ismael
+              </Text>
+              <Text
+                style={[
+                  // styles.textCardNickName,
+                  { color: Colors[colorScheme].orange, fontWeight: "700" },
+                ]}
+              >
+                #Rapido
+              </Text>
+              <Text
+                style={[
+                  // styles.textCardNickName,
+                  {
+                    color: Colors[colorScheme].black2,
+                    fontWeight: "100",
+                  },
+                ]}
+              >
+                Hermantino vieira de souza, 630, Novo Horizonte
+              </Text>
+            </View>
+          </View>
+
+          <Text
+            style={[
+              styles.textCurrentSolicitation,
+              { color: Colors[colorScheme].black2 },
+            ]}
+          >
+            Chamados
+          </Text>
+          <NavigationContainer independent={true}>
+            <Tab.Navigator
+              style={{
+                backgroundColor: Colors[colorScheme].secund,
+              }}
+              tabBar={(props: any) => <MyTabBar {...props} />}
+            >
+              <Tab.Screen name="Rapido" component={fastScreen} />
+              <Tab.Screen name="Agendado" component={scheduledScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </View>
+      </View>
 
       {showModal && (
         <ModalAlertCustom
@@ -159,49 +426,63 @@ export default function SetLocationMapAddressScreen(props: any) {
 
 const styles = StyleSheet.create({
   container: {
+    // marginTop: Constants.statusBarHeight,
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-  },
-  buttonSave: {
-    height: 50,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  form: {
-    height: 110,
-    width: "100%",
-    padding: 5,
+    // height: "90%",
   },
 
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  modalMensage: {
-    fontSize: 16,
+  header: {
+    flexDirection: "row",
+    display: "flex",
     width: "100%",
+    padding: 15,
+    paddingBottom: 40,
+    justifyContent: "space-between",
   },
-  input: {
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 5,
-    width: "100%",
+  headerSwitch: {
+    flexDirection: "row",
+    display: "flex",
+    backgroundColor: "rgba(52, 52, 52, 0.0)",
   },
-  boxAtiveStatusAgent: {
-    position: "absolute",
-    alignSelf: "center",
-    top: "2.1%",
+  textAtiveStatusAgent: {
     fontSize: 18,
     fontWeight: "bold",
+    alignSelf: "center",
+  },
+  switchStatus: {
+    marginRight: 5,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+  },
+  body: {
+    marginTop: -25,
+    flex: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 30,
     padding: 25,
+  },
+  textNick: {
+    fontSize: 24,
+    fontWeight: "700",
+  },
+  textNotification: {
+    fontSize: 14,
+    fontWeight: "100",
+  },
+  textCurrentSolicitation: {
+    fontSize: 12,
+    fontWeight: "100",
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  cardCurrent: {
     width: "100%",
-    height: 55,
+    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: 6,
+    height: 110,
   },
 });

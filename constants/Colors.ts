@@ -16,6 +16,11 @@ export default {
     white: '#fff',
     warning: '#F58A07',
     sucess: '#98CE00',
+    sucess2: '#84AE1E',
+
+    orange: '#FA6F4E',
+
+
 
   },
   dark: {
@@ -37,5 +42,10 @@ export default {
     white: '#fff',
     warning: '#F58A07',
     sucess: '#98CE00',
+    sucess2: '#84AE1E',
+
+
+    orange: '#FA6F4E',
+
   },
 };

@@ -39,7 +39,6 @@ export default function App() {
           <StatusBar
             translucent={false}
             style="light"
-            backgroundColor={Colors[colorScheme].primary}
           />
         </NavigationContainer>
       </SafeAreaProvider>

@@ -44,6 +44,8 @@ export type AgentStackParamList = {
   RootAgent: undefined;
   NotFound: undefined;
 
+  SolicitationDetail: undefined;
+
   SetLocationMap: undefined;
   Profile: undefined;
   ProfileAddress: undefined;
@@ -71,7 +73,7 @@ export type ItemListView = {
   icon?: React.ComponentProps<typeof Ionicons>['name'];
   onPress: any;
   // onPress: ()=> void | JSX.Element;
-  styleItem?: any | null;
+  status?: any | null;
 }
 
 export type ModalAlert = {

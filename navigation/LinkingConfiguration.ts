@@ -87,6 +87,11 @@ export default {
         },
       },
       
+      SolicitationDetailScreen: {
+        screens: {
+          SolicitationDetailScreen: 'SolicitationDetail'
+        }
+      },
       
       NotFound: '*',
     },
