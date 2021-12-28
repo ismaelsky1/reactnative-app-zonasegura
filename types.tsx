@@ -45,7 +45,11 @@ export type AgentStackParamList = {
   NotFound: undefined;
 
   SolicitationDetail: undefined;
+  DetailClient: undefined;
+  InvoiceDetail: undefined;
 
+  HistoryInvoice: undefined;
+  
   SetLocationMap: undefined;
   Profile: undefined;
   ProfileAddress: undefined;

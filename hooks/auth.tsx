@@ -28,6 +28,16 @@ interface User {
   coordinates: string;
 }
 
+interface SignUpCredentials {
+  email: string;
+  name: string;
+  document: string;
+  phone: string;
+  role: string;
+  state: string;
+  status: string;
+}
+
 interface AuthState {
   token?: string;
   user: User;
@@ -42,6 +52,7 @@ interface AuthContextData {
   user: User;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
+  signUp(credentials: SignUpCredentials): Promise<void>;
   signOut(): void;
   setUser(use: User): void;
 }
@@ -73,8 +84,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
   const signIn = useCallback(async ({ document, password }) => {
     const response = await api.post("auth/singIn", {
-      document: "12312312399",
-      password: "123123",
+      document,
+      password,
     });
 
     const { token, user } = response.data;
@@ -86,6 +97,21 @@ const AuthProvider: React.FC = ({ children }) => {
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
+  }, []);
+
+  const signUp = useCallback(async (signUpDto) => {
+    const document = signUpDto.document.replace(/[^0-9]/g,'');
+    const phone = signUpDto.phone.replace(/[^0-9]/g,'');
+    signUpDto.document = document;
+    signUpDto.phone = phone;
+    signUpDto.role = 'CLIENT';
+    signUpDto.status = 'PENDING_VALIDATION';
+
+    const response = await api.post("auth/singUp", signUpDto);
+    console.log(response.data)
+    await AsyncStorage.multiSet([
+      ["@Shild:user", JSON.stringify(response.data)],
+    ]);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -102,7 +128,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, setUser, loading, signIn, signOut }}
+      value={{ user: data.user, setUser, loading, signIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>

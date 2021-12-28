@@ -11,12 +11,22 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import { ItemListView } from "../types";
 
-export default function ListViewCustom(props: { data: ItemListView[] }) {
+export default function ListViewCustom(props: {
+  data: ItemListView[];
+  scrollEnabled?: boolean;
+}) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
 
   const colorScheme = useColorScheme();
   return (
     <FlatList
+      scrollEnabled={
+        props.scrollEnabled === undefined
+          ? true
+          : props.scrollEnabled === true
+          ? true
+          : false
+      }
       style={styles.containerList}
       data={props.data}
       renderItem={({ item }) => (
@@ -59,13 +69,20 @@ export default function ListViewCustom(props: { data: ItemListView[] }) {
                 </Text>
               </View>
             </View>
-            
+
             {item.status && (
               <View style={[styles.statusItemList]}>
                 <Text
                   style={[
                     styles.subtitleList,
-                    { color: item.status === '#Aberto'? Colors[colorScheme].orange : (item.status == '#Agendado'? Colors[colorScheme].primary : Colors[colorScheme].black2) },
+                    {
+                      color:
+                        item.status === "#Aberto"
+                          ? Colors[colorScheme].orange
+                          : item.status == "#Agendado"
+                          ? Colors[colorScheme].primary
+                          : Colors[colorScheme].black2,
+                    },
                   ]}
                 >
                   {item.status}
@@ -99,9 +116,9 @@ const styles = StyleSheet.create({
     height: 64,
     width: "100%",
     justifyContent: "space-between",
-    marginVertical: 8,
+    marginVertical: 4,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   groupitemList: {
     flexDirection: "row",
@@ -110,7 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     alignItems: "flex-end",
-    justifyContent: 'center',
+    justifyContent: "center",
     borderRadius: 12,
     marginRight: 10,
   },

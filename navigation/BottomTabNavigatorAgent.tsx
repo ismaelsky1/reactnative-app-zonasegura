@@ -28,7 +28,7 @@ export default function BottomTabNavigator() {
         name="TabClient"
         component={TabClientNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="wallet" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="contacts" color={color} />,
         }}
       />
       <BottomTab.Screen

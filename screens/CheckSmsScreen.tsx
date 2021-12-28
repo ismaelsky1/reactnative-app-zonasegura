@@ -42,6 +42,10 @@ export default function CheckSmsScreen() {
       }),
   });
 
+  useEffect(() => {
+    
+  }, []);
+
   const handleSignIn = useCallback(
     ()=>{navigate('SetLocationMapAddressScreen')}
     // async (data: any) => {

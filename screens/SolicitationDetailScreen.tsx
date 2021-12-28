@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 // import { Permissions } from 'react-native-unimodules';
 import { useIsFocused } from "@react-navigation/native";
 
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 
 import MapView from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   Button,
   Switch,
+  Linking,
 } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -286,51 +287,21 @@ export default function SolicitationDetailScreen(props: any) {
     }
   };
 
+  function linkWhats() {
+    console.log('link')
+    Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte');
+  }
+
+  function linkCall() {
+    console.log('link')
+    Linking.openURL(`tel:${77981143208}`);
+  }
+
+  
+
   return (
     <>
-      {/* <TouchableOpacity
-        style={[
-          styles.activeButtonSolicitations,
-          { backgroundColor: Colors[colorScheme].secund },
-        ]}
-      >
-        <MaterialIcons
-          color={Colors[colorScheme].primary}
-          style={{ position: "absolute", alignSelf: "center", top: "44%" }}
-          name="location-history"
-          size={35}
-        />
-      </TouchableOpacity> */}
-      <View style={styles.boxAtiveStatusAgent}>
-        {isEnabled && (
-          <Text
-            style={[
-              styles.textAtiveStatusAgent,
-              { color: Colors[colorScheme].sucess },
-            ]}
-          >
-            Ativo
-          </Text>
-        )}
-        {!isEnabled && (
-          <Text
-            style={[
-              styles.textAtiveStatusAgent,
-              { color: Colors[colorScheme].warning },
-            ]}
-          >
-            Ausente
-          </Text>
-        )}
-        <Switch
-          trackColor={{ false: "#767577", true: Colors[colorScheme].black2 }}
-          thumbColor={isEnabled ? Colors[colorScheme].sucess : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
-      </View>
-      <View style={styles.container}>
+      <View style={styles.containerMap}>
         {location ? (
           <>
             <MapView
@@ -359,30 +330,208 @@ export default function SolicitationDetailScreen(props: any) {
                 title="Solicitando presença"
                 description="Maria do Carlos"
               />
-              {/* <Marker
-                key={2}
-                coordinate={{
-                  latitude: location.coords?.latitude,
-                  longitude: location.coords?.longitude,
-                }}
-                title="Solicitando presença"
-                description="Maria do Carlos"
-                
-              /> */}
             </MapView>
-
-            {/* <MaterialIcons
-              color={Colors[colorScheme].primary}
-              style={{ position: "absolute", alignSelf: "center", top: "44%" }}
-              name="location-history"
-              size={37}
-            /> */}
           </>
         ) : (
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
       </View>
-      
+      <View style={styles.containerDetail}>
+        <View
+          style={[
+            styles.cardCurrent,
+            { backgroundColor: Colors[colorScheme].white },
+          ]}
+        >
+          <View style={[{ backgroundColor: Colors[colorScheme].white }]}>
+            <Ionicons
+              style={{
+                backgroundColor: Colors[colorScheme].secund,
+                padding: 18,
+                borderRadius: 6,
+              }}
+              name="megaphone-outline"
+              size={24}
+              color={Colors[colorScheme].orange}
+            />
+          </View>
+          <View
+            style={[
+              { backgroundColor: Colors[colorScheme].white, width: "78%" },
+            ]}
+          >
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black,
+                  fontWeight: "700",
+                  fontSize: 16,
+                },
+              ]}
+            >
+              Ismael
+            </Text>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black2,
+                  fontWeight: "100",
+                },
+              ]}
+            >
+              Hermantino vieira de souza, 630, Novo Horizonte
+            </Text>
+          </View>
+        </View>
+        <View style={styles.gridDetail}>
+          <View style={[{ width: "50%" }]}>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black2,
+                },
+              ]}
+            >
+              Tipo
+            </Text>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].orange,
+                  fontWeight: "700",
+                },
+              ]}
+            >
+              #Rapida
+            </Text>
+          </View>
+          <View style={[{ width: "50%" }]}>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black2,
+                },
+              ]}
+            >
+              Status
+            </Text>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].orange,
+                  fontWeight: "700",
+                },
+              ]}
+            >
+              Aberto
+            </Text>
+          </View>
+        </View>
+        <View style={styles.gridDetail}>
+          <View style={[{ width: "50%" }]}>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black2,
+                },
+              ]}
+            >
+              Agendado
+            </Text>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black,
+                  fontWeight: "700",
+                },
+              ]}
+            >
+              10:00 03/12/2021
+            </Text>
+          </View>
+          <View style={[{ width: "50%" }]}>
+            <Text
+              style={[
+                {
+                  color: Colors[colorScheme].black2,
+                  width: "100%",
+                },
+              ]}
+            >
+              Contato
+            </Text>
+            <View style={[{ width: "100%", flexDirection: "row", marginTop: 4 }]}>
+              <TouchableOpacity
+                onPress={linkCall}
+                style={[
+                  styles.ButtonCall,
+                  { backgroundColor: Colors[colorScheme].primary },
+                ]}
+              >
+                <MaterialIcons
+                  color={Colors[colorScheme].white}
+                  style={{ alignSelf: "center" }}
+                  name="call"
+                  size={20}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={linkWhats}
+                style={[
+                  styles.ButtonCall,
+                  { backgroundColor: Colors[colorScheme].sucess2 },
+                ]}
+              >
+                <Ionicons
+                  style={{ alignSelf: "center" }}
+                  name="logo-whatsapp"
+                  size={20}
+                  color={Colors[colorScheme].white}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <View style={styles.gridDetail}>
+          <View style={[{ width: "50%" }]}>
+            <TouchableHighlight
+              style={[
+                styles.button,
+                { backgroundColor: Colors[colorScheme].primary },
+              ]}
+              onPress={() => {}}
+            >
+              <Text style={styles.textButton}>Aceitar</Text>
+            </TouchableHighlight>
+          </View>
+          <View style={[{ width: "50%" }]}>
+            <TouchableHighlight
+              style={[
+                styles.button,
+                { backgroundColor: Colors[colorScheme].warning },
+              ]}
+              onPress={() => {}}
+            >
+              <Text style={styles.textButton}>Cancelar</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+      <TouchableOpacity
+        onPress={goBack}
+        style={[
+          styles.ButtonGoBack,
+          { backgroundColor: Colors[colorScheme].secund },
+        ]}
+      >
+        <MaterialIcons
+          color={Colors[colorScheme].black}
+          style={{ alignSelf: "center" }}
+          name="keyboard-arrow-left"
+          size={35}
+        />
+      </TouchableOpacity>
+
       {showModal && (
         <ModalAlertCustom
           title={mensage.title}
@@ -397,19 +546,25 @@ export default function SolicitationDetailScreen(props: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: Constants.statusBarHeight,
-    flex: 1,
-    height: "90%",
-    backgroundColor: "#fff",
+  containerMap: {
+    flex: 3,
     alignItems: "center",
     justifyContent: "center",
+  },
+  containerDetail: {
+    flex: 2,
+    backgroundColor: "#fff",
+    // alignItems: "center",
+    justifyContent: "center",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    marginTop: -9,
   },
   map: {
     // width: Dimensions.get("window").width,
     // height: Dimensions.get("window").height,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   buttonSave: {
     height: 50,
@@ -438,23 +593,63 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   boxAtiveStatusAgent: {
-    flexDirection: "row", 
-    display: 'flex',
-    position: 'relative',   
+    flexDirection: "row",
+    display: "flex",
+    position: "relative",
     // width: "100%",
     height: 35,
-    backgroundColor: 'red'
+    backgroundColor: "red",
   },
   textAtiveStatusAgent: {
     fontSize: 18,
     fontWeight: "bold",
   },
-  activeButtonSolicitations: {
-    width: 35,
-    height: 35,
-    // position: "absolute",
+  ButtonGoBack: {
+    width: 45,
+    height: 45,
+    position: "absolute",
+    top: 10,
+    left: 15,
+    borderRadius: 10,
     alignSelf: "center",
     justifyContent: "center",
-    bottom: "50%",
+    // bottom: "50%",
+  },
+  ButtonCall: {
+    width: 35,
+    height: 35,
+    borderRadius: 10,
+    justifyContent: "center",
+    marginRight: 4,
+    // bottom: "50%",
+  },
+  cardCurrent: {
+    width: "100%",
+    paddingTop: 20,
+    paddingLeft: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: 6,
+  },
+  gridDetail: {
+    width: "100%",
+    paddingHorizontal: 20,
+    marginTop: 8,
+    flexDirection: "row",
+    // justifyContent: "flex-start",
+  },
+  button: {
+    // flex: 1,
+    height: 40,
+    width: "98%",
+    borderRadius: 10,
+    justifyContent: "center",
+  },
+  textButton: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    width: "100%",
+    margin: "auto",
   },
 });

@@ -34,7 +34,7 @@ export default function TabProfileScreen({ navigation, route }: any) {
 
   function linkContact() {
     console.log('link')
-    Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte%20%3F');
+    Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte');
   }
 
   useEffect(() => {

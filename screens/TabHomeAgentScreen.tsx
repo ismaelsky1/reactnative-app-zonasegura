@@ -15,6 +15,7 @@ import {
   Button,
   Switch,
   Image,
+  TouchableHighlight,
 } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -113,7 +114,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via GPS",
               icon: "flash",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Aberto",
             },
@@ -122,7 +123,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via GPS",
               icon: "flash",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Finalizado",
             },
@@ -131,7 +132,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via Endereço",
               icon: "flash",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Cancelado",
             },
@@ -151,7 +152,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "10:00 - Buscar Pagamento",
               icon: "calendar",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Aberto",
             },
@@ -160,7 +161,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "21:40 - Escolta",
               icon: "calendar",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Finalizado",
             },
@@ -169,7 +170,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "23:00 - Verificar casa",
               icon: "calendar",
               onPress: () => {
-                true;
+                navigate('SolicitationDetail')
               },
               status: "#Agendado",
             },
@@ -328,66 +329,67 @@ export default function SetLocationMapAddressScreen(props: any) {
           >
             Chamado em atendimento
           </Text>
-
-          <View
-            style={[
-              styles.cardCurrent,
-              { backgroundColor: Colors[colorScheme].white },
-            ]}
-          >
+          <TouchableOpacity onPress={()=> {navigate('SolicitationDetail')}}>
             <View
               style={[
-                // styles.cardCurrent,
+                styles.cardCurrent,
                 { backgroundColor: Colors[colorScheme].white },
               ]}
             >
-              <Ionicons
-                style={{
-                  backgroundColor: Colors[colorScheme].secund,
-                  padding: 18,
-                  borderRadius: 6,
-                  marginRight: 10,
-                }}
-                name="megaphone-outline"
-                size={34}
-                color={Colors[colorScheme].orange}
-              />
+              <View
+                style={[
+                  // styles.cardCurrent,
+                  { backgroundColor: Colors[colorScheme].white },
+                ]}
+              >
+                <Ionicons
+                  style={{
+                    backgroundColor: Colors[colorScheme].secund,
+                    padding: 18,
+                    borderRadius: 6,
+                    marginRight: 10,
+                  }}
+                  name="megaphone-outline"
+                  size={34}
+                  color={Colors[colorScheme].orange}
+                />
+              </View>
+              <View
+                style={[
+                  // styles.cardCurrent,
+                  { backgroundColor: Colors[colorScheme].white, width: "70%" },
+                ]}
+              >
+                <Text
+                  style={[
+                    // styles.textCardNickName,
+                    { color: Colors[colorScheme].black2, fontWeight: "700" },
+                  ]}
+                >
+                  ismael
+                </Text>
+                <Text
+                  style={[
+                    // styles.textCardNickName,
+                    { color: Colors[colorScheme].orange, fontWeight: "700" },
+                  ]}
+                >
+                  #Rapido
+                </Text>
+                <Text
+                  style={[
+                    // styles.textCardNickName,
+                    {
+                      color: Colors[colorScheme].black2,
+                      fontWeight: "100",
+                    },
+                  ]}
+                >
+                  Hermantino vieira de souza, 630, Novo Horizonte
+                </Text>
+              </View>
             </View>
-            <View
-              style={[
-                // styles.cardCurrent,
-                { backgroundColor: Colors[colorScheme].white, width: "70%" },
-              ]}
-            >
-              <Text
-                style={[
-                  // styles.textCardNickName,
-                  { color: Colors[colorScheme].black2, fontWeight: "700" },
-                ]}
-              >
-                ismael
-              </Text>
-              <Text
-                style={[
-                  // styles.textCardNickName,
-                  { color: Colors[colorScheme].orange, fontWeight: "700" },
-                ]}
-              >
-                #Rapido
-              </Text>
-              <Text
-                style={[
-                  // styles.textCardNickName,
-                  {
-                    color: Colors[colorScheme].black2,
-                    fontWeight: "100",
-                  },
-                ]}
-              >
-                Hermantino vieira de souza, 630, Novo Horizonte
-              </Text>
-            </View>
-          </View>
+          </TouchableOpacity>
 
           <Text
             style={[

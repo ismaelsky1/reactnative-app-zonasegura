@@ -27,11 +27,9 @@ import { useAuth } from '../hooks/auth';
 export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const [msgError, setMsgError] = useState(false);
+  const { navigate, goBack } = useNavigation();
 
-
-  const { goBack } = useNavigation();
-
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   const colorScheme = useColorScheme();
 
@@ -43,7 +41,7 @@ export default function SignUpScreen() {
     password: yup.string()
       .required('Mínimo 6 caractéres')
       .min(6, 'Mínimo 6 caractéres'),
-    cellphone: yup.string()
+    phone: yup.string()
       .required('Obrigatório')
       .test("len", "Informe um número válido.", (val) => {
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
@@ -58,20 +56,20 @@ export default function SignUpScreen() {
   });
 
 
-  const handleSignIn = useCallback(
+  const handleSignUp = useCallback(
     async (data: any) => {
       setMsgError(false);
       setLoading(true);
 
       try {
-        await signIn({
-          email: data.email,
-          password: data.password,
-        });
+        const response = await signUp(data);
         setMsgError(false);
         setLoading(false);
+        navigate('CheckSms')
 
       } catch (error) {
+        console.log('error',error)
+
         setMsgError(true);
         setLoading(false);
 
@@ -89,11 +87,11 @@ export default function SignUpScreen() {
           validationSchema={schemaDataUsers}
           initialValues={{
             name: '',
-            cellphone: '',
+            phone: '',
             document: '',
             password: '',
           }}
-          onSubmit={handleSignIn}
+          onSubmit={handleSignUp}
         >
           {({
             handleSubmit,
@@ -118,10 +116,10 @@ export default function SignUpScreen() {
               <MaskInputCustom
                 title='Telefone:'
                 placeholder="..."
-                onChangeText={handleChange('cellphone')}
-                onBlur={handleBlur('cellphone')}
+                onChangeText={handleChange('phone')}
+                onBlur={handleBlur('phone')}
                 keyboardType='phone-pad'
-                value={values.cellphone}
+                value={values.phone}
                 type={'cel-phone'}
                 options={{
                   maskType: 'BRL',
@@ -129,8 +127,8 @@ export default function SignUpScreen() {
                   dddMask: '(99) '
                 }}
               />
-              {(errors.cellphone && touched.cellphone) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.cellphone}</Text>
+              {(errors.phone && touched.phone) &&
+                <Text style={{ fontSize: 10, color: 'red' }}>{errors.phone}</Text>
               }
               <MaskInputCustom
                 title='CPF:'

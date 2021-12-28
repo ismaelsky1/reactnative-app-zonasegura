@@ -42,6 +42,7 @@ export default function SignInScreen() {
       document: yup.string()
       .required('Obrigatório')
       .test("len", "Informe um número válido.", (val) => {
+        // console.log(val)
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
         return (lengthWithoutDashes === 13) ? true : false;
       }),
@@ -51,10 +52,9 @@ export default function SignInScreen() {
     async (data: any) => {
       setMsgError(false);
       setLoading(true);
-
       try {
         await signIn({
-          document: data.document,
+          document: data.document.replace(/[^0-9]/g,''),
           password: data.password,
         });
         setMsgError(false);
@@ -80,8 +80,8 @@ export default function SignInScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            document: '',
-            password: '',
+            document: '058.755.185-00',
+            password: '123123',
           }}
           onSubmit={handleSignIn}
         >

@@ -13,6 +13,7 @@ export default {
     secund: '#F8F9FD',
     black: '#213031',
     black2: '#7C8587',
+    gray: '#E1E2E3',
     white: '#fff',
     warning: '#F58A07',
     sucess: '#98CE00',
@@ -39,12 +40,13 @@ export default {
     secund: '#F8F9FD',
     black: '#213031',
     black2: '#7C8587',
+    gray: '#E1E2E3',
     white: '#fff',
     warning: '#F58A07',
     sucess: '#98CE00',
     sucess2: '#84AE1E',
 
-
+    
     orange: '#FA6F4E',
 
   },
