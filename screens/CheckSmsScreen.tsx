@@ -52,7 +52,10 @@ export default function CheckSmsScreen({ route, navigation }: any) {
   useEffect(() => {
     // console.log("step1", user);
     setCount(60);
-    console.log(route.params);
+    if(route.params.status == 403){
+      handleResendCode();
+    }
+    // console.log();
   }, []);
 
   useEffect(() => {

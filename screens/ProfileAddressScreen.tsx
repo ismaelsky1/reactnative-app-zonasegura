@@ -96,13 +96,13 @@ export default function ProfileAddressScreen(props: any) {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            address: user.address,
-            complement: user.complement,
-            number: Number(user.number),
-            district: user.district,
-            city: user.city,
-            state: user.state,
-            zipcode: user.zipcode,
+            address: user.address? user.address: '',
+            complement: user.complement? user.complement: '',
+            number: Number(user.number? user.number: 0),
+            district: user.district? user.district: '',
+            city: user.city? user.city : '',
+            state: user.state? user.state : '',
+            zipcode: user.zipcode?  user.zipcode: '',
           }}
           onSubmit={handleUpdateProfile}
         >

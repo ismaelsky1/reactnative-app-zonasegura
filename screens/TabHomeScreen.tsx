@@ -45,7 +45,11 @@ export default function TabHomeScreen({ route, navigation }: any) {
     if (isFocused) {
       getTypeSolicitation();
     }
+    
     if(!user.coordinates){
+      navigate('ProfileAddress')
+    }
+    if(!user.address){
       navigate('ProfileAddress')
     }
     const use = user.name.split(" ");

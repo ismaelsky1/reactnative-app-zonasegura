@@ -82,5 +82,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 5,
     borderRadius: 5,
+    height: 50
   },
 });
