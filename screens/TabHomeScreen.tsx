@@ -45,6 +45,9 @@ export default function TabHomeScreen({ route, navigation }: any) {
     if (isFocused) {
       getTypeSolicitation();
     }
+    if(!user.coordinates){
+      navigate('ProfileAddress')
+    }
     const use = user.name.split(" ");
     setNick(use[0]);
   }, [isFocused]);
@@ -70,7 +73,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
                 btnOk: "Sim",
                 icon: "help-circle",
                 onPress: () => {
-                  createSolicitation(item.id, item.action);
+                  createSolicitation(item._id, item.action);
                 },
                 btnCancel: "Não",
                 onPressCancel: () => {
@@ -80,7 +83,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
             }
 
             if (item.action == "ESCOLTA") {
-              navigate(`SetLocationMap`, { idTypeSolicitation: item.id });
+              navigate(`SetLocationMap`, { idTypeSolicitation: item._id });
             }
           },
         };
@@ -136,7 +139,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
 
     try {
       const { data } = await api.post("solicitation", {
-        client: user.id,
+        client: user._id,
         agent: user.responsibleAgentId,
         typeSolicitation: idTypeSolicitation,
         status: "OPEN",

@@ -76,7 +76,7 @@ export default function SetLocationMapAddressScreen(props: any) {
     setLoading(true);
 
     try {
-      const { data } = await api.patch(`users/${user.id}`, {
+      const { data } = await api.patch(`users/${user._id}`, {
         coordinates: JSON.stringify(loc.coords),
       });
 

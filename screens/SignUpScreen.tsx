@@ -1,95 +1,116 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, TextInput, Button, ScrollView, Image } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { Octicons } from '@expo/vector-icons';
+import { useNavigation } from "@react-navigation/native";
+import { Octicons } from "@expo/vector-icons";
 
-import MaskInputCustom from '../components/MaskInputCustom';
-import TextInputCustom from '../components/TextInputCustom';
-import PasswordInputCustom from '../components/PasswordInputCustom';
+import MaskInputCustom from "../components/MaskInputCustom";
+import TextInputCustom from "../components/TextInputCustom";
+import PasswordInputCustom from "../components/PasswordInputCustom";
 
-import { Text, View } from '../components/Themed';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import { Text, View } from "../components/Themed";
+import { Formik } from "formik";
+import * as yup from "yup";
 
-import Colors from '../constants/Colors';
-import { ModalContext, ModalContextProvider } from '../contexts/modal';
-import useColorScheme from '../hooks/useColorScheme';
-import { ModalAlert } from '../types';
-import ButtonCustom from '../components/ButtonCustom';
-import ModalAlertCustom from '../components/ModalAlertCustom';
-import ModalAgendaCustom from '../components/ModalAgendaCustom';
+import Colors from "../constants/Colors";
+import { ModalContext, ModalContextProvider } from "../contexts/modal";
+import useColorScheme from "../hooks/useColorScheme";
+import { ModalAlert } from "../types";
+import ButtonCustom from "../components/ButtonCustom";
+import ModalAlertCustom from "../components/ModalAlertCustom";
+import ModalAgendaCustom from "../components/ModalAgendaCustom";
 
-
-
-import logoImg from '../assets/images/logo.png';
-import { useAuth } from '../hooks/auth';
+import logoImg from "../assets/images/logo.png";
+import { useAuth } from "../hooks/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
-  const [msgError, setMsgError] = useState(false);
+  const [msgError, setMsgError] = useState("");
   const { navigate, goBack } = useNavigation();
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
 
   const colorScheme = useColorScheme();
 
-
   const schemaDataUsers = yup.object().shape({
-
-    name: yup.string()
-      .required('Obrigatório'),
-    password: yup.string()
-      .required('Mínimo 6 caractéres')
-      .min(6, 'Mínimo 6 caractéres'),
-    phone: yup.string()
-      .required('Obrigatório')
+    name: yup.string().required("Obrigatório"),
+    password: yup
+      .string()
+      .required("Mínimo 6 caractéres")
+      .min(6, "Mínimo 6 caractéres"),
+    phone: yup
+      .string()
+      .required("Obrigatório")
       .test("len", "Informe um número válido.", (val) => {
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 13 || lengthWithoutDashes === 14) ? true : false;
+        return lengthWithoutDashes === 13 || lengthWithoutDashes === 14
+          ? true
+          : false;
       }),
-    document: yup.string()
-      .required('Obrigatório')
+    document: yup
+      .string()
+      .required("Obrigatório")
       .test("len", "Informe um número válido.", (val) => {
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 13) ? true : false;
+        return lengthWithoutDashes === 13 ? true : false;
       }),
   });
 
-
   const handleSignUp = useCallback(
     async (data: any) => {
-      setMsgError(false);
+      setMsgError("");
       setLoading(true);
 
       try {
-        const response = await signUp(data);
-        setMsgError(false);
-        setLoading(false);
-        navigate('CheckSms')
+        const response: any = await signUp(data);
 
-      } catch (error) {
-        console.log('error',error)
-
-        setMsgError(true);
+        setMsgError("");
         setLoading(false);
+        navigate("CheckSms", response);
+      } catch (error: any) {
+        setLoading(false);
+
+        if (error.request.status == 400) {
+          // const response = JSON.parse(error.request.response);
+
+          // if (response.code == 11000) {
+            setMsgError("Telefone ou CPF já utilizado!");
+          // }
+        }else{
+          setMsgError("Error, Tente novamente mais tarde");
+        }
 
       }
     },
-    [signIn],
+    [signIn]
   );
 
-
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].primary }]}>
-      <View style={[styles.box, { backgroundColor: Colors[colorScheme].secund }]}>
-        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Criar sua Conta</Text>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].primary },
+      ]}
+    >
+      <View
+        style={[styles.box, { backgroundColor: Colors[colorScheme].secund }]}
+      >
+        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>
+          Criar sua Conta
+        </Text>
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            name: '',
-            phone: '',
-            document: '',
-            password: '',
+            name: "teste ",
+            phone: "7798114320",
+            document: "0587551852",
+            password: "123123",
           }}
           onSubmit={handleSignUp}
         >
@@ -103,71 +124,103 @@ export default function SignUpScreen() {
           }) => (
             <>
               <TextInputCustom
-                title='Nome Completo:'
+                title="Nome Completo:"
                 placeholder="..."
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
+                onChangeText={handleChange("name")}
+                onBlur={handleBlur("name")}
                 value={values.name}
               />
-              {(errors.name && touched.name) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.name}</Text>
-              }
+              {errors.name && touched.name && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  {errors.name}
+                </Text>
+              )}
 
               <MaskInputCustom
-                title='Telefone:'
+                title="Telefone:"
                 placeholder="..."
-                onChangeText={handleChange('phone')}
-                onBlur={handleBlur('phone')}
-                keyboardType='phone-pad'
+                onChangeText={handleChange("phone")}
+                onBlur={handleBlur("phone")}
+                keyboardType="phone-pad"
                 value={values.phone}
-                type={'cel-phone'}
+                type={"cel-phone"}
                 options={{
-                  maskType: 'BRL',
+                  maskType: "BRL",
                   withDDD: true,
-                  dddMask: '(99) '
+                  dddMask: "(99) ",
                 }}
               />
-              {(errors.phone && touched.phone) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.phone}</Text>
-              }
+              {errors.phone && touched.phone && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  {errors.phone}
+                </Text>
+              )}
               <MaskInputCustom
-                title='CPF:'
+                title="CPF:"
                 placeholder="000.000.000-00"
-                onChangeText={handleChange('document')}
-                onBlur={handleBlur('document')}
-                keyboardType='decimal-pad'
+                onChangeText={handleChange("document")}
+                onBlur={handleBlur("document")}
+                keyboardType="decimal-pad"
                 value={values.document}
-                type={'cpf'}
+                type={"cpf"}
               />
-              {(errors.document && touched.document) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
-              }
+              {errors.document && touched.document && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  {errors.document}
+                </Text>
+              )}
               <PasswordInputCustom
-                title='Senha:'
+                title="Senha:"
                 placeholder="..."
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
                 value={values.password}
               />
-              {(errors.password && touched.password) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.password}</Text>
-              }
+              {errors.password && touched.password && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  {errors.password}
+                </Text>
+              )}
               <Text style={{ color: Colors[colorScheme].warning }}>
-                {msgError && ('Senha ou Número inválidos. Por favor, tente novamente. Caso tenha esquecido sua senha clique no link: Esqueçeu sua senha?')
-                }
+                {msgError}
               </Text>
 
-
-              <ButtonCustom isLoading={loading} background={Colors[colorScheme].primary} onPress={handleSubmit} title="Cadastrar" />
+              <ButtonCustom
+                isLoading={loading}
+                background={Colors[colorScheme].primary}
+                onPress={handleSubmit}
+                title="Cadastrar"
+              />
             </>
           )}
         </Formik>
-
       </View>
-      <View style={[styles.boxFooter, { backgroundColor: Colors[colorScheme].secund }]}>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <View style={[styles.boxFooterRow, { backgroundColor: Colors[colorScheme].secund }]}>
-          <Text onPress={() => { goBack() }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}> Já tenho conta? Acesse sua conta </Text>
+      <View
+        style={[
+          styles.boxFooter,
+          { backgroundColor: Colors[colorScheme].secund },
+        ]}
+      >
+        <View
+          style={styles.separator}
+          lightColor="#eee"
+          darkColor="rgba(255,255,255,0.1)"
+        />
+        <View
+          style={[
+            styles.boxFooterRow,
+            { backgroundColor: Colors[colorScheme].secund },
+          ]}
+        >
+          <Text
+            onPress={() => {
+              goBack();
+            }}
+            style={[styles.textFooter, { color: Colors[colorScheme].primary }]}
+          >
+            {" "}
+            Já tenho conta? Acesse sua conta{" "}
+          </Text>
         </View>
       </View>
       {/* {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} />} */}
@@ -181,19 +234,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
-    marginVertical: 10
+    fontWeight: "700",
+    marginVertical: 10,
   },
 
   textInput: {},
   logo: {
     width: 150,
     height: 150,
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   boxLogo: {
     flex: 0.5,
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   box: {
     flex: 1,
@@ -204,11 +257,11 @@ const styles = StyleSheet.create({
   },
   boxFooter: {
     height: 50,
-    width: '100%',
+    width: "100%",
   },
   boxFooterRow: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     justifyContent: "space-between",
   },
   textFooter: {
@@ -217,8 +270,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    width: '100%',
+    width: "100%",
   },
-
-
 });

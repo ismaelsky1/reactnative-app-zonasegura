@@ -74,7 +74,7 @@ export default function HistorySolicitationScreen(props: any) {
                     btnCancel: "Não",
                     icon: "alert",
                     onPress: () => {
-                      deleteSolicitation(item.id);
+                      deleteSolicitation(item._id);
                     },
                     onPressCancel: () => {
                       setShowModal(false);
@@ -108,7 +108,7 @@ export default function HistorySolicitationScreen(props: any) {
                     btnCancel: "Não",
                     icon: "alert",
                     onPress: () => {
-                      deleteSolicitation(item.id);
+                      deleteSolicitation(item._id);
                     },
                     onPressCancel: () => {
                       setShowMapModal(false);
@@ -135,9 +135,9 @@ export default function HistorySolicitationScreen(props: any) {
     }
   }, []);
 
-  const deleteSolicitation = useCallback(async (id: string) => {
+  const deleteSolicitation = useCallback(async (_id: string) => {
     try {
-      const { data } = await api.delete(`solicitation/${id}`);
+      const { data } = await api.delete(`solicitation/${_id}`);
 
       getSolicitation();
       setMensage({

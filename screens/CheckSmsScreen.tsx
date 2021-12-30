@@ -1,92 +1,143 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet, TextInput, Button, ScrollView, Image } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
-import TextInputCustom from '../components/TextInputCustom';
+import TextInputCustom from "../components/TextInputCustom";
 
-import { Text, View } from '../components/Themed';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import { Text, View } from "../components/Themed";
+import { Formik } from "formik";
+import * as yup from "yup";
 
-import Colors from '../constants/Colors';
-import { ModalContext, ModalContextProvider } from '../contexts/modal';
-import useColorScheme from '../hooks/useColorScheme';
-import { ModalAlert } from '../types';
-import ButtonCustom from '../components/ButtonCustom';
-import ModalAlertCustom from '../components/ModalAlertCustom';
-import ModalAgendaCustom from '../components/ModalAgendaCustom';
+import Colors from "../constants/Colors";
+import { ModalContext, ModalContextProvider } from "../contexts/modal";
+import useColorScheme from "../hooks/useColorScheme";
+import { ModalAlert } from "../types";
+import ButtonCustom from "../components/ButtonCustom";
+import ModalAlertCustom from "../components/ModalAlertCustom";
+import ModalAgendaCustom from "../components/ModalAgendaCustom";
 
+import logoImg from "../assets/images/logo-name.png";
+import { useAuth } from "../hooks/auth";
+import api from "../services/api";
 
-import logoImg from '../assets/images/logo-name.png';
-import { useAuth } from '../hooks/auth';
-
-export default function CheckSmsScreen() {
+export default function CheckSmsScreen({ route, navigation }: any) {
   const [loading, setLoading] = useState(false);
   const [msgError, setMsgError] = useState(false);
 
+  const [count, setCount] = useState<number>(60);
+  const [resendPhone, setResendPhone] = useState<string>();
 
   const { navigate } = useNavigation();
-
-  const { signIn } = useAuth();
+  const { signIn, checkValidationCode, user } = useAuth();
 
   const colorScheme = useColorScheme();
 
-
   const schemaDataUsers = yup.object().shape({
-    key: yup.string()
-      .required('Obrigatório')
+    key: yup
+      .string()
+      .required("Obrigatório")
       .test("len", "Informe um número válido.", (val) => {
         const lengthWithoutDashes = val?.replace(/-|_/g, "").length;
-        return (lengthWithoutDashes === 6) ? true : false;
+        return lengthWithoutDashes === 6 ? true : false;
       }),
   });
 
   useEffect(() => {
-    
+    // console.log("step1", user);
+    setCount(60);
+    console.log(route.params);
   }, []);
 
-  const handleSignIn = useCallback(
-    ()=>{navigate('SetLocationMapAddressScreen')}
-    // async (data: any) => {
-    //   setMsgError(false);
-    //   setLoading(true);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (count < 1) {
+        setCount(0);
+        return () => clearTimeout(timeout);
+      }
+      setCount(count - 1);
+    }, 1000);
+  }, [count, resendPhone]);
 
-    //   try {
-    //     await signIn({
-    //       email: data.email,
-    //       password: data.password,
-    //     });
-    //     setMsgError(false);
-    //     setLoading(false);
+  const handleCheckValidationCode = useCallback(
+    async (dataForm: any) => {
+      setMsgError(false);
+      setLoading(true);
+      console.log(dataForm);
+      try {
+        await checkValidationCode({
+          _id: route.params.user._id,
+          code: dataForm.key,
+        });
 
-    //   } catch (error) {
-    //     setMsgError(true);
-    //     setLoading(false);
-
-    //   }
-    // }
-    , [signIn],
+        // navigate("SetLocationMapAddress");
+      } catch (error: any) {
+        console.log(error.request);
+        setMsgError(true);
+        setLoading(false);
+      }
+    },
+    [checkValidationCode]
   );
 
+  const handleResendCode = useCallback(async () => {
+    setMsgError(false);
+    setLoading(true);
+    try {
+      const response = await api.get(`auth/forgotPassword/${route.params.user.document}`);
+      console.log(response.data)
+
+
+      setMsgError(false);
+      setLoading(false);
+    } catch (error: any) {
+      console.log(error.request);
+      setMsgError(true);
+      setLoading(false);
+    }
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors[colorScheme].primary }]}>
-      <View style={[styles.boxLogo, { backgroundColor: Colors[colorScheme].primary }]}>
-        <Ionicons style={styles.logo} name="key-outline" size={100} color={Colors[colorScheme].secund} />
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme].primary },
+      ]}
+    >
+      <View
+        style={[
+          styles.boxLogo,
+          { backgroundColor: Colors[colorScheme].primary },
+        ]}
+      >
+        <Ionicons
+          style={styles.logo}
+          name="key-outline"
+          size={100}
+          color={Colors[colorScheme].secund}
+        />
       </View>
-      <View style={[styles.box, { backgroundColor: Colors[colorScheme].secund }]}>
-        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>Informe código recebido</Text>
+      <View
+        style={[styles.box, { backgroundColor: Colors[colorScheme].secund }]}
+      >
+        <Text style={[styles.title, { color: Colors[colorScheme].black }]}>
+          Informe código recebido
+        </Text>
         <Text style={[styles.subTitle, { color: Colors[colorScheme].black2 }]}>
-          Enviamos um código para seu número, informe no campo
-          logo a baixo.
+          Enviamos um código para seu número, informe no campo logo a baixo.
         </Text>
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            key: ''
+            key: "",
           }}
-          onSubmit={handleSignIn}
+          onSubmit={handleCheckValidationCode}
         >
           {({
             handleSubmit,
@@ -98,28 +149,83 @@ export default function CheckSmsScreen() {
           }) => (
             <>
               <TextInputCustom
-                title='Código:'
+                title="Código:"
                 placeholder="..."
-                onChangeText={handleChange('key')}
-                onBlur={handleBlur('key')}
-                keyboardType='decimal-pad'
+                onChangeText={handleChange("key")}
+                onBlur={handleBlur("key")}
+                keyboardType="decimal-pad"
                 value={values.key}
               />
-              {(errors.key && touched.key) &&
-                <Text style={{ fontSize: 10, color: 'red' }}>{errors.key}</Text>
-              }
-
-              <ButtonCustom isLoading={loading} background={Colors[colorScheme].primary} onPress={handleSubmit} title="Verificar" />
+              {errors.key && touched.key && (
+                <Text style={{ fontSize: 10, color: "red" }}>{errors.key}</Text>
+              )}
+              {msgError && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  Código inválido
+                </Text>
+              )}
+              <ButtonCustom
+                isLoading={loading}
+                background={Colors[colorScheme].primary}
+                onPress={handleSubmit}
+                title="Verificar"
+              />
             </>
           )}
         </Formik>
-
       </View>
-      <View style={[styles.boxFooter, { backgroundColor: Colors[colorScheme].secund }]}>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <View style={[styles.boxFooterRow, { backgroundColor: Colors[colorScheme].secund }]}>
-          <Text onPress={() => { navigate('SignIn') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>00:59</Text>
-          <Text onPress={() => { navigate('SignIn') }} style={[styles.textFooter, { color: Colors[colorScheme].primary }]}>Reenviar código</Text>
+      <View
+        style={[
+          styles.boxFooter,
+          { backgroundColor: Colors[colorScheme].secund },
+        ]}
+      >
+        <View
+          style={styles.separator}
+          lightColor="#eee"
+          darkColor="rgba(255,255,255,0.1)"
+        />
+        <View
+          style={[
+            styles.boxFooterRow,
+            { backgroundColor: Colors[colorScheme].secund },
+          ]}
+        >
+          <Text style={[styles.textFooter]}>
+            {count !== 0 ? (
+              `00:${count < 10 ? `0${count}` : count}`
+            ) : (
+              <Text
+                onPress={() => {
+                  setCount(30);
+                  setMsgError(false);
+                }}
+              >
+                00:00
+              </Text>
+            )}
+          </Text>
+          {count == 0 && (
+            <Text
+              onPress={() => {
+                handleResendCode();
+                // navigate("SignIn");
+              }}
+              style={[
+                styles.textFooter,
+                { color: Colors[colorScheme].primary },
+              ]}
+            >
+              Reenviar código
+            </Text>
+          )}
+          {count > 0 && (
+            <Text
+              style={[styles.textFooter, { color: Colors[colorScheme].gray }]}
+            >
+              Reenviar código
+            </Text>
+          )}
         </View>
       </View>
       {/* {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} />} */}
@@ -133,20 +239,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
-    marginVertical: 10
+    fontWeight: "700",
+    marginVertical: 10,
   },
   subTitle: {
     fontSize: 12,
-    fontWeight: '300',
-    marginVertical: 5
+    fontWeight: "300",
+    marginVertical: 5,
   },
   logo: {
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   boxLogo: {
     flex: 0.5,
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   box: {
     flex: 1,
@@ -157,11 +263,11 @@ const styles = StyleSheet.create({
   },
   boxFooter: {
     height: 50,
-    width: '100%',
+    width: "100%",
   },
   boxFooterRow: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     justifyContent: "space-between",
   },
   textFooter: {
@@ -170,8 +276,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    width: '100%',
+    width: "100%",
   },
-
-
 });

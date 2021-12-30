@@ -63,7 +63,7 @@ export default function ProfileScreenScreen(props: any) {
     };
 
     try {
-      const { data } = await api.patch(`users/${user.id}`, form);
+      const { data } = await api.patch(`users/${user._id}`, form);
       setUser(data);
       
       setMensageSuccess("Salvo");

@@ -68,7 +68,7 @@ export default function ProfileAddressScreen(props: any) {
     setMensageWarning("");
     console.log(dataForm);
     try {
-      const { data } = await api.patch(`users/${user.id}`, dataForm);
+      const { data } = await api.patch(`users/${user._id}`, dataForm);
       setUser(data);
       console.log("->", data);
 

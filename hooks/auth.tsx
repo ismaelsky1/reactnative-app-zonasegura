@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../services/api";
 
 interface User {
-  id: string;
+  _id: string;
   email: string;
   name: string;
   address: string;
@@ -48,11 +48,17 @@ interface SignInCredentials {
   password: string;
 }
 
+interface CheckValidationCodeCredentials{
+  _id: string;
+  code: String;
+}
+
 interface AuthContextData {
   user: User;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signUp(credentials: SignUpCredentials): Promise<void>;
+  checkValidationCode(credentials: CheckValidationCodeCredentials): Promise<void>;
   signOut(): void;
   setUser(use: User): void;
 }
@@ -93,7 +99,6 @@ const AuthProvider: React.FC = ({ children }) => {
       ["@Shild:token", token],
       ["@Shild:user", JSON.stringify(user)],
     ]);
-    console.log(token);
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
@@ -106,18 +111,31 @@ const AuthProvider: React.FC = ({ children }) => {
     signUpDto.phone = phone;
     signUpDto.role = 'CLIENT';
     signUpDto.status = 'PENDING_VALIDATION';
-
-    const response = await api.post("auth/singUp", signUpDto);
-    console.log(response.data)
-    await AsyncStorage.multiSet([
-      ["@Shild:user", JSON.stringify(response.data)],
-    ]);
+    
+     const {data} = await api.post("auth/singUp", signUpDto);
+     return data;
   }, []);
 
   const signOut = useCallback(async () => {
     await AsyncStorage.multiRemove(["@Shild:user", "@Shild:token"]);
 
     setData({} as AuthState);
+  }, []);
+
+  const checkValidationCode = useCallback(async ({ _id, code }) => {
+    const response = await api.post(`auth/checkValidationCode/${_id}`, {
+      code,
+    });
+    
+    const { token, user } = response.data;
+    await AsyncStorage.multiSet([
+      ["@Shild:token", token],
+      ["@Shild:user", JSON.stringify(user)],
+    ]);
+    
+    api.defaults.headers.authorization = `Bearer ${token}`;
+
+    setData({ token, user });
   }, []);
 
   const setUser = useCallback(async (user) => {
@@ -128,7 +146,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, setUser, loading, signIn, signUp, signOut }}
+      value={{ user: data.user, setUser, loading, signIn, signUp, signOut, checkValidationCode }}
     >
       {children}
     </AuthContext.Provider>

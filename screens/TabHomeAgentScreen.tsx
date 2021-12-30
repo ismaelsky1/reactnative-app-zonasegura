@@ -59,6 +59,8 @@ export default function SetLocationMapAddressScreen(props: any) {
   useEffect(() => {
     const use = user.name.split(" ");
     setNick(use[0]);
+
+
     // if(props.route.params){
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
@@ -72,7 +74,7 @@ export default function SetLocationMapAddressScreen(props: any) {
     setLoading(true);
 
     try {
-      const { data } = await api.patch(`users/${user.id}`, {
+      const { data } = await api.patch(`users/${user._id}`, {
         coordinates: JSON.stringify(loc.coords),
       });
 
@@ -114,7 +116,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via GPS",
               icon: "flash",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Aberto",
             },
@@ -123,7 +125,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via GPS",
               icon: "flash",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Finalizado",
             },
@@ -132,7 +134,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "Solicitação via Endereço",
               icon: "flash",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Cancelado",
             },
@@ -152,7 +154,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "10:00 - Buscar Pagamento",
               icon: "calendar",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Aberto",
             },
@@ -161,7 +163,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "21:40 - Escolta",
               icon: "calendar",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Finalizado",
             },
@@ -170,7 +172,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               descript: "23:00 - Verificar casa",
               icon: "calendar",
               onPress: () => {
-                navigate('SolicitationDetail')
+                navigate("SolicitationDetail");
               },
               status: "#Agendado",
             },
@@ -329,7 +331,11 @@ export default function SetLocationMapAddressScreen(props: any) {
           >
             Chamado em atendimento
           </Text>
-          <TouchableOpacity onPress={()=> {navigate('SolicitationDetail')}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigate("SolicitationDetail");
+            }}
+          >
             <View
               style={[
                 styles.cardCurrent,
