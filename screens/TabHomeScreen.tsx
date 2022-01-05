@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { Alert, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -11,12 +11,9 @@ import useColorScheme from "../hooks/useColorScheme";
 import { ModalAlert } from "../types";
 
 import ModalAlertCustom from "../components/ModalAlertCustom";
-import ModalAgendaCustom from "../components/ModalAgendaCustom";
-import ModalAlertMap from "../components/ModalAlertMap";
+import locationsetImg from "../assets/images/locationset.png";
 
 import api from "../services/api";
-import SkeletonLoader from "../components/SkeletonLoader";
-import ListViewDanger from "../components/ListViewDanger";
 import { useAuth } from "../hooks/auth";
 import { AntDesign, Foundation } from "@expo/vector-icons";
 
@@ -29,6 +26,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
   const [isLoade, setIsLoade] = useState(true);
+  const [isAddressFull, setIsAddressFull] = useState(true);
   const [nick, setNick] = useState("");
 
   const { user } = useAuth();
@@ -42,16 +40,25 @@ export default function TabHomeScreen({ route, navigation }: any) {
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
     // }
+
+    
+
     if (isFocused) {
+      if (!user.coordinates) {
+        console.log(user.coordinates)
+        setIsAddressFull(false);
+      }else if(!user.address){
+        console.log(user.address)
+
+        setIsAddressFull(false);
+      }else{
+        console.log('ss')
+
+        setIsAddressFull(true);
+      }  
       getTypeSolicitation();
     }
-    
-    if(!user.coordinates){
-      navigate('ProfileAddress')
-    }
-    if(!user.address){
-      navigate('ProfileAddress')
-    }
+
     const use = user.name.split(" ");
     setNick(use[0]);
   }, [isFocused]);
@@ -73,7 +80,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
               setShowModal(true);
               setMensage({
                 title: "Confirmar",
-                mensage: `Suporte via ${item.name} sera solicitado \n Realmente desejá concluir?`,
+                mensage: `${item.name} sera solicitado \n Realmente desejá concluir?`,
                 btnOk: "Sim",
                 icon: "help-circle",
                 onPress: () => {
@@ -86,7 +93,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
               });
             }
 
-            if (item.action == "ESCOLTA") {
+            if (item.type == "SCHEDULED") {
               navigate(`SetLocationMap`, { idTypeSolicitation: item._id });
             }
           },
@@ -142,14 +149,16 @@ export default function TabHomeScreen({ route, navigation }: any) {
     }
 
     try {
+      console.log('11111111111111111111111111111111111')
       const { data } = await api.post("solicitation", {
         client: user._id,
-        agent: user.responsibleAgentId,
+        agent: user.responsibleAgent._id ,
         typeSolicitation: idTypeSolicitation,
         status: "OPEN",
         obs: "",
         coordinates: coord,
       });
+      
 
       setMensage({
         title: "Concluido !",
@@ -177,42 +186,80 @@ export default function TabHomeScreen({ route, navigation }: any) {
 
   return (
     <>
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme].primary },
-        ]}
-      >
-        <Text style={[styles.title, { color: Colors[colorScheme].white }]}>
-          Olá
-        </Text>
-        <Text style={[styles.subtitle, { color: Colors[colorScheme].white }]}>
-          {nick}
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigate("HistorySolicitatio");
-          }}
-          style={styles.history}
-          key="+"
-        >
-          <Text style={styles.titleSolicitation}>Suas Solicitações</Text>
-          <View>
-            <AntDesign
-              name="rightcircleo"
-              size={24}
-              color={Colors[colorScheme].black2}
-            />
-          </View>
-        </TouchableOpacity>
+      {isAddressFull ? (
         <View
-          style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
-        />
+          style={[
+            styles.container,
+            { backgroundColor: Colors[colorScheme].primary },
+          ]}
+        >
+          <Text style={[styles.title, { color: Colors[colorScheme].white }]}>
+            Olá
+          </Text>
+          <Text style={[styles.subtitle, { color: Colors[colorScheme].white }]}>
+            {nick}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigate("HistorySolicitatio");
+            }}
+            style={styles.history}
+            key="+"
+          >
+            <Text style={styles.titleSolicitation}>Suas Solicitações</Text>
+            <View>
+              <AntDesign
+                name="rightcircleo"
+                size={24}
+                color={Colors[colorScheme].black2}
+              />
+            </View>
+          </TouchableOpacity>
+          <View
+            style={styles.separator}
+            lightColor="#eee"
+            darkColor="rgba(255,255,255,0.1)"
+          />
 
-        {listService && <ListViewCustom data={listService} />}
-      </View>
+          {listService && <ListViewCustom data={listService} />}
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: Colors[colorScheme].white },
+          ]}
+        >
+          <Text style={[styles.title, { color: Colors[colorScheme].primary }]}>
+            Bem-vindo
+          </Text>
+          <Text
+            style={[styles.subtitle, { color: Colors[colorScheme].primary }]}
+          >
+            {nick}
+          </Text>
+          <Image style={styles.locationsetImg} source={locationsetImg} />
+
+          <Text style={[styles.title, { color: Colors[colorScheme].black2 }]}>
+            Finalize seu cadastro
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigate("ProfileAddress");
+            }}
+            style={[styles.continue, { backgroundColor: Colors[colorScheme].primary } ]}
+            key="++"
+          >
+            <Text style={[styles.titleSolicitation,{color: Colors[colorScheme].white }]}>CONTINUAR</Text>
+            
+              {/* <AntDesign
+                name="rightcircleo"
+                size={24}
+                color={Colors[colorScheme].white}
+              /> */}
+          </TouchableOpacity>
+        </View>
+      )}
       {showModal && (
         <ModalAlertCustom
           onPress={mensage.onPress}
@@ -255,8 +302,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     margin: 10,
+    marginVertical: 20,
     borderRadius: 20,
     justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  continue: {
+    width: "90%",
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    margin: 10,
+    marginVertical: 50,
+    borderRadius:30,
+    justifyContent: "space-evenly",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -264,5 +324,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     textAlign: "center",
+  },
+  locationsetImg: {
+    width: 200,
+    height: 200,
   },
 });

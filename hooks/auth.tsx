@@ -20,7 +20,7 @@ interface User {
   document: string;
   number: string;
   phone: string;
-  responsibleAgentId: string;
+  responsibleAgent: any;
   role: string;
   state: string;
   status: string;
@@ -48,17 +48,21 @@ interface SignInCredentials {
   password: string;
 }
 
-interface CheckValidationCodeCredentials{
+interface CheckValidationCodeCredentials {
   _id: string;
   code: String;
 }
-
 interface AuthContextData {
   user: User;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signUp(credentials: SignUpCredentials): Promise<void>;
-  checkValidationCode(credentials: CheckValidationCodeCredentials): Promise<void>;
+  checkValidationCode(
+    credentials: CheckValidationCodeCredentials
+  ): Promise<void>;
+  setToken(
+    credentials: AuthState
+  ): Promise<void>,
   signOut(): void;
   setUser(use: User): void;
 }
@@ -93,27 +97,19 @@ const AuthProvider: React.FC = ({ children }) => {
       document,
       password,
     });
-    console.log('step2',response.data)
-    const { token, user } = response.data;
-    await AsyncStorage.multiSet([
-      ["@Shild:token", token],
-      ["@Shild:user", JSON.stringify(user)],
-    ]);
-    api.defaults.headers.authorization = `Bearer ${token}`;
-
-    setData({ token, user });
+    setToken(response.data);
   }, []);
 
   const signUp = useCallback(async (signUpDto) => {
-    const document = signUpDto.document.replace(/[^0-9]/g,'');
-    const phone = signUpDto.phone.replace(/[^0-9]/g,'');
+    const document = signUpDto.document.replace(/[^0-9]/g, "");
+    const phone = signUpDto.phone.replace(/[^0-9]/g, "");
     signUpDto.document = document;
     signUpDto.phone = phone;
-    signUpDto.role = 'CLIENT';
-    signUpDto.status = 'PENDING_VALIDATION';
-    
-     const {data} = await api.post("auth/singUp", signUpDto);
-     return data;
+    signUpDto.role = "CLIENT";
+    signUpDto.status = "PENDING_VALIDATION";
+
+    const { data } = await api.post("auth/singUp", signUpDto);
+    return data;
   }, []);
 
   const signOut = useCallback(async () => {
@@ -126,13 +122,15 @@ const AuthProvider: React.FC = ({ children }) => {
     const response = await api.post(`auth/checkValidationCode/${_id}`, {
       code,
     });
-    
-    const { token, user } = response.data;
+    setToken(response.data);
+  }, []);
+
+  const setToken = useCallback(async ({ token, user }) => {
     await AsyncStorage.multiSet([
       ["@Shild:token", token],
       ["@Shild:user", JSON.stringify(user)],
     ]);
-    
+
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
@@ -146,7 +144,16 @@ const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, setUser, loading, signIn, signUp, signOut, checkValidationCode }}
+      value={{
+        user: data.user,
+        setUser,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        checkValidationCode,
+        setToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -36,24 +36,3 @@ const Routes = ({ colorScheme }: { colorScheme: ColorSchemeName }) => {
 };
 
 export default Routes;
-
-// function interception() {
-//   api.interceptors.response.use(
-//     (response) => {
-//       return response;
-//     },
-//     (err) => {
-//       return new Promise((resolve, reject) => {
-//         const originalReq = err.config;
-//         console.log("intersept", err.response.status);
-//         return <AuthRoutes />;
-//         // if(err.response.status == 401 && err.config && !err.config._retry){
-//         //   originalReq.config._retry = true;
-//         //   AsyncStorage.getItem('@Shild:token').then((token)=> {
-
-//         //   })
-//         // }
-//       });
-//     }
-//   );
-// }

@@ -5,6 +5,7 @@ import SignIn from '../screens/SignInScreen';
 import SignUp from '../screens/SignUpScreen';
 import Forgout from '../screens/ForgoutScreen';
 import CheckSms from '../screens/CheckSmsScreen';
+import RedefinePassword from '../screens/RedefinePasswordScreen';
 
 const Auth = createStackNavigator();
 
@@ -19,6 +20,7 @@ const AuthRoutes: React.FC = () => (
     <Auth.Screen name="SignUp" component={SignUp} />
     <Auth.Screen name="Forgout" component={Forgout} />
     <Auth.Screen name="CheckSms" component={CheckSms} />
+    <Auth.Screen name="RedefinePassword" component={RedefinePassword} />
     
   </Auth.Navigator>
 );

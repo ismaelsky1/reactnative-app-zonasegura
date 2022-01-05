@@ -63,9 +63,9 @@ export default function SignInScreen() {
         setMsgError(false);
         setLoading(false);
       } catch (error: any) {
-        console.log(error.request)
         if (error.request.status == 403) {
-          navigate('CheckSms', {status: 403, user: {document: data.document.replace(/[^0-9]/g, "")}},)
+          const request = JSON.parse(error.request._response)
+          navigate('CheckSms', {status: 403, user: request.user},)
         }
 
         setMsgError(true);

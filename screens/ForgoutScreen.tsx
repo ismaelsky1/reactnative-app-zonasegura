@@ -21,6 +21,7 @@ import ModalAgendaCustom from '../components/ModalAgendaCustom';
 
 import logoImg from '../assets/images/logo-name.png';
 import { useAuth } from '../hooks/auth';
+import api from '../services/api';
 
 export default function ForgoutScreen() {
   const [loading, setLoading] = useState(false);
@@ -43,30 +44,20 @@ export default function ForgoutScreen() {
       }),
   });
 
-  const handleSignIn = useCallback(
+  const handleForgout = useCallback(async (dataform) => {
+    setMsgError(false);
+    setLoading(true);
+    try {
+      const response = await api.get(`auth/forgotPassword/${dataform.document.replace(/[^0-9]/g, "")}`);
+      console.log(response.data)
 
-    ()=>navigate('CheckSms')
-
-    // async (data: any) => {
-    //   setMsgError(false);
-    //   setLoading(true);
-
-    //   try {
-    //     await signIn({
-    //       email: data.email,
-    //       password: data.password,
-    //     });
-    //     setMsgError(false);
-    //     setLoading(false);
-
-    //   } catch (error) {
-    //     setMsgError(true);
-    //     setLoading(false);
-
-    //   }
-    // }
-    , [signIn],
-  );
+      navigate("CheckSms", {navigateStep: 'RedefinePassword', ...response.data});
+    } catch (error: any) {
+      console.log(error.request);
+      setMsgError(true);
+      setLoading(false);
+    }
+  }, []);
 
 
   return (
@@ -85,7 +76,7 @@ export default function ForgoutScreen() {
           initialValues={{
             document: ''
           }}
-          onSubmit={handleSignIn}
+          onSubmit={handleForgout}
         >
           {({
             handleSubmit,
@@ -109,7 +100,7 @@ export default function ForgoutScreen() {
               {(errors.document && touched.document) &&
                 <Text style={{ fontSize: 10, color: 'red' }}>{errors.document}</Text>
               }
-
+              { msgError &&(<Text style={{ fontSize: 10, color: 'red' }}>CPF inválido</Text>)}
               <ButtonCustom isLoading={loading} background={Colors[colorScheme].primary} onPress={handleSubmit} title="Enviar" />
             </>
           )}

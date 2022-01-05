@@ -18,6 +18,7 @@ export default function ListViewCustom(props: {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
 
   const colorScheme = useColorScheme();
+  const random = () => Math.floor(Math.random() * (999999 - 1)) + 1;
   return (
     <FlatList
       scrollEnabled={
@@ -30,28 +31,32 @@ export default function ListViewCustom(props: {
       style={styles.containerList}
       data={props.data}
       renderItem={({ item }) => (
-        <TouchableOpacity key={item.name} onPress={item.onPress}>
+        <TouchableOpacity key={random()} onPress={item.onPress}>
           <View
+            key={random()}
             style={[
               styles.itemList,
               { backgroundColor: Colors[colorScheme].background },
             ]}
           >
-            <View style={[styles.groupitemList]}>
+            <View key={random()} style={[styles.groupitemList]}>
               <View
+                key={random()}
                 style={[
                   styles.iconItemList,
                   { backgroundColor: Colors[colorScheme].secund },
                 ]}
               >
                 <Ionicons
+                  key={random()}
                   name={item.icon}
                   size={24}
                   color={Colors[colorScheme].primary}
                 />
               </View>
-              <View>
+              <View key={random()}>
                 <Text
+                  key={random()}
                   style={[
                     styles.titleList,
                     { color: Colors[colorScheme].black },
@@ -60,6 +65,7 @@ export default function ListViewCustom(props: {
                   {item.name}
                 </Text>
                 <Text
+                  key={random()}
                   style={[
                     styles.subtitleList,
                     { color: Colors[colorScheme].black2 },
@@ -71,27 +77,52 @@ export default function ListViewCustom(props: {
             </View>
 
             {item.status && (
-              <View style={[styles.statusItemList]}>
-                <Text
-                  style={[
-                    styles.subtitleList,
-                    {
-                      color:
-                        item.status === "#Aberto"
-                          ? Colors[colorScheme].orange
-                          : item.status == "#Agendado"
-                          ? Colors[colorScheme].primary
-                          : Colors[colorScheme].black2,
-                    },
-                  ]}
-                >
-                  {item.status}
-                </Text>
+              <View key={random()} style={[styles.statusItemList]}>
+                {item.status === "OPEN" && (
+                  <Text
+                    key={random()}
+                    style={[
+                      styles.subtitleList,
+                      {
+                        color: Colors[colorScheme].orange,
+                      },
+                    ]}
+                  >
+                    Aberto
+                  </Text>
+                ) }
+                {item.status === "SCHEDULED" && (
+                  <Text
+                    key={random()}
+                    style={[
+                      styles.subtitleList,
+                      {
+                        color: Colors[colorScheme].black2,
+                      },
+                    ]}
+                  >
+                    {item.status}
+                  </Text>
+                )}
+                {(item.status !== "SCHEDULED" && item.status !== "OPEN") && (
+                  <Text
+                    key={random()}
+                    style={[
+                      styles.subtitleList,
+                      {
+                        color: Colors[colorScheme].black2,
+                      },
+                    ]}
+                  >
+                    {item.status}
+                  </Text>
+                )}
               </View>
             )}
             {item.next && (
-              <View style={[styles.iconItemList]}>
+              <View key={random()} style={[styles.iconItemList]}>
                 <Ionicons
+                  key={random()}
                   name="md-chevron-forward"
                   size={24}
                   color={Colors[colorScheme].black2}

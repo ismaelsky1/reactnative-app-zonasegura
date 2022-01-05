@@ -10,7 +10,6 @@ export type RootStackParamList = {
   Root: undefined;
   NotFound: undefined;
 
-  RequestService: undefined;
   SetLocationMap: undefined;
   Profile: undefined;
   InvoiceDetail: undefined;

@@ -50,12 +50,13 @@ export default function CheckSmsScreen({ route, navigation }: any) {
   });
 
   useEffect(() => {
-    // console.log("step1", user);
     setCount(60);
-    if(route.params.status == 403){
+
+    //status pendente do usuário
+    if (route.params.status == 403) {
       handleResendCode();
     }
-    // console.log();
+
   }, []);
 
   useEffect(() => {
@@ -72,14 +73,25 @@ export default function CheckSmsScreen({ route, navigation }: any) {
     async (dataForm: any) => {
       setMsgError(false);
       setLoading(true);
-      console.log(dataForm);
       try {
-        await checkValidationCode({
-          _id: route.params.user._id,
-          code: dataForm.key,
-        });
+     
+        if (route.params.navigateStep == "RedefinePassword") {
+          const { data } = await api.post(
+            `auth/checkValidationCode/${route.params.user._id}`,
+            {
+              code: dataForm.key,
+            }
+          );
+          navigate("RedefinePassword", { code: dataForm.key, ...data });
+        } else {
 
-        // navigate("SetLocationMapAddress");
+          await checkValidationCode({
+            _id: route.params.user._id,
+            code: dataForm.key,
+          });
+
+          
+        }
       } catch (error: any) {
         console.log(error.request);
         setMsgError(true);
@@ -93,9 +105,10 @@ export default function CheckSmsScreen({ route, navigation }: any) {
     setMsgError(false);
     setLoading(true);
     try {
-      const response = await api.get(`auth/forgotPassword/${route.params.user.document}`);
-      console.log(response.data)
-
+      const response = await api.get(
+        `auth/forgotPassword/${route.params.user.document}`
+      );
+      console.log(response.data);
 
       setMsgError(false);
       setLoading(false);

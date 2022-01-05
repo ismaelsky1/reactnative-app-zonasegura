@@ -9,7 +9,6 @@ import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
-import RequestServiceScreen from '../screens/RequestServiceScreen';
 import SetLocationMapScreen from '../screens/SetLocationMapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import InvoiceDetailScreen from '../screens/InvoiceDetailScreen';
@@ -40,7 +39,6 @@ function RootNavigator() {
   return (
     <App.Navigator initialRouteName={'Root'} screenOptions={{ headerShown: false }}>
       <App.Screen name="Root" component={BottomTabNavigator} />
-      <App.Screen name="RequestService" component={RequestServiceScreen} />
       <App.Screen name="SetLocationMap" component={SetLocationMapScreen} />
       <App.Screen name="Profile" component={ProfileScreen} />
       <App.Screen name="InvoiceDetail" component={InvoiceDetailScreen} />

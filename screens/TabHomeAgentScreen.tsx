@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Vibration } from "react-native";
 import { Text, View } from "../components/Themed";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 // import { Permissions } from 'react-native-unimodules';
@@ -35,7 +36,7 @@ import Animated from "react-native-reanimated";
 import ListViewCustom from "../components/ListViewCustom";
 import ListViewDanger from "../components/ListViewDanger";
 
-export default function SetLocationMapAddressScreen(props: any) {
+export default function SetLocationMapAddressScreen() {
   const { user, setUser } = useAuth();
   const isFocused = useIsFocused();
 
@@ -45,7 +46,13 @@ export default function SetLocationMapAddressScreen(props: any) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [location, setLocation] = useState<any>(null);
+  const [isLoade, setIsLoade] = useState<boolean>(false);
+  const [solicitationOpen, setSolicitationOpen] = useState(0);
+  const [current, setCurrent] = useState<any>(null);
+  const [listSolicitationNow, setListSolicitationNow] = useState<any>([]);
+  const [listSolicitationSheduled, setListSolicitationSheduled] = useState<any>(
+    []
+  );
 
   const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
@@ -54,48 +61,67 @@ export default function SetLocationMapAddressScreen(props: any) {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getSolicitation();
+    
+    const timeout = setInterval(() => {
+      getSolicitation();
+    }, 60000);
+  }, []);
 
   useEffect(() => {
     const use = user.name.split(" ");
     setNick(use[0]);
-
-
-    // if(props.route.params){
-    //   console.log(props.route.params)
-    //   // setFormLocationData(props.route.params.coords)
-    // }
-
-    if (isFocused) {
-    }
   }, [isFocused]);
 
-  const handleSave = async (loc: any) => {
-    setLoading(true);
+  useEffect(() => {
+    Vibration.vibrate();
+  }, [solicitationOpen]);
 
+  const getSolicitation = async () => {
     try {
-      const { data } = await api.patch(`users/${user._id}`, {
-        coordinates: JSON.stringify(loc.coords),
+      setIsLoade(true);
+      const { data } = await api.get("agent/dashboard");
+
+      const now = data.now.map((item: any) => {
+        return {
+          name: item.client.name,
+          descript: item.typeSolicitation.name,
+          icon: item.typeSolicitation.icon,
+          status: item.status,
+          onPress: () => {
+            navigate("SolicitationDetail", item);
+          },
+        };
+      });
+      const sheduled = data.scheduled.map((item: any) => {
+        const startUp = new Date(item.startUp);
+        return {
+          name: item.client.name,
+          descript: `${startUp.getHours()}:${
+            startUp.getMinutes() < 10 ? "0" : ""
+          }${startUp.getMinutes()} - ${item.typeSolicitation.name}`,
+          icon: item.typeSolicitation.icon,
+          status: item.status,
+          onPress: () => {
+            navigate("SolicitationDetail", item);
+          },
+        };
       });
 
-      setUser(data);
-      setShowModal(true);
-      setMensage({
-        title: "Concluido !",
-        mensage: `Localização no maps atualizada. `,
-        btnOk: "Ok",
-        icon: "check",
-        onPress: () => {
-          setShowModal(false);
-          navigate("ProfileAddress");
-        },
-      });
-      setLoading(false);
-    } catch (error) {
+      setListSolicitationNow(now);
+      setListSolicitationSheduled(sheduled);
+      setSolicitationOpen(data.open);
+      setCurrent(data.current);
+
+      setIsLoade(false);
+    } catch (error: any) {
+      // console.log("error", error);
+
       setShowModal(!showModal);
       setMensage({
         title: "Error",
-        mensage: "Tente novamente.",
+        mensage: "Tente novamente mais tarde.",
         btnOk: "Ok",
         icon: "alert",
         onPress: () => {
@@ -106,77 +132,25 @@ export default function SetLocationMapAddressScreen(props: any) {
   };
 
   function fastScreen() {
-    console.log("as");
     return (
-      <View style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}>
-        <ListViewCustom
-          data={[
-            {
-              name: "Jose",
-              descript: "Solicitação via GPS",
-              icon: "flash",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Aberto",
-            },
-            {
-              name: "Ismael",
-              descript: "Solicitação via GPS",
-              icon: "flash",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Finalizado",
-            },
-            {
-              name: "maria",
-              descript: "Solicitação via Endereço",
-              icon: "flash",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Cancelado",
-            },
-          ]}
-        />
+      <View
+        key="fastScreen"
+        style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}
+      >
+        <ListViewCustom key="fastScreen1" data={listSolicitationNow} />
       </View>
     );
   }
 
   function scheduledScreen() {
     return (
-      <View style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}>
+      <View
+        key="scheduledScreen"
+        style={{ flex: 1, backgroundColor: Colors[colorScheme].secund }}
+      >
         <ListViewCustom
-          data={[
-            {
-              name: "Jose",
-              descript: "10:00 - Buscar Pagamento",
-              icon: "calendar",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Aberto",
-            },
-            {
-              name: "Ismael",
-              descript: "21:40 - Escolta",
-              icon: "calendar",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Finalizado",
-            },
-            {
-              name: "maria",
-              descript: "23:00 - Verificar casa",
-              icon: "calendar",
-              onPress: () => {
-                navigate("SolicitationDetail");
-              },
-              status: "#Agendado",
-            },
-          ]}
+          key="scheduledScreen1"
+          data={listSolicitationSheduled}
         />
       </View>
     );
@@ -187,6 +161,7 @@ export default function SetLocationMapAddressScreen(props: any) {
   function MyTabBar({ state, descriptors, navigation, position }: any) {
     return (
       <View
+        key={descriptors + "1"}
         style={{ flexDirection: "row", borderRadius: 15, marginBottom: 10 }}
       >
         {state.routes.map((route: any, index: any) => {
@@ -228,6 +203,7 @@ export default function SetLocationMapAddressScreen(props: any) {
 
           return (
             <TouchableOpacity
+              key={label + "1"}
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -246,6 +222,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               }}
             >
               <Animated.Text
+                key={label}
                 style={{
                   opacity: 1,
                   color: isFocused
@@ -264,7 +241,7 @@ export default function SetLocationMapAddressScreen(props: any) {
 
   return (
     <>
-      <View style={styles.container}>
+      <View key={"container"} style={styles.container}>
         <View
           style={[
             styles.header,
@@ -274,7 +251,7 @@ export default function SetLocationMapAddressScreen(props: any) {
           ]}
         >
           <View style={styles.headerSwitch}>
-            <Switch
+            {/* <Switch
               style={styles.switchStatus}
               trackColor={{
                 false: "#767577",
@@ -304,7 +281,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               >
                 Ausente
               </Text>
-            )}
+            )} */}
           </View>
           <Image style={styles.logo} source={logoImg} />
         </View>
@@ -320,7 +297,7 @@ export default function SetLocationMapAddressScreen(props: any) {
               { color: Colors[colorScheme].text },
             ]}
           >
-            Você tem 02 novos chamados!
+            Você tem {solicitationOpen} novos chamados!
             {/* Você tem {nick} novos chamados! */}
           </Text>
           <Text
@@ -331,71 +308,79 @@ export default function SetLocationMapAddressScreen(props: any) {
           >
             Chamado em atendimento
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              navigate("SolicitationDetail");
-            }}
-          >
-            <View
-              style={[
-                styles.cardCurrent,
-                { backgroundColor: Colors[colorScheme].white },
-              ]}
+          {current && (
+            <TouchableOpacity
+              onPress={() => {
+                navigate("SolicitationDetail", current);
+              }}
             >
               <View
                 style={[
-                  // styles.cardCurrent,
+                  styles.cardCurrent,
                   { backgroundColor: Colors[colorScheme].white },
                 ]}
               >
-                <Ionicons
-                  style={{
-                    backgroundColor: Colors[colorScheme].secund,
-                    padding: 18,
-                    borderRadius: 6,
-                    marginRight: 10,
-                  }}
-                  name="megaphone-outline"
-                  size={34}
-                  color={Colors[colorScheme].orange}
-                />
-              </View>
-              <View
-                style={[
-                  // styles.cardCurrent,
-                  { backgroundColor: Colors[colorScheme].white, width: "70%" },
-                ]}
-              >
-                <Text
+                <View
                   style={[
-                    // styles.textCardNickName,
-                    { color: Colors[colorScheme].black2, fontWeight: "700" },
+                    // styles.cardCurrent,
+                    { backgroundColor: Colors[colorScheme].white },
                   ]}
                 >
-                  ismael
-                </Text>
-                <Text
+                  <Ionicons
+                    style={{
+                      backgroundColor: Colors[colorScheme].secund,
+                      padding: 18,
+                      borderRadius: 6,
+                      marginRight: 10,
+                    }}
+                    name="megaphone-outline"
+                    size={34}
+                    color={Colors[colorScheme].orange}
+                  />
+                </View>
+                <View
                   style={[
-                    // styles.textCardNickName,
-                    { color: Colors[colorScheme].orange, fontWeight: "700" },
-                  ]}
-                >
-                  #Rapido
-                </Text>
-                <Text
-                  style={[
-                    // styles.textCardNickName,
+                    // styles.cardCurrent,
                     {
-                      color: Colors[colorScheme].black2,
-                      fontWeight: "100",
+                      backgroundColor: Colors[colorScheme].white,
+                      width: "70%",
                     },
                   ]}
                 >
-                  Hermantino vieira de souza, 630, Novo Horizonte
-                </Text>
+                  <Text
+                    style={[
+                      // styles.textCardNickName,
+                      { color: Colors[colorScheme].black2, fontWeight: "700" },
+                    ]}
+                  >
+                    {current?.client.name}
+                  </Text>
+                  <Text
+                    style={[
+                      // styles.textCardNickName,
+                      { color: Colors[colorScheme].orange, fontWeight: "700" },
+                    ]}
+                  >
+                    {current?.typeSolicitation?.type == "NOW" && "#Rápido"}
+                    {current?.typeSolicitation?.type == "SCHEDULED" &&
+                      "#Agendado"}
+                  </Text>
+                  <Text
+                    style={[
+                      // styles.textCardNickName,
+                      {
+                        color: Colors[colorScheme].black2,
+                        fontWeight: "100",
+                      },
+                    ]}
+                  >
+                    {current?.client.address} - {current?.client.number},{" "}
+                    {current?.client.district}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
 
           <Text
             style={[

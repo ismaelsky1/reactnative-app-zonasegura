@@ -4,6 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 // import { Permissions } from 'react-native-unimodules';
 import { useIsFocused } from "@react-navigation/native";
 
+import moment from "moment";
+import "moment/locale/pt-br";
+
 import Constants from "expo-constants";
 
 import MapView from "react-native-maps";
@@ -33,7 +36,7 @@ import api from "../services/api";
 import { useAuth } from "../hooks/auth";
 import { TouchableHighlight } from "react-native-gesture-handler";
 
-export default function SolicitationDetailScreen(props: any) {
+export default function SolicitationDetailScreen({ route }: any) {
   const mapStyle = [
     {
       elementType: "geometry",
@@ -209,6 +212,7 @@ export default function SolicitationDetailScreen(props: any) {
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [showModal, setShowModal] = useState<boolean>(false);
   const [location, setLocation] = useState<any>(null);
+  const [solicitation, setSolicitation] = useState<any>(null);
 
   const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
@@ -216,41 +220,47 @@ export default function SolicitationDetailScreen(props: any) {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
-    // if(props.route.params){
-    //   console.log(props.route.params)
-    //   // setFormLocationData(props.route.params.coords)
-    // }
+    console.log(route.params);
+    setSolicitation(route.params);
+    const coordinates = JSON.parse(route.params.coordinates)
+    console.log(coordinates)
+    setLocation(coordinates);
+  }, []);
 
-    if (isFocused) {
-      (async () => {
-        // let { status } = await Location.requestForegroundPermissionsAsync();
+  // useEffect(() => {
+  //   // if(props.route.params){
+  //   //   console.log(props.route.params)
+  //   //   // setFormLocationData(props.route.params.coords)
+  //   // }
 
-        const { status } = await Permissions.askAsync(
-          Permissions.LOCATION_FOREGROUND
-        );
+  //   if (isFocused) {
+  //     (async () => {
+  //       // let { status } = await Location.requestForegroundPermissionsAsync();
 
-        if (status !== "granted") {
-          setAlertMsg({
-            mensage: "Permissão de acesso a localização necessária.",
-            onPress: () => {
-              goBack();
-            },
-            btnOk: "Ok",
-            title: "Atenção",
-            icon: "alert-circle",
-          });
-          setShowAlert(true);
-          return;
-        }
-        let getLocation = await Location.getCurrentPositionAsync({});
-        console.log(getLocation);
-        setLocation(getLocation);
-      })();
-    }
-  }, [isFocused]);
+  //       const { status } = await Permissions.askAsync(
+  //         Permissions.LOCATION_FOREGROUND
+  //       );
+
+  //       if (status !== "granted") {
+  //         setAlertMsg({
+  //           mensage: "Permissão de acesso a localização necessária.",
+  //           onPress: () => {
+  //             goBack();
+  //           },
+  //           btnOk: "Ok",
+  //           title: "Atenção",
+  //           icon: "alert-circle",
+  //         });
+  //         setShowAlert(true);
+  //         return;
+  //       }
+  //       let getLocation = await Location.getCurrentPositionAsync({});
+  //       console.log(getLocation);
+  //       setLocation(getLocation);
+  //     })();
+  //   }
+  // }, [isFocused]);
 
   const handleSave = async (loc: any) => {
     setLoading(true);
@@ -288,32 +298,28 @@ export default function SolicitationDetailScreen(props: any) {
   };
 
   function linkWhats() {
-    console.log('link')
-    Linking.openURL('https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte');
+    console.log("link");
+    Linking.openURL(
+      "https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte"
+    );
   }
 
   function linkCall() {
-    console.log('link')
+    console.log("link");
     Linking.openURL(`tel:${77981143208}`);
   }
-
-  
 
   return (
     <>
       <View style={styles.containerMap}>
-        {location ? (
+        {/* {false ? ( */}
+       {location ? (
           <>
             <MapView
               showsUserLocation={true}
               rotateEnabled={false}
               customMapStyle={mapStyle}
-              initialRegion={{
-                latitude: location.coords?.latitude,
-                longitude: location.coords?.longitude,
-                latitudeDelta: 0,
-                longitudeDelta: 0,
-              }}
+              initialRegion={location}
               // onRegionChange={(res) => {
               //   console.log(res);
               //   setLocation({ coords: res });
@@ -323,10 +329,7 @@ export default function SolicitationDetailScreen(props: any) {
               <Marker
                 image={iconClientMap}
                 key={1}
-                coordinate={{
-                  latitude: location.coords?.latitude,
-                  longitude: location.coords?.longitude,
-                }}
+                coordinate={location}
                 title="Solicitando presença"
                 description="Maria do Carlos"
               />
@@ -336,7 +339,7 @@ export default function SolicitationDetailScreen(props: any) {
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
       </View>
-      <View style={styles.containerDetail}>
+      {solicitation && (<View style={styles.containerDetail}>
         <View
           style={[
             styles.cardCurrent,
@@ -369,7 +372,7 @@ export default function SolicitationDetailScreen(props: any) {
                 },
               ]}
             >
-              Ismael
+              {solicitation?.client?.name}
             </Text>
             <Text
               style={[
@@ -379,7 +382,8 @@ export default function SolicitationDetailScreen(props: any) {
                 },
               ]}
             >
-              Hermantino vieira de souza, 630, Novo Horizonte
+              {solicitation?.client.address} - {solicitation?.client.number},{" "}
+              {solicitation?.client.district}
             </Text>
           </View>
         </View>
@@ -397,12 +401,14 @@ export default function SolicitationDetailScreen(props: any) {
             <Text
               style={[
                 {
-                  color: Colors[colorScheme].orange,
+                  color: Colors[colorScheme].primary,
                   fontWeight: "700",
                 },
               ]}
             >
-              #Rapida
+              {solicitation?.typeSolicitation?.type == "NOW" && "#Rápido"}
+              {solicitation?.typeSolicitation?.type == "SCHEDULED" &&
+                "#Agendado"}
             </Text>
           </View>
           <View style={[{ width: "50%" }]}>
@@ -415,16 +421,52 @@ export default function SolicitationDetailScreen(props: any) {
             >
               Status
             </Text>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].orange,
-                  fontWeight: "700",
-                },
-              ]}
-            >
-              Aberto
-            </Text>
+            {solicitation?.status == "OPEN" && (
+              <Text
+                style={[
+                  { fontWeight: "700", color: Colors[colorScheme].orange },
+                ]}
+              >
+                Aberto
+              </Text>
+            )}
+            {solicitation?.status == "SCHEDULED" && (
+              <Text
+                style={[
+                  { fontWeight: "700", color: Colors[colorScheme].primary },
+                ]}
+              >
+                Agendado
+              </Text>
+            )}
+            {solicitation?.status == "CURRENT" && (
+                <Text
+                  style={[
+                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                  ]}
+                >
+                  Em atendimento
+                </Text>
+              )}
+              {solicitation?.status == "FINISHED" && (
+                <Text
+                  style={[
+                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                  ]}
+                >
+                  Finalizado
+                </Text>
+              )}
+              {solicitation?.status == "CANCELED" && (
+                <Text
+                  style={[
+                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                  ]}
+                >
+                  Cancelado
+                </Text>
+              )}
+
           </View>
         </View>
         <View style={styles.gridDetail}>
@@ -446,7 +488,7 @@ export default function SolicitationDetailScreen(props: any) {
                 },
               ]}
             >
-              10:00 03/12/2021
+              { moment(solicitation?.startUp).locale("pt-br").format("HH:mm DD/MM/YYYY") } 
             </Text>
           </View>
           <View style={[{ width: "50%" }]}>
@@ -460,7 +502,9 @@ export default function SolicitationDetailScreen(props: any) {
             >
               Contato
             </Text>
-            <View style={[{ width: "100%", flexDirection: "row", marginTop: 4 }]}>
+            <View
+              style={[{ width: "100%", flexDirection: "row", marginTop: 4 }]}
+            >
               <TouchableOpacity
                 onPress={linkCall}
                 style={[
@@ -516,7 +560,7 @@ export default function SolicitationDetailScreen(props: any) {
             </TouchableHighlight>
           </View>
         </View>
-      </View>
+      </View>)}
       <TouchableOpacity
         onPress={goBack}
         style={[

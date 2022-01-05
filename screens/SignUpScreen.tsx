@@ -69,10 +69,8 @@ export default function SignUpScreen() {
 
       try {
         const response: any = await signUp(data);
-
-        setMsgError("");
-        setLoading(false);
-        navigate("CheckSms", response);
+        console.log(response)
+        navigate("CheckSms", {navigateStep: '', ...response});
       } catch (error: any) {
         setLoading(false);
 
