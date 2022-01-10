@@ -99,7 +99,7 @@ export default function SignInScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            document: "058.755.185-21",
+            document: "000.000.000-01",
             password: "123123",
           }}
           onSubmit={handleSignIn}
@@ -165,7 +165,7 @@ export default function SignInScreen() {
                 isLoading={loading}
                 background={Colors[colorScheme].primary}
                 onPress={handleSubmit}
-                title="Salvar"
+                title="Entrar"
               />
             </>
           )}

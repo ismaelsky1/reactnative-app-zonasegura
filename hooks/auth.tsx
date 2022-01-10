@@ -13,10 +13,9 @@ interface User {
   email: string;
   name: string;
   address: string;
-  city: string;
+  city: {_id: string, name: string};
+  district: {_id: string, name: string};
   complement: string;
-  created_at: Date;
-  district: string;
   document: string;
   number: string;
   phone: string;
@@ -26,6 +25,7 @@ interface User {
   status: string;
   zipcode: string;
   coordinates: string;
+  created_at: Date;
 }
 
 interface SignUpCredentials {

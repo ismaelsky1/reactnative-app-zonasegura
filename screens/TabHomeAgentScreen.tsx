@@ -62,7 +62,7 @@ export default function SetLocationMapAddressScreen() {
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(() => {
-    getSolicitation();
+    
     
     const timeout = setInterval(() => {
       getSolicitation();
@@ -72,6 +72,7 @@ export default function SetLocationMapAddressScreen() {
   useEffect(() => {
     const use = user.name.split(" ");
     setNick(use[0]);
+    getSolicitation();
   }, [isFocused]);
 
   useEffect(() => {

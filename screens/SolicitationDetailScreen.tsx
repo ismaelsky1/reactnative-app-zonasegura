@@ -221,10 +221,8 @@ export default function SolicitationDetailScreen({ route }: any) {
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(() => {
-    console.log(route.params);
-    setSolicitation(route.params);
-    const coordinates = JSON.parse(route.params.coordinates)
-    console.log(coordinates)
+    getSolicitation(route.params._id);
+    const coordinates = JSON.parse(route.params.coordinates);
     setLocation(coordinates);
   }, []);
 
@@ -262,28 +260,62 @@ export default function SolicitationDetailScreen({ route }: any) {
   //   }
   // }, [isFocused]);
 
-  const handleSave = async (loc: any) => {
+  const handleStatus = async (nextStatus: any) => {
     setLoading(true);
-
     try {
-      const { data } = await api.patch(`users/${user._id}`, {
-        coordinates: JSON.stringify(loc.coords),
-      });
+      const { data } = await api.get(
+        `agent/solicitation/${solicitation._id}/status/${nextStatus}`
+      );
+      console.log(data);
+      setSolicitation(data);
 
-      setUser(data);
       setShowModal(true);
       setMensage({
         title: "Concluido !",
-        mensage: `Localização no maps atualizada. `,
+        mensage: `Solicitação Atualizado `,
         btnOk: "Ok",
         icon: "check",
         onPress: () => {
           setShowModal(false);
-          navigate("ProfileAddress");
         },
       });
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
+      setShowModal(!showModal);
+      console.log(error.request);
+      if (error.request.status == 400) {
+        const resp = JSON.parse(error.request._response);
+        setMensage({
+          title: "Ops...",
+          mensage: resp.message,
+          btnOk: "Ok",
+          icon: "alert",
+          onPress: () => {
+            setShowModal(false);
+          },
+        });
+      } else {
+        setMensage({
+          title: "Error",
+          mensage: "Tente novamente.",
+          btnOk: "Ok",
+          icon: "alert",
+          onPress: () => {
+            setShowModal(false);
+          },
+        });
+      }
+    }
+  };
+
+  const getSolicitation = async (_id: any) => {
+    setLoading(true);
+    try {
+      const { data } = await api.get(`solicitation/${_id}`);
+      setSolicitation(data);
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
       setShowModal(!showModal);
       setMensage({
         title: "Error",
@@ -292,6 +324,7 @@ export default function SolicitationDetailScreen({ route }: any) {
         icon: "alert",
         onPress: () => {
           setShowModal(false);
+          navigate("TabHomeAgent");
         },
       });
     }
@@ -313,17 +346,22 @@ export default function SolicitationDetailScreen({ route }: any) {
     <>
       <View style={styles.containerMap}>
         {/* {false ? ( */}
-       {location ? (
+        {location ? (
           <>
             <MapView
               showsUserLocation={true}
+              showsMyLocationButton={true}
               rotateEnabled={false}
               customMapStyle={mapStyle}
-              initialRegion={location}
-              // onRegionChange={(res) => {
-              //   console.log(res);
-              //   setLocation({ coords: res });
-              // }}
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude, 
+                latitudeDelta: 0.017,
+                longitudeDelta: 0.014}}
+              onRegionChange={(res) => {
+                console.log(res);
+                // setLocation({ coords: res });
+              }}
               style={styles.map}
             >
               <Marker
@@ -339,110 +377,111 @@ export default function SolicitationDetailScreen({ route }: any) {
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
       </View>
-      {solicitation && (<View style={styles.containerDetail}>
-        <View
-          style={[
-            styles.cardCurrent,
-            { backgroundColor: Colors[colorScheme].white },
-          ]}
-        >
-          <View style={[{ backgroundColor: Colors[colorScheme].white }]}>
-            <Ionicons
-              style={{
-                backgroundColor: Colors[colorScheme].secund,
-                padding: 18,
-                borderRadius: 6,
-              }}
-              name="megaphone-outline"
-              size={24}
-              color={Colors[colorScheme].orange}
-            />
-          </View>
+      {solicitation && (
+        <View style={styles.containerDetail}>
           <View
             style={[
-              { backgroundColor: Colors[colorScheme].white, width: "78%" },
+              styles.cardCurrent,
+              { backgroundColor: Colors[colorScheme].white },
             ]}
           >
-            <Text
+            <View style={[{ backgroundColor: Colors[colorScheme].white }]}>
+              <Ionicons
+                style={{
+                  backgroundColor: Colors[colorScheme].secund,
+                  padding: 18,
+                  borderRadius: 6,
+                }}
+                name="megaphone-outline"
+                size={24}
+                color={Colors[colorScheme].orange}
+              />
+            </View>
+            <View
               style={[
-                {
-                  color: Colors[colorScheme].black,
-                  fontWeight: "700",
-                  fontSize: 16,
-                },
+                { backgroundColor: Colors[colorScheme].white, width: "78%" },
               ]}
             >
-              {solicitation?.client?.name}
-            </Text>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black2,
-                  fontWeight: "100",
-                },
-              ]}
-            >
-              {solicitation?.client.address} - {solicitation?.client.number},{" "}
-              {solicitation?.client.district}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.gridDetail}>
-          <View style={[{ width: "50%" }]}>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black2,
-                },
-              ]}
-            >
-              Tipo
-            </Text>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].primary,
-                  fontWeight: "700",
-                },
-              ]}
-            >
-              {solicitation?.typeSolicitation?.type == "NOW" && "#Rápido"}
-              {solicitation?.typeSolicitation?.type == "SCHEDULED" &&
-                "#Agendado"}
-            </Text>
-          </View>
-          <View style={[{ width: "50%" }]}>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black2,
-                },
-              ]}
-            >
-              Status
-            </Text>
-            {solicitation?.status == "OPEN" && (
               <Text
                 style={[
-                  { fontWeight: "700", color: Colors[colorScheme].orange },
+                  {
+                    color: Colors[colorScheme].black,
+                    fontWeight: "700",
+                    fontSize: 16,
+                  },
                 ]}
               >
-                Aberto
+                {solicitation?.client?.name}
               </Text>
-            )}
-            {solicitation?.status == "SCHEDULED" && (
               <Text
                 style={[
-                  { fontWeight: "700", color: Colors[colorScheme].primary },
+                  {
+                    color: Colors[colorScheme].black2,
+                    fontWeight: "100",
+                  },
                 ]}
               >
-                Agendado
+                {solicitation?.client.address} - {solicitation?.client.number},{" "}
+                {solicitation?.client.district}
               </Text>
-            )}
-            {solicitation?.status == "CURRENT" && (
+            </View>
+          </View>
+          <View style={styles.gridDetail}>
+            <View style={[{ width: "50%" }]}>
+              <Text
+                style={[
+                  {
+                    color: Colors[colorScheme].black2,
+                  },
+                ]}
+              >
+                Tipo
+              </Text>
+              <Text
+                style={[
+                  {
+                    color: Colors[colorScheme].primary,
+                    fontWeight: "700",
+                  },
+                ]}
+              >
+                {solicitation?.typeSolicitation?.type == "NOW" && "#Rápido"}
+                {solicitation?.typeSolicitation?.type == "SCHEDULED" &&
+                  "#Agendado"}
+              </Text>
+            </View>
+            <View style={[{ width: "50%" }]}>
+              <Text
+                style={[
+                  {
+                    color: Colors[colorScheme].black2,
+                  },
+                ]}
+              >
+                Status
+              </Text>
+              {solicitation?.status == "OPEN" && (
                 <Text
                   style={[
-                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                    { fontWeight: "700", color: Colors[colorScheme].orange },
+                  ]}
+                >
+                  Aberto
+                </Text>
+              )}
+              {solicitation?.status == "SCHEDULED" && (
+                <Text
+                  style={[
+                    { fontWeight: "700", color: Colors[colorScheme].primary },
+                  ]}
+                >
+                  Agendado
+                </Text>
+              )}
+              {solicitation?.status == "CURRENT" && (
+                <Text
+                  style={[
+                    { fontWeight: "700", color: Colors[colorScheme].primary },
                   ]}
                 >
                   Em atendimento
@@ -451,7 +490,7 @@ export default function SolicitationDetailScreen({ route }: any) {
               {solicitation?.status == "FINISHED" && (
                 <Text
                   style={[
-                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                    { fontWeight: "700", color: Colors[colorScheme].sucess2 },
                   ]}
                 >
                   Finalizado
@@ -460,107 +499,187 @@ export default function SolicitationDetailScreen({ route }: any) {
               {solicitation?.status == "CANCELED" && (
                 <Text
                   style={[
-                    { fontWeight: "700", color: Colors[colorScheme].black2 },
+                    { fontWeight: "700", color: Colors[colorScheme].orange },
                   ]}
                 >
                   Cancelado
                 </Text>
               )}
-
+            </View>
           </View>
-        </View>
-        <View style={styles.gridDetail}>
-          <View style={[{ width: "50%" }]}>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black2,
-                },
-              ]}
-            >
-              Agendado
-            </Text>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black,
-                  fontWeight: "700",
-                },
-              ]}
-            >
-              { moment(solicitation?.startUp).locale("pt-br").format("HH:mm DD/MM/YYYY") } 
-            </Text>
-          </View>
-          <View style={[{ width: "50%" }]}>
-            <Text
-              style={[
-                {
-                  color: Colors[colorScheme].black2,
-                  width: "100%",
-                },
-              ]}
-            >
-              Contato
-            </Text>
-            <View
-              style={[{ width: "100%", flexDirection: "row", marginTop: 4 }]}
-            >
-              <TouchableOpacity
-                onPress={linkCall}
+          <View style={styles.gridDetail}>
+            <View style={[{ width: "50%" }]}>
+              <Text
                 style={[
-                  styles.ButtonCall,
-                  { backgroundColor: Colors[colorScheme].primary },
+                  {
+                    color: Colors[colorScheme].black2,
+                  },
                 ]}
               >
-                <MaterialIcons
-                  color={Colors[colorScheme].white}
-                  style={{ alignSelf: "center" }}
-                  name="call"
-                  size={20}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={linkWhats}
+                Agendado
+              </Text>
+              <Text
                 style={[
-                  styles.ButtonCall,
-                  { backgroundColor: Colors[colorScheme].sucess2 },
+                  {
+                    color: Colors[colorScheme].black,
+                    fontWeight: "700",
+                  },
                 ]}
               >
-                <Ionicons
-                  style={{ alignSelf: "center" }}
-                  name="logo-whatsapp"
-                  size={20}
-                  color={Colors[colorScheme].white}
-                />
-              </TouchableOpacity>
+                {moment(solicitation?.startUp)
+                  .locale("pt-br")
+                  .format("HH:mm DD/MM/YYYY")}
+              </Text>
+            </View>
+            <View style={[{ width: "50%" }]}>
+              <Text
+                style={[
+                  {
+                    color: Colors[colorScheme].black2,
+                    width: "100%",
+                  },
+                ]}
+              >
+                Contato
+              </Text>
+              <View
+                style={[{ width: "100%", flexDirection: "row", marginTop: 4 }]}
+              >
+                <TouchableOpacity
+                  onPress={linkCall}
+                  style={[
+                    styles.ButtonCall,
+                    { backgroundColor: Colors[colorScheme].primary },
+                  ]}
+                >
+                  <MaterialIcons
+                    color={Colors[colorScheme].white}
+                    style={{ alignSelf: "center" }}
+                    name="call"
+                    size={20}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={linkWhats}
+                  style={[
+                    styles.ButtonCall,
+                    { backgroundColor: Colors[colorScheme].sucess2 },
+                  ]}
+                >
+                  <Ionicons
+                    style={{ alignSelf: "center" }}
+                    name="logo-whatsapp"
+                    size={20}
+                    color={Colors[colorScheme].white}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <View style={styles.gridDetail}>
+            <View style={[{ width: "50%" }]}>
+              {solicitation.status == "OPEN" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].primary },
+                  ]}
+                  onPress={() => {
+                    handleStatus("CURRENT");
+                  }}
+                >
+                  <Text style={styles.textButton}>Aceitar</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "CURRENT" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].sucess },
+                  ]}
+                  onPress={() => {
+                    handleStatus("FINISHED");
+                  }}
+                >
+                  <Text style={styles.textButton}>Finalizar</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "FINISHED" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].gray },
+                  ]}
+                  onPress={() => {}}
+                >
+                  <Text style={styles.textButton}>...</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "CANCELED" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].gray },
+                  ]}
+                  onPress={() => {}}
+                >
+                  <Text style={styles.textButton}>...</Text>
+                </TouchableHighlight>
+              )}
+            </View>
+            <View style={[{ width: "50%" }]}>
+              {solicitation.status == "CANCELED" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].gray },
+                  ]}
+                  onPress={() => {}}
+                >
+                  <Text style={styles.textButton}>...</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "FINISHED" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].gray },
+                  ]}
+                  onPress={() => {}}
+                >
+                  <Text style={styles.textButton}>...</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "OPEN" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].warning },
+                  ]}
+                  onPress={() => {
+                    handleStatus("CANCELED");
+                  }}
+                >
+                  <Text style={styles.textButton}>Cancelar</Text>
+                </TouchableHighlight>
+              )}
+              {solicitation.status == "CURRENT" && (
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].warning },
+                  ]}
+                  onPress={() => {
+                    handleStatus("CANCELED");
+                  }}
+                >
+                  <Text style={styles.textButton}>Cancelar</Text>
+                </TouchableHighlight>
+              )}
             </View>
           </View>
         </View>
-        <View style={styles.gridDetail}>
-          <View style={[{ width: "50%" }]}>
-            <TouchableHighlight
-              style={[
-                styles.button,
-                { backgroundColor: Colors[colorScheme].primary },
-              ]}
-              onPress={() => {}}
-            >
-              <Text style={styles.textButton}>Aceitar</Text>
-            </TouchableHighlight>
-          </View>
-          <View style={[{ width: "50%" }]}>
-            <TouchableHighlight
-              style={[
-                styles.button,
-                { backgroundColor: Colors[colorScheme].warning },
-              ]}
-              onPress={() => {}}
-            >
-              <Text style={styles.textButton}>Cancelar</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>)}
+      )}
       <TouchableOpacity
         onPress={goBack}
         style={[

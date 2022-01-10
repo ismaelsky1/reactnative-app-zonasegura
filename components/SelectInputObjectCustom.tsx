@@ -15,11 +15,11 @@ interface Props {
   invalid?: boolean;
   onChangeText: (res: any) => void;
   onBlur?: (res: any) => void;
-  selectedLanguage?: any;
-  setSelectedLanguage?: any;
+  selected?: any;
+  setSelected?: any;
 }
 
-export default function SelectInputCustom(props: Props) {
+export default function SelectInputObjectCustom(props: Props) {
   const colorScheme = useColorScheme();
 
   return (
@@ -40,16 +40,16 @@ export default function SelectInputCustom(props: Props) {
             color: Colors[colorScheme].black,
           },
         ]}
-        selectedValue={props.selectedLanguage}
+        selectedValue={props.selected}
         onValueChange={(itemValue, itemIndex) => {
-          props.setSelectedLanguage(itemValue);
+          props.setSelected(itemValue);
           props.onChangeText(itemValue);
         }}
         mode="dropdown"
       >
-        {props.value.map((item) => {
+        {props.value.map((item: any) => {
           return (
-            <Picker.Item key={String(item)} label={String(item)} value={item} />
+            <Picker.Item key={String(item?._id)} label={String(item?.name)} value={item?._id} />
           );
         })}
       </Picker>
