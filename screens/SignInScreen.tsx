@@ -167,9 +167,16 @@ export default function SignInScreen() {
                 onPress={handleSubmit}
                 title="Entrar"
               />
+             
             </>
           )}
         </Formik>
+        <ButtonCustom
+                isLoading={loading}
+                background={Colors[colorScheme].sucess2}
+                onPress={()=>{navigate("SignUp");}}
+                title="Criar conta"
+              />
       </View>
       <View
         style={[
@@ -202,7 +209,7 @@ export default function SignInScreen() {
             }}
             style={[styles.textFooter, { color: Colors[colorScheme].primary }]}
           >
-            Criar conta
+            Precisa de ajuda?
           </Text>
         </View>
       </View>

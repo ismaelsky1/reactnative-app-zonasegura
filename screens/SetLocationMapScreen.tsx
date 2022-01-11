@@ -136,6 +136,9 @@ export default function SetLocationMapScreen({ route, navigation }: any) {
         {location ? (
           <>
             <MapView
+              showsMyLocationButton={true}
+              showsUserLocation={true}
+              
               initialRegion={{
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,

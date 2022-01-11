@@ -14,6 +14,7 @@ import InvoiceDetailScreen from "../screens/InvoiceDetailScreen";
 
 import { AgentStackParamList } from "../types";
 import BottomTabNavigator from "./BottomTabNavigatorAgent";
+import SelectViewScreen from "../screens/SelectViewScreen";
 
 export default function Navigation({
   colorScheme,
@@ -37,6 +38,7 @@ function RootNavigator() {
       <App.Screen name="SetLocationMap" component={SetLocationMapScreen} />
       <App.Screen name="Profile" component={ProfileScreen} />
       <App.Screen name="ProfileAddress" component={ProfileAddressScreen} />
+      <App.Screen name="SelectView" component={SelectViewScreen} />
       <App.Screen
         name="SetLocationMapAddress"
         component={SetLocationMapAddressScreen}

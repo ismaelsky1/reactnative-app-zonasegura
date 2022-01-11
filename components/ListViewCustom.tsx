@@ -64,7 +64,7 @@ export default function ListViewCustom(props: {
                 >
                   {item.name}
                 </Text>
-                <Text
+                {item.descript && (<Text
                   key={random()}
                   style={[
                     styles.subtitleList,
@@ -72,7 +72,7 @@ export default function ListViewCustom(props: {
                   ]}
                 >
                   {item.descript}
-                </Text>
+                </Text>)}
               </View>
             </View>
 
@@ -150,9 +150,12 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     padding: 10,
     borderRadius: 10,
+    alignItems: 'center'
+    
   },
   groupitemList: {
     flexDirection: "row",
+    alignItems: 'center'
   },
   statusItemList: {
     flex: 1,

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, Linking } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 import ListViewCustom from "../components/ListViewCustom";
 import { Text, View } from "../components/Themed";
@@ -13,30 +13,20 @@ import ModalAlertCustom from "../components/ModalAlertCustom";
 import ModalAgendaCustom from "../components/ModalAgendaCustom";
 import { useAuth } from "../hooks/auth";
 import TextInputCustom from "../components/TextInputCustom";
+import api from "../services/api";
 
 export default function TabClientScreen({ navigation, route }: any) {
-  const [showModal, setShowModal] = useState(false);
-  const [mensage, setMensage] = useState<ModalAlert>({});
+  const [mensage, setMensage] = useState("");
   const [search, setSearch] = useState("");
+  const isFocused = useIsFocused();
 
   const { signOut, user } = useAuth();
 
-  // const [formDataTimeData, setFormDataTimeData] = useState(null);
-  // const [formLocationData, setFormLocationData] = useState<any>(null);
+  const [listClients, SetListClients] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const colorScheme = useColorScheme();
   const { navigate, goBack } = useNavigation();
-
-  function link(params: string) {
-    navigate(params);
-  }
-
-  function linkContact() {
-    console.log("link");
-    Linking.openURL(
-      "https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%2C%20Preciso%20de%20suporte"
-    );
-  }
 
   useEffect(() => {
     // if(props.route.params){
@@ -44,7 +34,48 @@ export default function TabClientScreen({ navigation, route }: any) {
     //   // setFormLocationData(props.route.params.coords)
     // }
     // console.log(props.route.params)
-  }, [navigation]);
+
+    if(isFocused){
+      console.log('step1')
+
+      getListClients();
+    }
+    
+  }, [isFocused]);
+
+  const getListClients = useCallback(async () => {
+    console.log('step2')
+
+    try {
+      const { data } = await api.get(`users`);
+      console.log(data)
+    console.log('step3')
+
+      const resp = data.map((item: any) => {
+        return {
+          name: item.name,
+          descript: item.phone,
+          icon: "person",
+          next: true,
+          onPress: () => {
+            navigate("DetailClient", item);
+          },
+        };
+      });
+      console.log(resp)
+    console.log('step4')
+
+
+      SetListClients(resp);
+      setLoading(false);
+    } catch (err: any) {
+      const error = JSON.parse(err.request._response);
+      console.log("getDistricts", err.request);
+
+      setMensage("Error, Tente novamente.");
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <View
@@ -66,203 +97,8 @@ export default function TabClientScreen({ navigation, route }: any) {
       />
       {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
       <ListViewCustom
-        data={[
-          {
-            name: "Maria",
-            descript: "77981143208",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-          {
-            name: "Jose",
-            descript: "77981143200",
-            icon: "person",
-            next: true,
-            onPress: () => {
-              link("DetailClient");
-            },
-          },
-        ]}
+        data={listClients}
       />
-
-      {showModal && (
-        <ModalAlertCustom
-          onPress={() => setShowModal(!showModal)}
-          onPressCancel={() => {
-            setShowModal(!showModal);
-          }}
-          mensage={mensage?.mensage}
-          icon={mensage?.icon}
-          btnOk={"OK"}
-          title={mensage?.title}
-          btnCancel="Cancelar"
-        />
-      )}
     </View>
   );
 }

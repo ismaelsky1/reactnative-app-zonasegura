@@ -105,10 +105,10 @@ export default function SignUpScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            name: "teste ",
-            phone: "7798114320",
-            document: "0587551852",
-            password: "123123",
+            name: "",
+            phone: "",
+            document: "",
+            password: "",
           }}
           onSubmit={handleSignUp}
         >

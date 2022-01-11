@@ -1,46 +1,37 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { StyleSheet, TextInput, Button, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import HeaderCustom from "../components/HeaderCustom";
-import ListViewCustom from "../components/ListViewCustom";
 import TextInputCustom from "../components/TextInputCustom";
 import { Text, View } from "../components/Themed";
 import { Formik } from "formik";
 import * as yup from "yup";
 
 import Colors from "../constants/Colors";
-import { ModalContext, ModalContextProvider } from "../contexts/modal";
 import useColorScheme from "../hooks/useColorScheme";
-import { ModalAlert } from "../types";
 import ButtonCustom from "../components/ButtonCustom";
-import ModalAlertCustom from "../components/ModalAlertCustom";
-import ModalAgendaCustom from "../components/ModalAgendaCustom";
 import { useAuth } from "../hooks/auth";
 import api from "../services/api";
 import MaskInputCustom from "../components/MaskInputCustom";
 import SelectInputCustom from "../components/SelectInputCustom";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function ProfileAddressScreen(props: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
   const { navigate, goBack } = useNavigation();
-  const [showModal, setShowModal] = useState(false);
-  const [mensage, setMensage] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
 
   const [mensageSuccess, setMensageSuccess] = useState<String>();
   const [mensageWarning, setMensageWarning] = useState<String>();
 
-  const [selectedLanguageState, setSelectedLanguageState] = useState<any>();
-
-
   const colorScheme = useColorScheme();
 
   const { setUser, user } = useAuth();
 
-  useEffect(()=>{
-    setSelectedLanguageState(user.state);
-  },[])
+  useEffect(() => {
+    console.log(user);
+  }, []);
 
   const schemaDataUsers = yup.object().shape({
     address: yup.string().required("Obrigatório"),
@@ -66,18 +57,18 @@ export default function ProfileAddressScreen(props: any) {
     setLoading(true);
     setMensageSuccess("");
     setMensageWarning("");
-    console.log(dataForm);
+    console.log("dataForm", dataForm);
     try {
       const { data } = await api.patch(`users/${user._id}`, dataForm);
       setUser(data);
-      console.log("->", data);
+      console.log("salvo->", data);
 
       setMensageSuccess("Salvo");
 
       setLoading(false);
     } catch (err: any) {
       // const error = JSON.parse(err.request._response);
-
+      console.log("err", err.request);
       setMensageWarning("Error, Tente novamente.");
       setLoading(false);
     }
@@ -96,13 +87,13 @@ export default function ProfileAddressScreen(props: any) {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            address: user.address? user.address: '',
-            complement: user.complement? user.complement: '',
-            number: Number(user.number? user.number: 0),
-            district: user.district? user.district: '',
-            city: user.city? user.city : '',
-            state: user.state? user.state : '',
-            zipcode: user.zipcode?  user.zipcode: '',
+            address: user.address ? user.address : "",
+            complement: user.complement ? user.complement : "",
+            number: Number(user.number ? user.number : 0),
+            district: user.district?._id ? user.district?._id : "",
+            city: user.city?._id ? user.city?._id : "",
+            state: user.state ? user.state : "",
+            zipcode: user.zipcode ? user.zipcode : "",
           }}
           onSubmit={handleUpdateProfile}
         >
@@ -134,20 +125,7 @@ export default function ProfileAddressScreen(props: any) {
                 title="Editar"
               />
               <Text></Text>
-
-              <MaskInputCustom
-                title="CEP:"
-                placeholder="00000-000"
-                onChangeText={handleChange("zipcode")}
-                onBlur={handleBlur("zipcode")}
-                keyboardType="phone-pad"
-                value={values.zipcode}
-                type={"zip-code"}
-              />
-              {errors.zipcode && (
-                <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
-              )}
-
+              
               <TextInputCustom
                 title="Rua:"
                 placeholder="..."
@@ -158,18 +136,6 @@ export default function ProfileAddressScreen(props: any) {
               {errors.address && (
                 <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
               )}
-              <TextInputCustom
-                title="Complemento:"
-                placeholder="..."
-                onChangeText={handleChange("complement")}
-                onBlur={handleBlur("complement")}
-                value={values.complement}
-              />
-              {/* {errors.complement && (
-                <Text style={{ fontSize: 10, color: "red" }}>
-                  {errors.complement}
-                </Text>
-              )} */}
               <TextInputCustom
                 title="Nº:"
                 placeholder="..."
@@ -184,71 +150,108 @@ export default function ProfileAddressScreen(props: any) {
                 </Text>
               )}
               <TextInputCustom
-                title="Bairro:"
+                title="Complemento:"
                 placeholder="..."
-                onChangeText={handleChange("district")}
-                onBlur={handleBlur("district")}
-                value={values.district}
+                onChangeText={handleChange("complement")}
+                onBlur={handleBlur("complement")}
+                value={values.complement}
               />
-              {errors.district && (
-                <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
-              )}
-              <TextInputCustom
-                title="Cidade:"
-                placeholder="..."
-                onChangeText={handleChange("city")}
-                onBlur={handleBlur("city")}
-                value={values.city}
-              />
-              {errors.city && (
-                <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
-              )}
-              <SelectInputCustom
-                title="Estado:"
-                value={[
-                  "AC",
-                  "AL",
-                  "AP",
-                  "AM",
-                  "BA",
-                  "CE",
-                  "DF",
-                  "ES",
-                  "GO",
-                  "MA",
-                  "MS",
-                  "MT",
-                  "MG",
-                  "PA",
-                  "PB",
-                  "PR",
-                  "PE",
-                  "PI",
-                  "RJ",
-                  "RN",
-                  "RS",
-                  "RO",
-                  "RR",
-                  "SC",
-                  "SP",
-                  "SE",
-                  "TO",
-                ]}
-                onChangeText={handleChange("state")}
-                selectedLanguage={selectedLanguageState}
-                setSelectedLanguage={setSelectedLanguageState}
-                onBlur={handleBlur("state")}
-              />
-              {/* <TextInputCustom
-                title="Estato:"
-                placeholder="..."
-                onChangeText={handleChange("state")}
-                onBlur={handleBlur("state")}
-                value={values.state}
-              /> */}
-              {errors.state && (
-                <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
-              )}
+
+              <Text
+                style={{
+                  color: Colors[colorScheme].black2,
+                  fontSize: 16,
+                  fontWeight: "700",
+                  paddingVertical: 7,
+                }}
+              >
+                Cidade:
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigate("SelectView", { title: "Cidade:" });
+                }}
+              >
+                <Text
+                  style={{
+                    backgroundColor: Colors[colorScheme].white,
+                    padding: 10,
+                    borderRadius: 8,
+                    fontSize: 16,
+                  }}
+                >
+                  {user?.city?.name}
+                </Text>
+                {errors.city && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    Obrigatório
+                  </Text>
+                )}
+              </TouchableOpacity>
+
+              <Text
+                style={{
+                  color: Colors[colorScheme].black2,
+                  fontSize: 16,
+                  fontWeight: "700",
+                  paddingVertical: 7,
+                }}
+              >
+                Bairro:
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigate("SelectView", { title: "Bairro:" });
+                }}
+              >
+                <Text
+                  style={{
+                    backgroundColor: Colors[colorScheme].white,
+                    padding: 10,
+                    borderRadius: 8,
+                    fontSize: 16,
+                  }}
+                >
+                  {user?.district?.name}
+                </Text>
+                {errors.district && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    Obrigatório
+                  </Text>
+                )}
+              </TouchableOpacity>
+              <Text
+                style={{
+                  color: Colors[colorScheme].black2,
+                  fontSize: 16,
+                  fontWeight: "700",
+                  paddingVertical: 7,
+                }}
+              >
+                Estado:
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigate("SelectView", { title: "Estado:" });
+                }}
+              >
+                <Text
+                  style={{
+                    backgroundColor: Colors[colorScheme].white,
+                    padding: 10,
+                    borderRadius: 8,
+                    fontSize: 16,
+                  }}
+                >
+                  {user.state}
+                </Text>
+                {errors.state && (
+                  <Text style={{ fontSize: 10, color: "red" }}>
+                    Obrigatório
+                  </Text>
+                )}
+              </TouchableOpacity>
+              <Text></Text>
 
               <ButtonCustom
                 isLoading={loading}

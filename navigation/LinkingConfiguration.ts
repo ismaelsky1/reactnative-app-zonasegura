@@ -54,6 +54,11 @@ export default {
           ProfileAddressScreen: 'ProfileAddress'
         }
       },
+      SelectViewScreen: {
+        screens: {
+          SelectViewScreen: 'SelectView'
+        }
+      },
       SetLocationMapAddressScreen: {
         screens: {
           SetLocationMapAddressScreen: 'SetLocationMapAddress'

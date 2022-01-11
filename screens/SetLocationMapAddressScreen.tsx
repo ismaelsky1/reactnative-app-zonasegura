@@ -113,7 +113,15 @@ export default function SetLocationMapAddressScreen(props: any) {
         {location ? (
           <>
             <MapView
-              initialRegion={location.coords}
+              initialRegion={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.017,
+                longitudeDelta: 0.014
+              }}
+              showsMyLocationButton={true}
+              showsUserLocation={true}
+              // followsUserLocation={true}
               onRegionChange={(res) => {
                 setLocation({ coords: res });
               }}
@@ -141,6 +149,7 @@ export default function SetLocationMapAddressScreen(props: any) {
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
       </View>
+
       <Ionicons
         onPress={() => {
           goBack();

@@ -16,6 +16,8 @@ export type RootStackParamList = {
   HistoryInvoice: undefined;
   ProfileAddress: undefined;
   SetLocationMapAddress: undefined;
+  SelectView: undefined;
+  
   HistorySolicitatio: undefined;
 };
 
@@ -53,6 +55,8 @@ export type AgentStackParamList = {
   Profile: undefined;
   ProfileAddress: undefined;
   SetLocationMapAddress: undefined;
+  SelectView: undefined;
+  
 };
 export type AgentBottomTabParamList = {
   TabClient: undefined;

@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "./Themed";
 
 import { Picker } from "@react-native-picker/picker";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   title?: string;
-  value: string[] | Number[];
+  data: any[];
   invalid?: boolean;
   onChangeText: (res: any) => void;
   onBlur?: (res: any) => void;
-  selectedLanguage?: any;
-  setSelectedLanguage?: any;
+  selected?: any;
+  setSelected?: any;
 }
 
 export default function SelectInputCustom(props: Props) {
@@ -40,16 +38,17 @@ export default function SelectInputCustom(props: Props) {
             color: Colors[colorScheme].black,
           },
         ]}
-        selectedValue={props.selectedLanguage}
+        selectedValue={props.selected}
         onValueChange={(itemValue, itemIndex) => {
-          props.setSelectedLanguage(itemValue);
+          console.log(itemValue)
+          props.setSelected(itemValue);
           props.onChangeText(itemValue);
         }}
         mode="dropdown"
       >
-        {props.value.map((item) => {
+        {props.data.map((item) => {
           return (
-            <Picker.Item key={String(item)} label={String(item)} value={item} />
+            <Picker.Item key={String(item._id)} label={String(item.name)} value={item._id} />
           );
         })}
       </Picker>
@@ -75,6 +74,6 @@ const styles = StyleSheet.create({
     padding: 8,
     marginVertical: 5,
     borderRadius: 5,
-    height: 50
+    height: 50,
   },
 });
