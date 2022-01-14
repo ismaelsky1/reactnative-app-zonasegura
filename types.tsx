@@ -17,7 +17,7 @@ export type RootStackParamList = {
   ProfileAddress: undefined;
   SetLocationMapAddress: undefined;
   SelectView: undefined;
-  
+  SolicitationDetail: undefined;
   HistorySolicitatio: undefined;
 };
 

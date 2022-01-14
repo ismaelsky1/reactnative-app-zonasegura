@@ -41,21 +41,14 @@ export default function TabHomeScreen({ route, navigation }: any) {
     //   // setFormLocationData(props.route.params.coords)
     // }
 
-    
-
     if (isFocused) {
       if (!user.coordinates) {
-        console.log(user.coordinates)
         setIsAddressFull(false);
-      }else if(!user.address){
-        console.log(user.address)
-
+      } else if (!user.address) {
         setIsAddressFull(false);
-      }else{
-        console.log('ss')
-
+      } else {
         setIsAddressFull(true);
-      }  
+      }
       getTypeSolicitation();
     }
 
@@ -84,7 +77,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
                 btnOk: "Sim",
                 icon: "help-circle",
                 onPress: () => {
-                  createSolicitation(item._id, item.action);
+                  createSolicitation(item);
                 },
                 btnCancel: "Não",
                 onPressCancel: () => {
@@ -94,7 +87,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
             }
 
             if (item.type == "SCHEDULED") {
-              navigate(`SetLocationMap`, { idTypeSolicitation: item._id });
+              navigate(`SetLocationMap`, { typeSolicitation: item });
             }
           },
         };
@@ -116,13 +109,10 @@ export default function TabHomeScreen({ route, navigation }: any) {
     }
   }, []);
 
-  const createSolicitation = async (
-    idTypeSolicitation: string,
-    action: string
-  ) => {
+  const createSolicitation = async (typeSolicitation: any) => {
     let coord;
 
-    if (action == "GPS") {
+    if (typeSolicitation.action == "GPS") {
       const { status } = await Permissions.askAsync(
         Permissions.LOCATION_FOREGROUND
       );
@@ -144,21 +134,20 @@ export default function TabHomeScreen({ route, navigation }: any) {
       coord = JSON.stringify(coords);
     }
 
-    if (action == "ENDERECO") {
+    if (typeSolicitation.action == "ENDERECO") {
       coord = user.coordinates;
     }
 
     try {
-      console.log('11111111111111111111111111111111111')
       const { data } = await api.post("solicitation", {
-        client: user._id,
-        agent: user.responsibleAgent._id ,
-        typeSolicitation: idTypeSolicitation,
+        client: user,
+        typeSolicitation: typeSolicitation,
+        district: user.district,
         status: "OPEN",
         obs: "",
         coordinates: coord,
       });
-      
+      console.log(data)
 
       setMensage({
         title: "Concluido !",
@@ -247,12 +236,22 @@ export default function TabHomeScreen({ route, navigation }: any) {
             onPress={() => {
               navigate("ProfileAddress");
             }}
-            style={[styles.continue, { backgroundColor: Colors[colorScheme].primary } ]}
+            style={[
+              styles.continue,
+              { backgroundColor: Colors[colorScheme].primary },
+            ]}
             key="++"
           >
-            <Text style={[styles.titleSolicitation,{color: Colors[colorScheme].white }]}>CONTINUAR</Text>
-            
-              {/* <AntDesign
+            <Text
+              style={[
+                styles.titleSolicitation,
+                { color: Colors[colorScheme].white },
+              ]}
+            >
+              CONTINUAR
+            </Text>
+
+            {/* <AntDesign
                 name="rightcircleo"
                 size={24}
                 color={Colors[colorScheme].white}
@@ -315,7 +314,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     margin: 10,
     marginVertical: 50,
-    borderRadius:30,
+    borderRadius: 30,
     justifyContent: "space-evenly",
     flexDirection: "row",
     alignItems: "center",

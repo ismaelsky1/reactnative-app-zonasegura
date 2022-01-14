@@ -21,17 +21,18 @@ import ModalMap from "../components/ModalAlertMap";
 
 import api from "../services/api";
 import ListViewDanger from "../components/ListViewDanger";
+import { useAuth } from "../hooks/auth";
+import ListViewCustom from "../components/ListViewCustom";
 
 export default function HistorySolicitationScreen(props: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
-  // const { navigate, goBack } = useNavigation();
+
+  const { user } = useAuth();
+
+  const { navigate, goBack } = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
 
-  const [showModal, setShowModal] = useState(false);
-  const [showMapModal, setShowMapModal] = useState(false);
-
-  const [mensage, setMensage] = useState<ModalAlert>({});
-  const [mensageMap, setMensageMap] = useState<ModalAlertMap>({});
+  const [mensage, setMensage] = useState('');
   const [listSolicitation, setListSolicitation] = useState([]);
 
   const colorScheme = useColorScheme();
@@ -42,123 +43,30 @@ export default function HistorySolicitationScreen(props: any) {
 
   const getSolicitation = useCallback(async () => {
     setIsLoading(true);
+    setMensage('');
     try {
-      const { data } = await api.get("solicitation");
+      const { data } = await api.get(`solicitation?client._id=${user._id}`);
 
       const resp = data.map((item: any) => {
         return {
           name: item.typeSolicitation.name,
-          descript: item.typeSolicitation.descript,
+          // descript: ' ',
+          status: item.status,
           icon: item.typeSolicitation.icon,
           next: false,
           onPress: () => {
-            if (
-              item.typeSolicitation.action == "GPS" ||
-              item.typeSolicitation.action == "ENDERECO"
-            ) {
-              setShowModal(true);
-              setMensage({
-                title: `Solicitação: \n${item.typeSolicitation.name}`,
-                mensage: `${item.typeSolicitation.descript} \nSegurança: ${item.agent.name} foi acionado!`,
-                btnOk: "Voltar",
-                btnCancel: "Cancelar",
-                icon: "run-fast",
-                onPress: () => {
-                  setShowModal(false);
-                },
-                onPressCancel: () => {
-                  setMensage({
-                    title: "Confirma",
-                    mensage: `Realmente desejá cancelar? \nO segurança já pode esta perto!`,
-                    btnOk: "Sim",
-                    btnCancel: "Não",
-                    icon: "alert",
-                    onPress: () => {
-                      deleteSolicitation(item._id);
-                    },
-                    onPressCancel: () => {
-                      setShowModal(false);
-                    },
-                  });
-                },
-              });
-            }
-
-            if (item.typeSolicitation.action == "ESCOLTA") {
-              console.log(item.startUp);
-              setShowMapModal(true);
-              setMensageMap({
-                title: `${item.typeSolicitation.name}`,
-                mensage: `Local de encontro:`,
-                btnOk: "Voltar",
-                btnCancel: "Cancelar",
-                icon: "map-marker-distance",
-                coordinates: item.coordinates,
-                startup: item.startUp,
-                onPress: () => {
-                  setShowMapModal(false);
-                },
-                onPressCancel: () => {
-                  setShowMapModal(false);
-                  setShowModal(true);
-                  setMensage({
-                    title: "Confirma",
-                    mensage: `Realmente desejá cancelar? \nO segurança já pode esta perto!`,
-                    btnOk: "Sim",
-                    btnCancel: "Não",
-                    icon: "alert",
-                    onPress: () => {
-                      deleteSolicitation(item._id);
-                    },
-                    onPressCancel: () => {
-                      setShowMapModal(false);
-                    },
-                  });
-                },
-              });
-            }
+            navigate("SolicitationDetail", item);
           },
         };
       });
+      if(!resp.length){
+        setMensage("Nenhuma Solicitação foi Encontrada");
+      }
       setListSolicitation(resp);
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
-      setShowModal(!showModal);
-      setMensage({
-        title: "Error",
-        mensage: "Tente novamente mais tarde.",
-        btnOk: "Ok",
-        icon: "alert",
-        onPress: () => {},
-      });
-    }
-  }, []);
-
-  const deleteSolicitation = useCallback(async (_id: string) => {
-    try {
-      const { data } = await api.delete(`solicitation/${_id}`);
-
-      getSolicitation();
-      setMensage({
-        title: "Concluído.",
-        mensage: `Solicitação cancelada.`,
-        btnOk: "Ok",
-        icon: "check",
-        onPress: () => {
-          setShowModal(false);
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      setShowModal(!showModal);
-      setMensage({
-        title: "Error",
-        mensage: "Tente novamente mais tarde.",
-        btnOk: "Ok",
-        icon: "alert",
-        onPress: () => {},
-      });
+      setIsLoading(false);
+      setMensage("Error no servidor, tente novamente mais tarde!");
     }
   }, []);
 
@@ -175,43 +83,19 @@ export default function HistorySolicitationScreen(props: any) {
           <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         ) : (
           <>
-            {!listSolicitation.length && (
+            {mensage !== '' && (
               <Text
                 style={[
-                  { color: Colors[colorScheme].black2, marginVertical: 10 },
+                  { color: Colors[colorScheme].orange, marginVertical: 10 },
                 ]}
               >
-                Nenhuma Solicitação.
+                {mensage}
               </Text>
             )}
-            <ListViewDanger data={listSolicitation} />
+            <ListViewCustom data={listSolicitation} />
           </>
         )}
       </View>
-      {showModal && (
-        <ModalAlertCustom
-          onPress={mensage.onPress}
-          onPressCancel={mensage.onPressCancel}
-          mensage={mensage?.mensage}
-          icon={mensage?.icon}
-          btnOk={mensage?.btnOk}
-          title={mensage?.title}
-          btnCancel={mensage?.btnCancel}
-        />
-      )}
-      {showMapModal && (
-        <ModalMap
-          onPress={mensageMap.onPress}
-          onPressCancel={mensageMap.onPressCancel}
-          mensage={mensageMap?.mensage}
-          coordinates={mensageMap?.coordinates}
-          startup={mensageMap.startup}
-          icon={mensageMap?.icon}
-          btnOk={mensageMap?.btnOk}
-          title={mensageMap?.title}
-          btnCancel={mensageMap?.btnCancel}
-        />
-      )}
     </>
   );
 }

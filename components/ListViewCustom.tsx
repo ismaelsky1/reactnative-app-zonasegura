@@ -91,6 +91,19 @@ export default function ListViewCustom(props: {
                     Aberto
                   </Text>
                 ) }
+                {item.status === "CURRENT" && (
+                  <Text
+                    key={random()}
+                    style={[
+                      styles.subtitleList,
+                      {
+                        color: Colors[colorScheme].primary,
+                      },
+                    ]}
+                  >
+                    Em atendimento
+                  </Text>
+                ) }
                 {item.status === "SCHEDULED" && (
                   <Text
                     key={random()}
@@ -104,7 +117,7 @@ export default function ListViewCustom(props: {
                     {item.status}
                   </Text>
                 )}
-                {(item.status !== "SCHEDULED" && item.status !== "OPEN") && (
+                {(item.status !== "SCHEDULED" && item.status !== "OPEN" && item.status !== "CURRENT") && (
                   <Text
                     key={random()}
                     style={[
@@ -155,7 +168,7 @@ const styles = StyleSheet.create({
   },
   groupitemList: {
     flexDirection: "row",
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusItemList: {
     flex: 1,
@@ -166,7 +179,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   iconItemList: {
-    width: 43,
+    width: 45,
     paddingVertical: 8,
     alignItems: "center",
     borderRadius: 12,

@@ -14,6 +14,7 @@ import SetLocationMapAddressScreen from "../screens/SetLocationMapAddressScreen"
 import { RootStackParamList } from "../types";
 import BottomTabNavigator from "./BottomTabNavigator";
 import SelectViewScreen from "../screens/SelectViewScreen";
+import SolicitationDetailScreen from "../screens/SolicitationDetailScreen";
 
 export default function Navigation({
   colorScheme,
@@ -40,7 +41,11 @@ function RootNavigator() {
       <App.Screen name="HistoryInvoice" component={HistoryInvoiceScreen} />
       <App.Screen name="ProfileAddress" component={ProfileAddressScreen} />
       <App.Screen name="SelectView" component={SelectViewScreen} />
-      
+      <App.Screen
+        name="SolicitationDetail"
+        component={SolicitationDetailScreen}
+      />
+
       <App.Screen
         name="SetLocationMapAddress"
         component={SetLocationMapAddressScreen}

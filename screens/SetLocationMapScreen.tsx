@@ -63,13 +63,13 @@ export default function SetLocationMapScreen({ route, navigation }: any) {
   };
 
 
-  const createSolicitation = async (idTypeSolicitation: string, loc: any) => {
+  const createSolicitation = async (typeSolicitation: any, loc: any) => {
   
     try {
       const { data } = await api.post("solicitation", {
-        client: user._id,
-        agent: user.responsibleAgent._id,
-        typeSolicitation: idTypeSolicitation,
+        client: user,
+        // agent: user.responsibleAgent._id,
+        typeSolicitation,
         status: "OPEN",
         obs: "",
         startUp: date,
@@ -231,7 +231,7 @@ export default function SetLocationMapScreen({ route, navigation }: any) {
 
       <TouchableOpacity
         onPress={() => {
-          createSolicitation(route.params?.idTypeSolicitation, location);
+          createSolicitation(route.params?.typeSolicitation, location);
         }}
         style={[
           styles.buttonSave,

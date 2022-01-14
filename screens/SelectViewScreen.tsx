@@ -36,7 +36,6 @@ export default function SelectViewScreen({ navigation, route }: any) {
     //   console.log(props.route.params)
     //   // setFormLocationData(props.route.params.coords)
     // }
-  console.log(user.city)
 
     if (isFocused) {
       getList("");
@@ -272,10 +271,9 @@ export default function SelectViewScreen({ navigation, route }: any) {
     if (filter !== "") {
       params.name = filter;
     }
-    console.log("params", params);
+    
     try {
       const { data } = await api.get(`${url}`, { params });
-      // console.log(data);
 
       const resp = data.map((item: any) => {
         return {
@@ -312,7 +310,7 @@ export default function SelectViewScreen({ navigation, route }: any) {
     if (route.params.title == "Bairro:") {
       params.district = idDto;
     }
-    console.log("params", params);
+    
     try {
       const { data } = await api.patch(`users/${user._id}`, params);
       setUser(data);

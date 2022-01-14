@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { StyleSheet, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 
 import HeaderCustom from "../components/HeaderCustom";
 import TextInputCustom from "../components/TextInputCustom";
@@ -24,22 +24,23 @@ export default function ProfileAddressScreen(props: any) {
 
   const [mensageSuccess, setMensageSuccess] = useState<String>();
   const [mensageWarning, setMensageWarning] = useState<String>();
+  const [reinitialize, setReinitialize] = useState<boolean>(false);
 
   const colorScheme = useColorScheme();
 
+  const isFocused = useIsFocused();
   const { setUser, user } = useAuth();
 
   useEffect(() => {
-    console.log(user);
-  }, []);
+  }, [isFocused]);
 
   const schemaDataUsers = yup.object().shape({
     address: yup.string().required("Obrigatório"),
     number: yup.number().required("Obrigatório"),
-    district: yup.string().required("Obrigatório"),
+    // district: yup.string().required("Obrigatório"),
     complement: yup.string().required("Obrigatório"),
-    city: yup.string().required("Obrigatório"),
-    state: yup.string().required("Obrigatório"),
+    // city: yup.string().required("Obrigatório"),
+    // state: yup.string().required("Obrigatório"),
     zipcode: yup
       .string()
       .required("Obrigatório")
@@ -50,21 +51,19 @@ export default function ProfileAddressScreen(props: any) {
   });
 
   const handleUpdateProfile = useCallback(async (dataForm: any) => {
+    console.log("handleUpdateProfile",dataForm);
+    
     let number = Number(dataForm.number);
-    let zipcode = dataForm.zipcode.replace(/[^0-9]/g, "");
+    // let zipcode = dataForm.zipcode.replace(/[^0-9]/g, "");
     dataForm.number = number;
-    dataForm.zipcode = zipcode;
     setLoading(true);
     setMensageSuccess("");
     setMensageWarning("");
-    console.log("dataForm", dataForm);
     try {
       const { data } = await api.patch(`users/${user._id}`, dataForm);
+
       setUser(data);
-      console.log("salvo->", data);
-
       setMensageSuccess("Salvo");
-
       setLoading(false);
     } catch (err: any) {
       // const error = JSON.parse(err.request._response);
@@ -85,16 +84,37 @@ export default function ProfileAddressScreen(props: any) {
         ]}
       >
         <Formik
-          validationSchema={schemaDataUsers}
+          // validationSchema={schemaDataUsers}
+
+          validate={(value) => {
+            let err: any = {};
+
+            if (!value.address) {
+              err.address = "Obrigatório";
+            }
+            if (!value.number) {
+              err.number = "Obrigatório";
+            }
+
+            if (!user.city) {
+              err.city = "Obrigatório";
+            }
+            if (!user.district) {
+              err.district = "Obrigatório";
+            }
+            if (!user.state) {
+              err.state = "Obrigatório";
+            }
+            console.log(err);
+
+            return err;
+          }}
           initialValues={{
             address: user.address ? user.address : "",
             complement: user.complement ? user.complement : "",
             number: Number(user.number ? user.number : 0),
-            district: user.district?._id ? user.district?._id : "",
-            city: user.city?._id ? user.city?._id : "",
-            state: user.state ? user.state : "",
-            zipcode: user.zipcode ? user.zipcode : "",
           }}
+          isInitialValid
           onSubmit={handleUpdateProfile}
         >
           {({
@@ -125,7 +145,7 @@ export default function ProfileAddressScreen(props: any) {
                 title="Editar"
               />
               <Text></Text>
-              
+
               <TextInputCustom
                 title="Rua:"
                 placeholder="..."
@@ -182,7 +202,7 @@ export default function ProfileAddressScreen(props: any) {
                 >
                   {user?.city?.name}
                 </Text>
-                {errors.city && (
+                {!user.city && (
                   <Text style={{ fontSize: 10, color: "red" }}>
                     Obrigatório
                   </Text>
@@ -214,7 +234,7 @@ export default function ProfileAddressScreen(props: any) {
                 >
                   {user?.district?.name}
                 </Text>
-                {errors.district && (
+                {!user.district && (
                   <Text style={{ fontSize: 10, color: "red" }}>
                     Obrigatório
                   </Text>
@@ -245,7 +265,7 @@ export default function ProfileAddressScreen(props: any) {
                 >
                   {user.state}
                 </Text>
-                {errors.state && (
+                {!user.state && (
                   <Text style={{ fontSize: 10, color: "red" }}>
                     Obrigatório
                   </Text>
