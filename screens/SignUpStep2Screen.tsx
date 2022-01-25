@@ -67,13 +67,13 @@ export default function SignUpScreen({ route, navigation }: any) {
             dueDate: route.params.dueDate ? route.params.dueDate : "",
             phone: route.params.phone ? route.params.phone : "",
             password: route.params.password ? route.params.password : "",
-            street: route.params.street ? route.params.street : "Hermatino",
-            complement: route.params.complement ? route.params.complement : "Casa",
-            number: route.params.number ? route.params.number : "630",
-            postCode: route.params.postCode ? route.params.postCode : "47802-382",
+            street: route.params.street ? route.params.street : "",
+            complement: route.params.complement ? route.params.complement : "",
+            number: route.params.number ? route.params.number : "",
+            postCode: route.params.postCode ? route.params.postCode : "",
             city: route.params.city ? route.params.city : "",
             district: route.params.district ? route.params.district : "",
-            state: route.params.state ? route.params.state : "BA",
+            state: route.params.state ? route.params.state : "",
           }}
           enableReinitialize
           onSubmit={handleNextStep}

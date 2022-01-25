@@ -60,7 +60,10 @@ export default function SignUpScreen() {
 
         const { data } = await api.get('users/has', { params: { document: dataUser.document.replace(/[^0-9]/g, ""), phone: dataUser.phone.replace(/[^0-9]/g, "") } })
         console.log(data)
-        // navigate("SignUpStep2", data);
+        setLoading(false);
+        setMessage('');
+
+        navigate("SignUpStep2", dataUser);
 
       } catch (error: any) {
         console.log(error.request)
@@ -88,10 +91,10 @@ export default function SignUpScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            name: "ismael",
-            phone: "(77)98114-3208",
-            document: "058.755.185-22",
-            password: "123123",
+            name: "",
+            phone: "",
+            document: "",
+            password: "",
             dueDate: "01",
           }}
           onSubmit={handleNextStep}
@@ -176,6 +179,9 @@ export default function SignUpScreen() {
                 setSelected={setSelectedDueDate}
                 title="Vencimento da fatura:"
               />
+              <Text style={{ fontSize: 10, color: "red" }}>
+              
+              </Text>
               <Text style={{ fontSize: 10, color: "red" }}>
                 {message}
               </Text>

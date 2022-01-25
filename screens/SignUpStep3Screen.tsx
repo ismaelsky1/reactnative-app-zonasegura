@@ -90,6 +90,7 @@ export default function SetLocationMapAddressScreen({ route, navigation }: any) 
         dataUser.coordinates = JSON.stringify(data.coords);
         dataUser.dueDate = route.params.dueDate;
         dataUser.password = route.params.password;
+        console.log(dataUser)
         
         const response: any = await signUp(dataUser);
         console.log(response)
