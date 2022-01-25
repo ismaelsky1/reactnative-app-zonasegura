@@ -24,7 +24,6 @@ export default function ProfileAddressScreen(props: any) {
 
   const [mensageSuccess, setMensageSuccess] = useState<String>();
   const [mensageWarning, setMensageWarning] = useState<String>();
-  const [reinitialize, setReinitialize] = useState<boolean>(false);
 
   const colorScheme = useColorScheme();
 
@@ -35,7 +34,7 @@ export default function ProfileAddressScreen(props: any) {
   }, [isFocused]);
 
   const schemaDataUsers = yup.object().shape({
-    address: yup.string().required("Obrigatório"),
+    street: yup.string().required("Obrigatório"),
     number: yup.number().required("Obrigatório"),
     // district: yup.string().required("Obrigatório"),
     complement: yup.string().required("Obrigatório"),
@@ -89,8 +88,8 @@ export default function ProfileAddressScreen(props: any) {
           validate={(value) => {
             let err: any = {};
 
-            if (!value.address) {
-              err.address = "Obrigatório";
+            if (!value.street) {
+              err.street = "Obrigatório";
             }
             if (!value.number) {
               err.number = "Obrigatório";
@@ -110,7 +109,7 @@ export default function ProfileAddressScreen(props: any) {
             return err;
           }}
           initialValues={{
-            address: user.address ? user.address : "",
+            street: user.street ? user.street : "",
             complement: user.complement ? user.complement : "",
             number: Number(user.number ? user.number : 0),
           }}
@@ -149,11 +148,11 @@ export default function ProfileAddressScreen(props: any) {
               <TextInputCustom
                 title="Rua:"
                 placeholder="..."
-                onChangeText={handleChange("address")}
-                onBlur={handleBlur("address")}
-                value={values.address}
+                onChangeText={handleChange("street")}
+                onBlur={handleBlur("street")}
+                value={values.street}
               />
-              {errors.address && (
+              {errors.street && (
                 <Text style={{ fontSize: 10, color: "red" }}>Obrigatório</Text>
               )}
               <TextInputCustom

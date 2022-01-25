@@ -12,30 +12,37 @@ interface User {
   _id: string;
   email: string;
   name: string;
-  address: string;
+  street: string;
   city: {_id: string, name: string};
   district: {_id: string, name: string};
   complement: string;
   document: string;
   number: string;
   phone: string;
-  responsibleAgent: any;
   role: string;
   state: string;
   status: string;
-  zipcode: string;
+  postCode: string;
   coordinates: string;
+  dueDate: string;
   created_at: Date;
 }
 
 interface SignUpCredentials {
   email: string;
   name: string;
+  street: string;
+  city: string;
+  district: string;
+  complement: string;
   document: string;
+  number: string;
   phone: string;
   role: string;
   state: string;
-  status: string;
+  postCode: string;
+  coordinates: string;
+  dueDate: string;
 }
 
 interface AuthState {
@@ -101,13 +108,6 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signUp = useCallback(async (signUpDto) => {
-    const document = signUpDto.document.replace(/[^0-9]/g, "");
-    const phone = signUpDto.phone.replace(/[^0-9]/g, "");
-    signUpDto.document = document;
-    signUpDto.phone = phone;
-    signUpDto.role = "CLIENT";
-    signUpDto.status = "PENDING_VALIDATION";
-
     const { data } = await api.post("auth/singUp", signUpDto);
     return data;
   }, []);

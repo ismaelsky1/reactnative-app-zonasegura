@@ -40,7 +40,6 @@ export default function SelectInputCustom(props: Props) {
         ]}
         selectedValue={props.selected}
         onValueChange={(itemValue, itemIndex) => {
-          console.log(itemValue)
           props.setSelected(itemValue);
           props.onChangeText(itemValue);
         }}

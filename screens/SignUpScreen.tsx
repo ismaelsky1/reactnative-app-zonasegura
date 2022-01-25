@@ -1,13 +1,9 @@
 import React, {
   useCallback,
-  useContext,
-  useEffect,
-  useRef,
   useState,
 } from "react";
-import { StyleSheet, TextInput, Button, ScrollView, Image } from "react-native";
+import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Octicons } from "@expo/vector-icons";
 
 import MaskInputCustom from "../components/MaskInputCustom";
 import TextInputCustom from "../components/TextInputCustom";
@@ -18,28 +14,22 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 import Colors from "../constants/Colors";
-import { ModalContext, ModalContextProvider } from "../contexts/modal";
 import useColorScheme from "../hooks/useColorScheme";
-import { ModalAlert } from "../types";
 import ButtonCustom from "../components/ButtonCustom";
-import ModalAlertCustom from "../components/ModalAlertCustom";
-import ModalAgendaCustom from "../components/ModalAgendaCustom";
-
-import logoImg from "../assets/images/logo.png";
-import { useAuth } from "../hooks/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import SelectInputCustom from "../components/SelectInputCustom";
+import api from "../services/api";
 
 export default function SignUpScreen() {
-  const [loading, setLoading] = useState(false);
-  const [msgError, setMsgError] = useState("");
   const { navigate, goBack } = useNavigation();
-
-  const { signIn, signUp, user } = useAuth();
+  const [selectedDueDate, setSelectedDueDate] = useState();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   const colorScheme = useColorScheme();
 
   const schemaDataUsers = yup.object().shape({
     name: yup.string().required("Obrigatório"),
+    dueDate: yup.string().required("Obrigatório"),
     password: yup
       .string()
       .required("Mínimo 6 caractéres")
@@ -62,31 +52,24 @@ export default function SignUpScreen() {
       }),
   });
 
-  const handleSignUp = useCallback(
-    async (data: any) => {
-      setMsgError("");
+  const handleNextStep = useCallback(
+    async (dataUser: any) => {
+      setMessage('');
       setLoading(true);
-
       try {
-        const response: any = await signUp(data);
-        console.log(response)
-        navigate("CheckSms", {navigateStep: '', ...response});
+
+        const { data } = await api.get('users/has', { params: { document: dataUser.document.replace(/[^0-9]/g, ""), phone: dataUser.phone.replace(/[^0-9]/g, "") } })
+        console.log(data)
+        // navigate("SignUpStep2", data);
+
       } catch (error: any) {
+        console.log(error.request)
+        setMessage('Telefone ou CPF já cadastrados!');
         setLoading(false);
-
-        if (error.request.status == 400) {
-          // const response = JSON.parse(error.request.response);
-
-          // if (response.code == 11000) {
-            setMsgError("Telefone ou CPF já utilizado!");
-          // }
-        }else{
-          setMsgError("Error, Tente novamente mais tarde");
-        }
-
       }
+
     },
-    [signIn]
+    []
   );
 
   return (
@@ -105,12 +88,13 @@ export default function SignUpScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            name: "",
-            phone: "",
-            document: "",
-            password: "",
+            name: "ismael",
+            phone: "(77)98114-3208",
+            document: "058.755.185-22",
+            password: "123123",
+            dueDate: "01",
           }}
-          onSubmit={handleSignUp}
+          onSubmit={handleNextStep}
         >
           {({
             handleSubmit,
@@ -179,15 +163,27 @@ export default function SignUpScreen() {
                   {errors.password}
                 </Text>
               )}
-              <Text style={{ color: Colors[colorScheme].warning }}>
-                {msgError}
-              </Text>
 
+              <SelectInputCustom data={[
+                { _id: '01', name: '01' },
+                { _id: '08', name: '08' },
+                { _id: '15', name: '15' },
+                { _id: '22', name: '22' },
+              ]}
+                onChangeText={handleChange("dueDate")}
+                onBlur={handleBlur("dueDate")}
+                selected={selectedDueDate}
+                setSelected={setSelectedDueDate}
+                title="Vencimento da fatura:"
+              />
+              <Text style={{ fontSize: 10, color: "red" }}>
+                {message}
+              </Text>
               <ButtonCustom
                 isLoading={loading}
                 background={Colors[colorScheme].primary}
                 onPress={handleSubmit}
-                title="Cadastrar"
+                title="Próximo"
               />
             </>
           )}

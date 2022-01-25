@@ -44,7 +44,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
     if (isFocused) {
       if (!user.coordinates) {
         setIsAddressFull(false);
-      } else if (!user.address) {
+      } else if (!user.street) {
         setIsAddressFull(false);
       } else {
         setIsAddressFull(true);
