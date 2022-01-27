@@ -81,7 +81,7 @@ export default function InvoiceDetailScreen({ route }: any) {
           status={currentChargeStatus}
           link={{ url: '', params: {} }}
         />)}
-        <Text style={styles.title}>Status</Text>
+        {/* <Text style={styles.title}>Status</Text>
 
         <Picker
           style={{ width: '100%', height: 40 }}
@@ -93,7 +93,7 @@ export default function InvoiceDetailScreen({ route }: any) {
           <Picker.Item label="Aberto" value="OPEN" />
           <Picker.Item label="Pago" value="PAID" />
           <Picker.Item label="Atrasado" value="LATE" />
-        </Picker>
+        </Picker> */}
 
         <Text style={styles.title}>Forma de Pagamento</Text>
         {currentCharge && (<ListViewCustom

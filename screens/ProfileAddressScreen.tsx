@@ -50,8 +50,8 @@ export default function ProfileAddressScreen(props: any) {
   });
 
   const handleUpdateProfile = useCallback(async (dataForm: any) => {
-    console.log("handleUpdateProfile",dataForm);
-    
+    console.log("handleUpdateProfile", dataForm);
+
     let postCode = dataForm.postCode.replace(/[^0-9]/g, "");
     dataForm.postcode = postCode;
     setLoading(true);
@@ -179,6 +179,21 @@ export default function ProfileAddressScreen(props: any) {
                 onBlur={handleBlur("complement")}
                 value={values.complement}
               />
+
+              <MaskInputCustom
+                type={'zip-code'}
+                title="CEP:"
+                keyboardType="decimal-pad"
+                placeholder="00000-000"
+                onChangeText={handleChange("postCode")}
+                onBlur={handleBlur("postCode")}
+                value={values.postCode}
+              />
+              {errors.postCode && touched.postCode && (
+                <Text style={{ fontSize: 10, color: "red" }}>
+                  {errors.postCode}
+                </Text>
+              )}
 
               <Text
                 style={{

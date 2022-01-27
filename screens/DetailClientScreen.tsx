@@ -307,8 +307,9 @@ export default function DetailClientScreen({ route }: any) {
               marginVertical: 10,
             }}
           >
-            <Text style={{ fontSize: 16 }}>Ativo</Text>
-            <Switch
+            <Text style={{ fontSize: 16 }}>Status</Text>
+            <Text style={{ fontSize: 11 }}>{client.status}</Text>
+            {/* <Switch
               trackColor={{
                 false: "#767577",
                 true: Colors[colorScheme].black2,
@@ -317,8 +318,8 @@ export default function DetailClientScreen({ route }: any) {
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleSwitch}
               value={isEnabled}
-            />
-          </View>
+            />*/}
+          </View> 
         </View>
         {location ? (
           <View style={{ borderRadius: 8, overflow: 'hidden' }}>
