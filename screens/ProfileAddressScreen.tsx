@@ -35,12 +35,12 @@ export default function ProfileAddressScreen(props: any) {
 
   const schemaDataUsers = yup.object().shape({
     street: yup.string().required("Obrigatório"),
-    number: yup.number().required("Obrigatório"),
+    number: yup.string().required("Obrigatório"),
     // district: yup.string().required("Obrigatório"),
     complement: yup.string().required("Obrigatório"),
     // city: yup.string().required("Obrigatório"),
     // state: yup.string().required("Obrigatório"),
-    zipcode: yup
+    postCode: yup
       .string()
       .required("Obrigatório")
       .test("len", "documento inválido.", (val) => {
@@ -52,9 +52,8 @@ export default function ProfileAddressScreen(props: any) {
   const handleUpdateProfile = useCallback(async (dataForm: any) => {
     console.log("handleUpdateProfile",dataForm);
     
-    let number = Number(dataForm.number);
-    // let zipcode = dataForm.zipcode.replace(/[^0-9]/g, "");
-    dataForm.number = number;
+    let postCode = dataForm.postCode.replace(/[^0-9]/g, "");
+    dataForm.postcode = postCode;
     setLoading(true);
     setMensageSuccess("");
     setMensageWarning("");
@@ -95,6 +94,10 @@ export default function ProfileAddressScreen(props: any) {
               err.number = "Obrigatório";
             }
 
+            if (!value.postCode) {
+              err.postCode = "Obrigatório";
+            }
+
             if (!user.city) {
               err.city = "Obrigatório";
             }
@@ -111,7 +114,8 @@ export default function ProfileAddressScreen(props: any) {
           initialValues={{
             street: user.street ? user.street : "",
             complement: user.complement ? user.complement : "",
-            number: Number(user.number ? user.number : 0),
+            number: user.number ? user.number : "",
+            postCode: user.postCode ? user.postCode : "",
           }}
           isInitialValid
           onSubmit={handleUpdateProfile}
@@ -161,7 +165,7 @@ export default function ProfileAddressScreen(props: any) {
                 onChangeText={handleChange("number")}
                 onBlur={handleBlur("number")}
                 value={values.number}
-                keyboardType="numeric"
+                keyboardType="default"
               />
               {errors.number && (
                 <Text style={{ fontSize: 10, color: "red" }}>

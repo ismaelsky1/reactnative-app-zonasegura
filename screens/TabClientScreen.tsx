@@ -29,27 +29,26 @@ export default function TabClientScreen({ navigation, route }: any) {
   const { navigate, goBack } = useNavigation();
 
   useEffect(() => {
-    // if(props.route.params){
-    //   console.log(props.route.params)
-    //   // setFormLocationData(props.route.params.coords)
-    // }
-    // console.log(props.route.params)
-
-    if(isFocused){
-      console.log('step1')
-
-      getListClients();
+    if (isFocused) {
+      const getDistrict = user.ownerDistrict.map(item => item._id)
+      getListClients(getDistrict,search);
     }
-    
-  }, [isFocused]);
 
-  const getListClients = useCallback(async () => {
-    console.log('step2')
+  }, [isFocused,search]);
+
+  const getListClients = useCallback(async (getDistrict,getSearch) => {
+    let params: any = {}
+    params.district = getDistrict;
+    params.role = 'CLIENT';
+    if (getSearch !== "") {
+      params.name =  getSearch;
+      // params.name =  { $regex: new RegExp(getSearch), $options: 'i' };
+      
+    }
 
     try {
-      const { data } = await api.get(`users`);
-      console.log(data)
-    console.log('step3')
+      console.log(params)
+      const { data } = await api.get(`users`, { params });
 
       const resp = data.map((item: any) => {
         return {
@@ -62,10 +61,6 @@ export default function TabClientScreen({ navigation, route }: any) {
           },
         };
       });
-      console.log(resp)
-    console.log('step4')
-
-
       SetListClients(resp);
       setLoading(false);
     } catch (err: any) {

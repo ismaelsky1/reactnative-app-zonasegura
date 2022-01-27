@@ -25,6 +25,7 @@ interface User {
   postCode: string;
   coordinates: string;
   dueDate: string;
+  ownerDistrict: any[]
   created_at: Date;
 }
 

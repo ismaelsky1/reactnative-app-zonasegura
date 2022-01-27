@@ -15,6 +15,7 @@ import {
   Button,
   Switch,
   ScrollView,
+  Linking,
 } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
@@ -30,7 +31,7 @@ import api from "../services/api";
 import { useAuth } from "../hooks/auth";
 import ListViewCustom from "../components/ListViewCustom";
 
-export default function DetailClientScreen(props: any) {
+export default function DetailClientScreen({ route }: any) {
   const { user, setUser } = useAuth();
 
   const { navigate, goBack } = useNavigation();
@@ -43,39 +44,15 @@ export default function DetailClientScreen(props: any) {
 
   const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
+  const [client, setClient] = useState<any>();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(() => {
-    (async () => {
-      // let { status } = await Location.requestForegroundPermissionsAsync();
-
-      const { status } = await Permissions.askAsync(
-        Permissions.LOCATION_FOREGROUND
-      );
-
-      if (status !== "granted") {
-        setAlertMsg({
-          mensage: "Permissão de acesso a localização necessária.",
-          onPress: () => {
-            goBack();
-          },
-          btnOk: "Ok",
-          title: "Atenção",
-          icon: "alert-circle",
-        });
-        setShowAlert(true);
-        return;
-      }
-      let getLocation = await Location.getCurrentPositionAsync({});
-
-      if (user.coordinates) {
-        setLocation({ coords: JSON.parse(user.coordinates) });
-      } else {
-        setLocation(getLocation);
-      }
-    })();
+    setClient(route.params);
+    setLocation({ coords: JSON.parse(route.params.coordinates) });
+    console.log({ coords: JSON.parse(route.params.coordinates) })
   }, []);
 
   const handleSave = async (loc: any) => {
@@ -115,7 +92,7 @@ export default function DetailClientScreen(props: any) {
 
   return (
     <>
-      <ScrollView
+      {client && <ScrollView
         style={[
           styles.container,
           { backgroundColor: Colors[colorScheme].secund },
@@ -158,7 +135,7 @@ export default function DetailClientScreen(props: any) {
           }}
         >
           <Text style={{ fontSize: 20, marginVertical: 10 }}>
-            JOSE ANTONIO DE MATOS
+            {client.name}
           </Text>
           <View
             style={{
@@ -170,13 +147,13 @@ export default function DetailClientScreen(props: any) {
               marginVertical: 10,
             }}
           >
-            <Text style={{ fontSize: 16 }}>77 9 81143208</Text>
+            <Text style={{ fontSize: 16 }}>{client.phone}</Text>
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <TouchableOpacity
                 onPress={() => {
-                  handleSave(location);
+                  Linking.openURL(`tel:${client.phone}`);
                 }}
                 style={[
                   styles.buttonOut,
@@ -200,7 +177,7 @@ export default function DetailClientScreen(props: any) {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  navigate('HistoryInvoice');
+                  Linking.openURL(`https://api.whatsapp.com/send?phone=55${client.phone}&text=Ol%C3%A1%2C%20Preciso%20de%20suporte`);
                 }}
                 style={[
                   styles.buttonOut,
@@ -244,7 +221,7 @@ export default function DetailClientScreen(props: any) {
             }}
           >
             <Text style={{ fontSize: 16 }}>Plano R$ 30,00/m</Text>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 handleSave(location);
               }}
@@ -266,7 +243,7 @@ export default function DetailClientScreen(props: any) {
                 size={21}
                 color={Colors[colorScheme].primary}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <View
             style={[
@@ -291,7 +268,7 @@ export default function DetailClientScreen(props: any) {
             <Text style={{ fontSize: 16 }}>Historico de pagamentos</Text>
             <TouchableOpacity
               onPress={() => {
-                navigate('HistoryInvoice');
+                navigate('HistoryInvoice', { idClient: client._id });
               }}
               style={[
                 styles.buttonOut,
@@ -307,7 +284,7 @@ export default function DetailClientScreen(props: any) {
               ]}
             >
               <AntDesign name="filetext1" size={21} color={Colors[colorScheme].primary} />
-             
+
             </TouchableOpacity>
           </View>
           <View
@@ -344,10 +321,16 @@ export default function DetailClientScreen(props: any) {
           </View>
         </View>
         {location ? (
-          <View style={{borderRadius: 8, overflow: 'hidden'}}>
+          <View style={{ borderRadius: 8, overflow: 'hidden' }}>
             <MapView
               pointerEvents="none"
-              initialRegion={location.coords}
+              initialRegion={{
+                latitude: location?.coords.latitude,
+                longitude: location?.coords.longitude,
+                latitudeDelta: 0.003,
+                longitudeDelta: 0.0111,
+              }}
+              
               onRegionChange={(res) => {
                 setLocation({ coords: res });
               }}
@@ -375,34 +358,37 @@ export default function DetailClientScreen(props: any) {
             />
           </View>
         ) : (
-          <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
+      <ActivityIndicator size="large" color={Colors[colorScheme].primary} />
         )}
-        <View
-          style={{ width: "100%", backgroundColor: Colors[colorScheme].secund }}
+      <View
+        style={{ width: "100%", backgroundColor: Colors[colorScheme].secund }}
+      >
+        <Text
+          style={{
+            width: "100%",
+            fontWeight: "100",
+            color: Colors[colorScheme].black2,
+            marginVertical: 5,
+          }}
         >
-          <Text
-            style={{
-              width: "100%",
-              fontWeight: "100",
-              color: Colors[colorScheme].black2,
-              marginVertical: 5,
-            }}
-          >
-            Rua Carlos de souza, 630, Vilar rica, Barreiras - BA, 47800-001
-          </Text>
-        </View>
-        
-      </ScrollView>
+          {client.street}, {client.number}, {client.district.name} , {client.city.name} - {client.state}
+        </Text>
+      </View>
 
-      {showModal && (
-        <ModalAlertCustom
-          title={mensage.title}
-          mensage={mensage?.mensage}
-          onPress={mensage.onPress}
-          btnOk={mensage.btnOk}
-          icon={mensage.icon}
-        />
-      )}
+    </ScrollView>}
+
+
+{
+  showModal && (
+    <ModalAlertCustom
+      title={mensage.title}
+      mensage={mensage?.mensage}
+      onPress={mensage.onPress}
+      btnOk={mensage.btnOk}
+      icon={mensage.icon}
+    />
+  )
+}
     </>
   );
 }

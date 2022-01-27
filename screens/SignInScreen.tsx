@@ -65,7 +65,7 @@ export default function SignInScreen() {
       } catch (error: any) {
         if (error.request.status == 403) {
           const request = JSON.parse(error.request._response)
-          navigate('CheckSms', {status: 403, user: request.user},)
+          navigate('CheckSms', { status: 403, user: request.user },)
         }
 
         setMsgError(true);
@@ -167,16 +167,16 @@ export default function SignInScreen() {
                 onPress={handleSubmit}
                 title="Entrar"
               />
-             
+
             </>
           )}
         </Formik>
         <ButtonCustom
-                isLoading={loading}
-                background={Colors[colorScheme].sucess2}
-                onPress={()=>{navigate("SignUp");}}
-                title="Criar conta"
-              />
+          isLoading={false}
+          background={Colors[colorScheme].sucess2}
+          onPress={() => { navigate("SignUp"); }}
+          title="Criar conta"
+        />
       </View>
       <View
         style={[

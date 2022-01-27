@@ -15,18 +15,38 @@ import { ItemListView, ModalAlert } from "../types";
 import ModalAlertCustom from "../components/ModalAlertCustom";
 import ModalAgendaCustom from "../components/ModalAgendaCustom";
 import CardPriceCustom from "../components/CardPriceCustom";
+import moment from "moment";
 
-export default function InvoiceDetailScreen(props: any) {
+export default function InvoiceDetailScreen({ route }: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
   // const { navigate, goBack } = useNavigation();
   const [showModal, setShowModal] = useState(false);
   const [showModalAgenda, setShowModalAgenda] = useState(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [selectedLanguage, setSelectedLanguage] = useState();
+  const [currentCharge, setCurrentCharge] = useState<any>();
+  const [currentChargeStatus, setCurrentChargeStatus] = useState('');
 
   const colorScheme = useColorScheme();
 
-  useEffect(() => {}, [props]);
+  useEffect(() => {
+    console.log('route', route.params)
+    setCurrentCharge(route.params)
+    let status = '';
+    if (route.params.charges[0].status == 'ACTIVE') {
+      status = 'Em aberto';
+    }
+    if (route.params.charges[0].status == 'PAID') {
+      status = 'Pago';
+    }
+    if (route.params.charges[0].status == 'MANUAL_RECONCILIATION') {
+      status = 'Pago';
+    }
+    if (route.params.charges[0].status == 'CANCELLED') {
+      status = 'Cancelado';
+    }
+    setCurrentChargeStatus(status)
+  }, [route]);
 
   const copyToClipboard = () => {
     Clipboard.setString("05875518529");
@@ -52,18 +72,19 @@ export default function InvoiceDetailScreen(props: any) {
           { backgroundColor: Colors[colorScheme].secund },
         ]}
       >
-        <CardPriceCustom
-          title="Plano Mensal"
+
+        {currentCharge && (<CardPriceCustom
+          title={"Plano Mensal"}
           subTitle="serviço de seguraça privada"
-          price="R$ 19,00"
-          date="Vencimento dia 02/04/21"
-          status="Em aberto"
-          link=""
-        />
+          price={`R$ ${currentCharge.charges[0].amount.toFixed(2)}`}
+          date={`Vencimento dia ${moment(currentCharge.charges[0].dueDate).format('DD/MM/yyyy')}`}
+          status={currentChargeStatus}
+          link={{ url: '', params: {} }}
+        />)}
         <Text style={styles.title}>Status</Text>
 
         <Picker
-        style={{width: '100%',height: 40}}
+          style={{ width: '100%', height: 40 }}
           selectedValue={selectedLanguage}
           onValueChange={(itemValue, itemIndex) =>
             setSelectedLanguage(itemValue)
@@ -75,20 +96,29 @@ export default function InvoiceDetailScreen(props: any) {
         </Picker>
 
         <Text style={styles.title}>Forma de Pagamento</Text>
-        <ListViewCustom
+        {currentCharge && (<ListViewCustom
           data={[
             {
-              name: "PIX CPF: 058.755.100-20",
-              descript: "Não é necessário enviar o comprovante.",
+              name: "Boleto ou Cartão de Crédito",
+              descript: "Rápido e pratico",
               onPress: () => {
-                copyToClipboard();
+                Linking.openURL(currentCharge.charges[0].checkoutUrl);
               },
               icon: "barcode",
               next: true,
             },
+            // {
+            //   name: "PIX CPF: 058.755.100-20",
+            //   descript: "Necessário enviar o comprovante.",
+            //   onPress: () => {
+            //     copyToClipboard();
+            //   },
+            //   icon: "link",
+            //   next: true,
+            // },
             {
               name: "Agendar retirada",
-              descript: "O Segurança irá a seu endereço cadastrado.",
+              descript: "Buscar no seu endereço.",
               onPress: () => {
                 Linking.openURL(
                   "https://api.whatsapp.com/send?phone=5577981143208&text=Ol%C3%A1%20desejo%20efetuar%20o%20pagamento!%20"
@@ -98,7 +128,7 @@ export default function InvoiceDetailScreen(props: any) {
               next: true,
             },
           ]}
-        />
+        />)}
       </View>
       {showModal && (
         <ModalAlertCustom

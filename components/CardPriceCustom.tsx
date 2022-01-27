@@ -16,7 +16,7 @@ interface Props {
   price: string;
   date: string;
   status: string;
-  link: string;
+  link: { url: '', params: any };
   // onPress: () => void;
 }
 
@@ -25,7 +25,7 @@ export default function CardPriceCustom(props: Props) {
   const colorScheme = useColorScheme();
   return (
     <View style={[styles.card, { backgroundColor: Colors[colorScheme].white }]} >
-      <TouchableOpacity style={[]} onPress={() => { navigate(props.link) }}>
+      <TouchableOpacity style={[]} onPress={() => { navigate(props.link.url, props.link.params) }}>
 
         <Text style={[styles.title, { color: Colors[colorScheme].black }]}>{props.title}</Text>
         <Text style={[styles.subTitle, { color: Colors[colorScheme].black }]}>{props.subTitle}</Text>

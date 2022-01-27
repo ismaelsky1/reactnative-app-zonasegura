@@ -33,7 +33,8 @@ export default function CheckSmsScreen({ route, navigation }: any) {
 
   const [count, setCount] = useState<number>(60);
   const [resendPhone, setResendPhone] = useState<string>();
-
+  const [sms, setSms] = useState<string>();
+  
   const { navigate } = useNavigation();
   const { signIn, checkValidationCode, user } = useAuth();
 
@@ -56,6 +57,8 @@ export default function CheckSmsScreen({ route, navigation }: any) {
     if (route.params.status == 403) {
       handleResendCode();
     }
+      setSms(route.params.data.mensagem)
+    
 
   }, []);
 
@@ -109,7 +112,7 @@ export default function CheckSmsScreen({ route, navigation }: any) {
         `auth/forgotPassword/${route.params.user.document}`
       );
       console.log(response.data);
-
+        setSms(response.data.mensagem)
       setMsgError(false);
       setLoading(false);
     } catch (error: any) {
@@ -146,7 +149,8 @@ export default function CheckSmsScreen({ route, navigation }: any) {
           Informe código recebido
         </Text>
         <Text style={[styles.subTitle, { color: Colors[colorScheme].black2 }]}>
-          Enviamos um código para seu número, informe no campo logo a baixo.
+          {/* Enviamos um código para seu número, informe no campo logo a baixo. */}
+          {sms}
         </Text>
         <Formik
           validationSchema={schemaDataUsers}

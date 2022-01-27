@@ -64,6 +64,7 @@ export default function SignUpScreen({ route, navigation }: any) {
           initialValues={{
             name: route.params.name ? route.params.name : "",
             document: route.params.document ? route.params.document : "",
+            // email: route.params.email ? route.params.email : "",
             dueDate: route.params.dueDate ? route.params.dueDate : "",
             phone: route.params.phone ? route.params.phone : "",
             password: route.params.password ? route.params.password : "",
