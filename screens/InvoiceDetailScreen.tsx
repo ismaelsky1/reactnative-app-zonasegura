@@ -42,7 +42,7 @@ export default function InvoiceDetailScreen({ route }: any) {
     if (route.params.charges[0].status == 'MANUAL_RECONCILIATION') {
       status = 'Pago';
     }
-    if (route.params.charges[0].status == 'CANCELLED') {
+    if (route.params.charges[0].status == 'CANCELED') {
       status = 'Cancelado';
     }
     setCurrentChargeStatus(status)

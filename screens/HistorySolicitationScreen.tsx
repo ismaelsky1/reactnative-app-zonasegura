@@ -5,7 +5,7 @@ import {
   Clipboard,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 // import Clipboard from '@react-native-clipboard/clipboard';
 
 import HeaderCustom from "../components/HeaderCustom";
@@ -26,6 +26,7 @@ import ListViewCustom from "../components/ListViewCustom";
 
 export default function HistorySolicitationScreen(props: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
+  const isFocused = useIsFocused();
 
   const { user } = useAuth();
 
@@ -38,8 +39,10 @@ export default function HistorySolicitationScreen(props: any) {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    getSolicitation();
-  }, [props]);
+    if(isFocused){
+      getSolicitation();
+    }
+  }, [isFocused]);
 
   const getSolicitation = useCallback(async () => {
     setIsLoading(true);

@@ -57,7 +57,7 @@ export default function CheckSmsScreen({ route, navigation }: any) {
     if (route.params.status == 403) {
       handleResendCode();
     }
-      setSms(route.params.data.mensagem)
+      setSms(route.params.mensagem)
     
 
   }, []);

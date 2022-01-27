@@ -49,7 +49,7 @@ export default function TabWalletScreen() {
         if (item.charges[0].status == 'MANUAL_RECONCILIATION') {
           status = 'Pago';
         }
-        if (item.charges[0].status == 'CANCELLED') {
+        if (item.charges[0].status == 'CANCELED') {
           status = 'Cancelado';
         }
 

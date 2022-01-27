@@ -13,6 +13,13 @@ import MapView from "react-native-maps";
 import { Marker, Callout } from "react-native-maps";
 import iconClientMap from "../assets/images/iconClientMap.png";
 
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+} from 'react-native-reanimated';
+
 import {
   StyleSheet,
   Dimensions,
@@ -35,6 +42,8 @@ import { ModalAlert } from "../types";
 import api from "../services/api";
 import { useAuth } from "../hooks/auth";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import TextInputCustom from "../components/TextInputCustom";
+import TextInputCustomOut from "../components/TextInputCustomOut";
 
 export default function SolicitationDetailScreen({ route }: any) {
   const mapStyle = [
@@ -202,23 +211,43 @@ export default function SolicitationDetailScreen({ route }: any) {
     },
   ];
 
-  const { user, setUser } = useAuth();
-  const isFocused = useIsFocused();
+
+  const { user } = useAuth();
 
   const { navigate, goBack } = useNavigation();
   const colorScheme = useColorScheme();
 
-  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [showModal, setShowModal] = useState<boolean>(false);
   const [location, setLocation] = useState<any>(null);
   const [solicitation, setSolicitation] = useState<any>(null);
 
-  const [alertMsg, setAlertMsg] = useState<ModalAlert>({});
   const [loading, setLoading] = useState(false);
 
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const [showStatusMensagem, setShowStatusMensagem] = useState<boolean>(false);
+  const [valueStatusMensagem, setValueStatusMensagem] = useState<string>('');
+  const [nextStatus, setNextStatus] = useState('');
+
+
+
+  const randomWidth = useSharedValue(5);
+  const messageAnimad = useSharedValue(0);
+
+  const config = {
+    duration: 1000,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
+
+  const styleContainerDetail = useAnimatedStyle(() => {
+    return {
+      flex: withTiming(randomWidth.value, config),
+    };
+  });
+  const styleMessage = useAnimatedStyle(() => {
+    return {
+      height: withTiming(messageAnimad.value, config),
+    };
+  });
 
   useEffect(() => {
     getSolicitation(route.params._id);
@@ -226,50 +255,27 @@ export default function SolicitationDetailScreen({ route }: any) {
     setLocation(coordinates);
   }, []);
 
-  // useEffect(() => {
-  //   // if(props.route.params){
-  //   //   console.log(props.route.params)
-  //   //   // setFormLocationData(props.route.params.coords)
-  //   // }
+  const handleStatus = (nextStatusDto: string) => {
 
-  //   if (isFocused) {
-  //     (async () => {
-  //       // let { status } = await Location.requestForegroundPermissionsAsync();
+    if (nextStatusDto == 'FINISHED' || nextStatusDto == 'CANCELED') {
+      setNextStatus(nextStatusDto)
+      randomWidth.value = randomWidth.value == 5 ? 10 : 5;
+      messageAnimad.value = messageAnimad.value == 0 ? 120 : 0;
+      setShowStatusMensagem(randomWidth.value == 5 ? true : false);
 
-  //       const { status } = await Permissions.askAsync(
-  //         Permissions.LOCATION_FOREGROUND
-  //       );
+    } else {
+      setStatusSolicitation(nextStatusDto)
+    }
+  };
 
-  //       if (status !== "granted") {
-  //         setAlertMsg({
-  //           mensage: "Permissão de acesso a localização necessária.",
-  //           onPress: () => {
-  //             goBack();
-  //           },
-  //           btnOk: "Ok",
-  //           title: "Atenção",
-  //           icon: "alert-circle",
-  //         });
-  //         setShowAlert(true);
-  //         return;
-  //       }
-  //       let getLocation = await Location.getCurrentPositionAsync({});
-  //       console.log(getLocation);
-  //       setLocation(getLocation);
-  //     })();
-  //   }
-  // }, [isFocused]);
-
-  const handleStatus = async (nextStatus: any) => {
+  const setStatusSolicitation = async (nextStatusDto: string) => {
     setLoading(true);
+    
     try {
       const { data } = await api.get(
-        `agent/solicitation/${solicitation._id}/status/${nextStatus}`
+        `agent/solicitation/${solicitation._id}/status/${nextStatusDto}?obs=${valueStatusMensagem}`
       );
-      console.log(data);
-      setSolicitation(data);
-
-      setShowModal(true);
+      
       setMensage({
         title: "Concluido !",
         mensage: `Solicitação Atualizado `,
@@ -279,7 +285,12 @@ export default function SolicitationDetailScreen({ route }: any) {
           setShowModal(false);
         },
       });
+      setSolicitation(data);
+      setShowModal(true);
       setLoading(false);
+      randomWidth.value = 5;
+      messageAnimad.value = 0;
+      setShowStatusMensagem(false);
     } catch (error: any) {
       setShowModal(!showModal);
       console.log(error.request);
@@ -308,11 +319,12 @@ export default function SolicitationDetailScreen({ route }: any) {
     }
   };
 
+
   const getSolicitation = async (_id: any) => {
     setLoading(true);
     try {
       const { data } = await api.get(`solicitation/${_id}`);
-      console.log('data',data)
+      console.log('data', data)
       setSolicitation(data);
       setLoading(false);
     } catch (error: any) {
@@ -376,7 +388,7 @@ export default function SolicitationDetailScreen({ route }: any) {
         )}
       </View>
       {solicitation && (
-        <View style={styles.containerDetail}>
+        <Animated.View style={[styles.containerDetail, styleContainerDetail]}>
           <View
             style={[
               styles.cardCurrent,
@@ -419,7 +431,7 @@ export default function SolicitationDetailScreen({ route }: any) {
                   },
                 ]}
               >
-                {solicitation?.client.address} - {solicitation?.client.number},{" "}
+                {solicitation?.client.street} - {solicitation?.client.number},{" "}
                 {solicitation?.district?.name}
               </Text>
             </View>
@@ -601,7 +613,43 @@ export default function SolicitationDetailScreen({ route }: any) {
               </Text>
             </View>
           </View>
-          <View style={styles.gridDetail}>
+          <Animated.View style={[styleMessage]}>
+            <View style={styles.gridDetail}>
+              <View style={[{ width: "100%" }]}>
+                <TextInputCustomOut value={valueStatusMensagem} onChangeText={setValueStatusMensagem} placeholder="Motivo..." />
+              </View>
+            </View>
+            <View style={styles.gridDetail}>
+              <View style={[{ width: "50%" }]}>
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].primary },
+                  ]}
+                  onPress={() => {
+                    setStatusSolicitation(nextStatus);
+                  }}
+                >
+                  <Text style={styles.textButton}>Salvar</Text>
+                </TouchableHighlight>
+              </View><View style={[{ width: "50%" }]}>
+                <TouchableHighlight
+                  style={[
+                    styles.button,
+                    { backgroundColor: Colors[colorScheme].black2 },
+                  ]}
+                  onPress={() => {
+                    randomWidth.value = 5;
+                    messageAnimad.value = 0;
+                    setShowStatusMensagem(randomWidth.value == 5 ? true : false);
+                  }}
+                >
+                  <Text style={styles.textButton}>Descartar</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </Animated.View>
+          {!showStatusMensagem && (<View style={styles.gridDetail}>
             {user.role == "AGENT" && (
               <View style={[{ flex: 1 }]}>
                 {solicitation.status == "OPEN" && (
@@ -636,7 +684,7 @@ export default function SolicitationDetailScreen({ route }: any) {
                       styles.button,
                       { backgroundColor: Colors[colorScheme].gray },
                     ]}
-                    onPress={() => {}}
+                    onPress={() => { }}
                   >
                     <Text style={styles.textButton}>...</Text>
                   </TouchableHighlight>
@@ -647,7 +695,7 @@ export default function SolicitationDetailScreen({ route }: any) {
                       styles.button,
                       { backgroundColor: Colors[colorScheme].gray },
                     ]}
-                    onPress={() => {}}
+                    onPress={() => { }}
                   >
                     <Text style={styles.textButton}>...</Text>
                   </TouchableHighlight>
@@ -661,7 +709,7 @@ export default function SolicitationDetailScreen({ route }: any) {
                     styles.button,
                     { backgroundColor: Colors[colorScheme].gray },
                   ]}
-                  onPress={() => {}}
+                  onPress={() => { }}
                 >
                   <Text style={styles.textButton}>...</Text>
                 </TouchableHighlight>
@@ -672,7 +720,7 @@ export default function SolicitationDetailScreen({ route }: any) {
                     styles.button,
                     { backgroundColor: Colors[colorScheme].gray },
                   ]}
-                  onPress={() => {}}
+                  onPress={() => { }}
                 >
                   <Text style={styles.textButton}>...</Text>
                 </TouchableHighlight>
@@ -708,8 +756,8 @@ export default function SolicitationDetailScreen({ route }: any) {
                 </>
               )}
             </View>
-          </View>
-        </View>
+          </View>)}
+        </Animated.View>
       )}
       <TouchableOpacity
         onPress={goBack}
@@ -835,8 +883,9 @@ const styles = StyleSheet.create({
   button: {
     // flex: 1,
     height: 40,
-    width: "98%",
+    width: "100%",
     borderRadius: 10,
+    margin: 1,
     justifyContent: "center",
   },
   textButton: {

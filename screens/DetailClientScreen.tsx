@@ -118,7 +118,7 @@ export default function DetailClientScreen({ route }: any) {
             color={Colors[colorScheme].black}
           />
           <Ionicons />
-          <MaterialCommunityIcons
+          {/* <MaterialCommunityIcons
             onPress={() => {
               goBack();
             }}
@@ -126,7 +126,7 @@ export default function DetailClientScreen({ route }: any) {
             name={"delete"}
             size={25}
             color={Colors[colorScheme].black}
-          />
+          /> */}
         </View>
         <View
           style={{

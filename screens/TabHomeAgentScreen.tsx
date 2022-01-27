@@ -83,7 +83,6 @@ export default function SetLocationMapAddressScreen() {
     try {
       setIsLoade(true);
       const { data } = await api.get("agent/dashboard");
-
       const now = data.now.map((item: any) => {
         return {
           name: item.client.name,
@@ -114,6 +113,7 @@ export default function SetLocationMapAddressScreen() {
       setListSolicitationSheduled(sheduled);
       setSolicitationOpen(data.open);
       setCurrent(data.current);
+      console.log('data.current',data.current)
 
       setIsLoade(false);
     } catch (error: any) {
@@ -375,8 +375,8 @@ export default function SetLocationMapAddressScreen() {
                       },
                     ]}
                   >
-                    {current?.client.address} - {current?.client.number},{" "}
-                    {current?.client.district}
+                    {current?.client.street} - {current?.client.number},{" "}
+                    {current?.district.name}
                   </Text>
                 </View>
               </View>

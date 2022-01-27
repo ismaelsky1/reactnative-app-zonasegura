@@ -68,6 +68,7 @@ export default function SetLocationMapScreen({ route, navigation }: any) {
     try {
       const { data } = await api.post("solicitation", {
         client: user,
+        district: user.district,
         // agent: user.responsibleAgent._id,
         typeSolicitation,
         status: "OPEN",
