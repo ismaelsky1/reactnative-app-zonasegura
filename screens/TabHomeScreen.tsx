@@ -26,6 +26,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
   const [mensage, setMensage] = useState<ModalAlert>({});
   const [listService, setListService] = useState([]);
   const [isLoade, setIsLoade] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isAddressFull, setIsAddressFull] = useState(true);
   const [nick, setNick] = useState("");
 
@@ -96,6 +97,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
       setListService(resp);
       setIsLoade(false);
     } catch (error) {
+      setIsLoade(false);
       setShowModal(!showModal);
       setMensage({
         title: "Error",
@@ -110,6 +112,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
   }, []);
 
   const createSolicitation = async (typeSolicitation: any) => {
+    setIsLoading(true);
     let coord;
 
     if (typeSolicitation.action == "GPS") {
@@ -158,8 +161,10 @@ export default function TabHomeScreen({ route, navigation }: any) {
           setShowModal(false);
         },
       });
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
       setShowModal(!showModal);
       setMensage({
         title: "Error",
@@ -268,6 +273,7 @@ export default function TabHomeScreen({ route, navigation }: any) {
           btnOk={mensage?.btnOk}
           title={mensage?.title}
           btnCancel={mensage?.btnCancel}
+          isLoading={isLoading}
         />
       )}
     </>

@@ -18,7 +18,7 @@ import moment from 'moment';
 import api from '../services/api';
 import { useAuth } from '../hooks/auth';
 
-export default function HitoryInvoiceScreen({route}: any) {
+export default function HitoryInvoiceScreen({ route }: any) {
   // const { openModalAlert, closeModal } = useContext(ModalContext);
   // const { navigate, goBack } = useNavigation();
   const [showModal, setShowModal] = useState(false);
@@ -36,19 +36,23 @@ export default function HitoryInvoiceScreen({route}: any) {
 
   useEffect(() => {
     let idUser = '';
-    if(route.params.idClient){
+    if (route.params?.idClient) {
       idUser = route.params.idClient;
-    }else{
+      console.log('route.params')
+
+    } else {
       idUser = user._id;
+      console.log('user._id')
+
     }
-    
+
     getListCharges(idUser)
 
   }, [route])
 
   const getListCharges = React.useCallback(async (idUser) => {
     try {
-      const { data } = await api.get(`charges`, { params: { 'billing._id': idUser} });
+      const { data } = await api.get(`charges`, { params: { 'billing._id': idUser } });
 
       const resp = data.map((item: any) => {
         let status = '';
@@ -75,7 +79,7 @@ export default function HitoryInvoiceScreen({route}: any) {
           link: { url: `InvoiceDetail`, params: item },
         };
       });
-      console.log(data)
+      // console.log(data)
       setListCharges(resp);
       setLoading(false);
     } catch (err: any) {
@@ -95,7 +99,7 @@ export default function HitoryInvoiceScreen({route}: any) {
       <View style={[styles.container, { backgroundColor: Colors[colorScheme].secund }]}>
         {listCharges.map((item: any) => (
           <CardPriceCustom key={item.date} title={item.title} subTitle={item.subTitle} price={item.price} date={item.date} status={item.status} link={item.link} />
-          ))}
+        ))}
 
       </View>
       {showModal && <ModalAlertCustom onPress={() => setShowModal(!showModal)} mensage={mensage?.mensage} icon={mensage?.icon} btnOk={'OK'} title={mensage?.title} />}

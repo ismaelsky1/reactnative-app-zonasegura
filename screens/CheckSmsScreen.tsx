@@ -173,7 +173,7 @@ export default function CheckSmsScreen({ route, navigation }: any) {
                 placeholder="..."
                 onChangeText={handleChange("key")}
                 onBlur={handleBlur("key")}
-                keyboardType="decimal-pad"
+                keyboardType="phone-pad"
                 value={values.key}
               />
               {errors.key && touched.key && (

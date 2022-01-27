@@ -8,30 +8,32 @@ import useColorScheme from '../hooks/useColorScheme';
 import { ItemListView } from '../types';
 
 interface Props {
-  title: string;
+  title?: string;
   background: string;
   isLoading?: boolean;
   isLoadingColor?: string;
   onPress: (res?: any) => void;
+  style?: any;
 }
 
 export default function ButtonCustom(props: Props) {
 
   const colorScheme = useColorScheme();
   return (
-    <TouchableOpacity style={[styles.btn, { backgroundColor: props.background }]} onPress={props.onPress}>
-      {props?.isLoading? (<ActivityIndicator size="small" color={!props.isLoadingColor? '#fff': props.isLoadingColor}  />) : (<Text style={[styles.title, { color: Colors[colorScheme].secund }]}>{props.title}</Text>) }
+    <TouchableOpacity disabled={props?.isLoading} style={[styles.btn, props?.style ,{ backgroundColor: props.background }]} onPress={props.onPress}>
+      {props?.isLoading? (<ActivityIndicator size="small" color={!props.isLoadingColor? '#fff': props.isLoadingColor}  />) : (<Text style={[styles.title, { color: Colors[colorScheme].secund }]}>{props?.title}</Text>) }
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   btn: {
-    width: '100%',
+    flex: 1,
     padding: 15,
     borderRadius: 5,
     marginVertical: 5,
-    height: 55
+    height: 55,
+    maxHeight: 55
   },
   title: {
     fontSize: 16,

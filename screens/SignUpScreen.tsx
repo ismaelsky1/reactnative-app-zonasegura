@@ -145,7 +145,7 @@ export default function SignUpScreen() {
                 placeholder="000.000.000-00"
                 onChangeText={handleChange("document")}
                 onBlur={handleBlur("document")}
-                keyboardType="decimal-pad"
+                keyboardType="phone-pad"
                 value={values.document}
                 type={"cpf"}
               />

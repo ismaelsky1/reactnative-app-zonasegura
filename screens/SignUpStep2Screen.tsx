@@ -130,7 +130,7 @@ export default function SignUpScreen({ route, navigation }: any) {
               <MaskInputCustom
                 type={'zip-code'}
                 title="CEP:"
-                keyboardType="decimal-pad"
+                keyboardType="phone-pad"
                 placeholder="00000-000"
                 onChangeText={handleChange("postCode")}
                 onBlur={handleBlur("postCode")}

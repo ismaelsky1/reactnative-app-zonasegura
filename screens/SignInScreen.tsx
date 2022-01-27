@@ -99,8 +99,8 @@ export default function SignInScreen() {
         <Formik
           validationSchema={schemaDataUsers}
           initialValues={{
-            document: "000.000.000-01",
-            password: "123123",
+            document: "",
+            password: "",
           }}
           onSubmit={handleSignIn}
         >

@@ -90,6 +90,7 @@ export type ModalAlert = {
   mensage?: string;
   btnOk?: string;
   btnCancel?: string;
+  isLoading?: boolean;
   onPress?: ()=> void;
   onPressCancel?: ()=> void;
 }
@@ -103,6 +104,7 @@ export type ModalAlertMap = {
   startup?: Date | any;
   btnOk?: string;
   btnCancel?: string;
+  isLoading?: boolean;
   onPress?: ()=> void;
   onPressCancel?: ()=> void;
 }

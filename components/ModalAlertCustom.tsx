@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Modal,
@@ -14,13 +15,15 @@ import { Text, View } from "./Themed";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import { ModalAlert } from "../types";
+import ButtonCustom from "./ButtonCustom";
 
 export default function ModalAlertCustom(props: ModalAlert) {
   const colorScheme = useColorScheme();
 
   return (
     <View style={styles.centeredView}>
-      <View style={styles.modalView}>
+
+      {!props?.isLoading ? (<View style={styles.modalView}>
         <View
           style={[
             { backgroundColor: Colors[colorScheme].secund },
@@ -57,32 +60,28 @@ export default function ModalAlertCustom(props: ModalAlert) {
             styles.footerModal,
           ]}
         >
-          {props.btnCancel && (
-            <TouchableHighlight
-              style={[
-                styles.openButton,
-                { backgroundColor: Colors[colorScheme].warning },
-              ]}
-              onPress={() => {
-                props?.onPressCancel();
-              }}
-            >
-              <Text style={styles.textButton}>{props.btnCancel}</Text>
-            </TouchableHighlight>
-          )}
-          <TouchableHighlight
-            style={[
-              styles.openButton,
-              { backgroundColor: Colors[colorScheme].primary },
-            ]}
+          <ButtonCustom
+            title={props.btnOk}
             onPress={() => {
               props?.onPress();
             }}
-          >
-            <Text style={styles.textButton}>{props.btnOk}</Text>
-          </TouchableHighlight>
+            
+            isLoading={props.isLoading}
+            background={Colors[colorScheme].primary}
+          />
+            {props.btnCancel && (
+            <ButtonCustom
+              title={props.btnCancel}
+              onPress={() => {
+                props?.onPressCancel();
+              }}
+              style={{ marginLeft: 5 }}
+              isLoading={props.isLoading}
+              background={Colors[colorScheme].warning}
+            />
+          )}
         </View>
-      </View>
+      </View>) : <ActivityIndicator size="large" color={'#fff'}  />}
     </View>
   );
 }
@@ -142,13 +141,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   openButton: {
-    // flex: 1,
-    height: 40,
-    width: '47%',
-    borderRadius: 45,
-    marginHorizontal: 5,
-    marginVertical: 20,
-    paddingTop: 10,
+    marginLeft: 4
   },
   textButton: {
     color: "white",

@@ -130,7 +130,20 @@ export default function ListViewCustom(props: {
                     Cancelado
                   </Text>
                 )}
-                {(item.status !== "SCHEDULED" && item.status !== "OPEN" && item.status !== "CURRENT" && item.status !== "CANCELED") && (
+                {item.status === "FINISHED" && (
+                  <Text
+                    key={random()}
+                    style={[
+                      styles.subtitleList,
+                      {
+                        color: Colors[colorScheme].sucess,
+                      },
+                    ]}
+                  >
+                    Finalizada
+                  </Text>
+                )}
+                {(item.status !== "SCHEDULED" && item.status !== "OPEN" && item.status !== "CURRENT" && item.status !== "CANCELED" && item.status !== "FINISHED" ) && (
                   <Text
                     key={random()}
                     style={[
